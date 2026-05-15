@@ -1,0 +1,36 @@
+.surface {
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-1);
+  color: var(--ink-1);
+  display: block;
+}
+.surface[data-level="2"] {
+  background: var(--surface-2);
+  box-shadow: var(--e-2);
+}
+.surface[data-level="3"] {
+  background: var(--surface-3);
+  box-shadow: var(--e-3);
+}
+.surface[data-level="4"] {
+  background: var(--surface-4);
+  box-shadow: var(--e-4);
+  border-radius: var(--r-lg);
+}
+.surface[data-padded="true"] {
+  padding: var(--s-9);
+}
+
+:global(.pp2.dark) .surface {
+  box-shadow: none;
+}
+
+.button {
+  appearance: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  width: 100%;
+}

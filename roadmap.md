@@ -50,6 +50,11 @@ loading.
 **Done when:** the playground passes `axe` with zero violations in both
 themes; all variants and states render correctly on a real phone.
 
+**Status: 🟡 implementation-complete, awaiting hosted verification.** The
+local gate is green (typecheck / lint / format:check / 6 tests including
+axe-core in both themes). Visual verification happens against the Vercel
+preview built from this push.
+
 ---
 
 ## M1b — Static screens

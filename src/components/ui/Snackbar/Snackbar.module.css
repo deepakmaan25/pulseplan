@@ -1,0 +1,74 @@
+.snackbar {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  max-width: min(92vw, 420px);
+  padding: var(--s-5) var(--s-7);
+  background: var(--surface-4);
+  color: var(--ink-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-3);
+  font: var(--t-body-sm);
+  letter-spacing: var(--ls-body);
+  z-index: 60;
+  opacity: 0;
+  transform-origin: bottom center;
+  animation: pp2-snack-in var(--dur-standard) var(--easing-emphasized) forwards;
+}
+
+@keyframes pp2-snack-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.tone {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  flex: 0 0 auto;
+}
+.tone[data-tone="default"] {
+  background: var(--ink-3);
+}
+.tone[data-tone="primary"] {
+  background: var(--primary);
+}
+.tone[data-tone="success"] {
+  background: var(--success);
+}
+.tone[data-tone="error"] {
+  background: var(--error);
+}
+.tone[data-tone="review"] {
+  background: var(--st-review-fg);
+}
+
+.message {
+  flex: 1 1 auto;
+}
+
+.action {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: var(--s-2) var(--s-4);
+  margin: calc(var(--s-2) * -1) calc(var(--s-2) * -1);
+  color: var(--primary);
+  font: var(--t-button);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+}
+.action:hover {
+  background: var(--primary-soft);
+}

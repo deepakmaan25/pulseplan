@@ -1,0 +1,155 @@
+/* Shared chip skeleton — used by Status / Pillar / Platform / Priority / Filter. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font: var(--t-caption);
+  border-radius: var(--r-full);
+  padding: 0 var(--s-5);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1;
+  user-select: none;
+}
+.chip[data-size="sm"] {
+  height: 20px;
+  font-size: 11px;
+  padding: 0 var(--s-4);
+  gap: var(--s-2);
+}
+.chip[data-size="md"] {
+  height: 22px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  flex: 0 0 auto;
+}
+.square {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  flex: 0 0 auto;
+}
+
+/* StatusChip */
+.status[data-state="idea"] {
+  background: var(--st-idea-bg);
+  color: var(--st-idea-fg);
+}
+.status[data-state="idea"] .dot {
+  background: var(--st-idea-fg);
+}
+.status[data-state="draft"] {
+  background: var(--st-draft-bg);
+  color: var(--st-draft-fg);
+}
+.status[data-state="draft"] .dot {
+  background: var(--st-draft-fg);
+}
+.status[data-state="review"] {
+  background: var(--st-review-bg);
+  color: var(--st-review-fg);
+}
+.status[data-state="review"] .dot {
+  background: var(--st-review-fg);
+}
+.status[data-state="sched"] {
+  background: var(--st-sched-bg);
+  color: var(--st-sched-fg);
+}
+.status[data-state="sched"] .dot {
+  background: var(--st-sched-fg);
+}
+.status[data-state="pub"] {
+  background: var(--st-pub-bg);
+  color: var(--st-pub-fg);
+}
+.status[data-state="pub"] .dot {
+  background: var(--st-pub-fg);
+}
+.status[data-state="overdue"] {
+  background: var(--st-overdue-bg);
+  color: var(--st-overdue-fg);
+}
+.status[data-state="overdue"] .dot {
+  background: var(--st-overdue-fg);
+}
+
+/* PillarChip — color comes from inline style */
+.pillar {
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+}
+
+/* PlatformChip */
+.platform {
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+}
+.platform[data-mono="true"] {
+  background: transparent;
+  color: var(--ink-1);
+  border-color: var(--outline);
+}
+.platformGlyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--r-full);
+  font: var(--t-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ink-inverse);
+  text-transform: lowercase;
+  letter-spacing: 0;
+}
+
+/* PriorityChip — outlined letterform */
+.priority {
+  background: transparent;
+  font: var(--t-label);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  padding: 0 var(--s-4);
+  height: 20px;
+  border-width: 1px;
+  border-style: solid;
+}
+.priority[data-level="P0"] {
+  color: var(--pri-P0);
+  border-color: var(--pri-P0);
+}
+.priority[data-level="P1"] {
+  color: var(--pri-P1);
+  border-color: var(--pri-P1);
+}
+.priority[data-level="P2"] {
+  color: var(--pri-P2);
+  border-color: var(--pri-P2);
+}
+
+/* FilterChip */
+.filter {
+  appearance: none;
+  cursor: pointer;
+  background: var(--surface-1);
+  color: var(--ink-2);
+  border: 1px solid var(--outline);
+  height: 28px;
+  padding: 0 var(--s-7);
+  font: var(--t-caption);
+  font-weight: 500;
+}
+.filter:hover {
+  background: var(--bg-sunken);
+}
+.filter[aria-pressed="true"] {
+  background: var(--ink-1);
+  color: var(--ink-inverse);
+  border-color: var(--ink-1);
+}

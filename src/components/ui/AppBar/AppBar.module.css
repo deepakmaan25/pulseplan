@@ -1,0 +1,60 @@
+.appbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  background: var(--bg-base);
+  padding: 52px var(--s-9) 0;
+  min-height: 96px;
+  width: 100%;
+}
+.appbar[data-variant="compact"] {
+  min-height: 96px;
+}
+.appbar[data-variant="prominent"] {
+  min-height: 118px;
+  align-items: flex-end;
+  padding-bottom: var(--s-7);
+}
+
+.leading,
+.trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: 0 0 auto;
+}
+.trailing {
+  margin-left: auto;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.kicker {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 2px;
+}
+.title {
+  font: var(--t-title-lg);
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.appbar[data-variant="compact"] .title {
+  font: var(--t-title);
+  font-weight: 600;
+}
+.subtitle {
+  font: var(--t-caption);
+  color: var(--ink-3);
+  margin: 2px 0 0;
+}

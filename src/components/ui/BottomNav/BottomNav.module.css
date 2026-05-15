@@ -1,0 +1,76 @@
+.nav {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: var(--surface-1);
+  border-top: 1px solid var(--divider);
+  padding: var(--s-3) var(--s-5) calc(var(--s-3) + env(safe-area-inset-bottom));
+  z-index: 30;
+}
+:global(.pp2.dark) .nav {
+  background: var(--surface-1);
+}
+
+.tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--s-3) var(--s-2);
+  color: var(--ink-3);
+  border-radius: var(--r-md);
+  text-decoration: none;
+  min-height: 52px;
+}
+.tab:hover {
+  color: var(--ink-2);
+}
+.tab[aria-current="page"] {
+  color: var(--ink-1);
+}
+.tab svg {
+  width: 22px;
+  height: 22px;
+}
+.label {
+  font: var(--t-mono);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.fab {
+  appearance: none;
+  background: var(--primary);
+  color: var(--ink-inverse);
+  border: 0;
+  border-radius: var(--r-full);
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  cursor: pointer;
+  box-shadow: var(--e-3);
+}
+.fab:hover {
+  background: var(--primary-hover);
+}
+.fab svg {
+  width: 24px;
+  height: 24px;
+}
+.fabWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

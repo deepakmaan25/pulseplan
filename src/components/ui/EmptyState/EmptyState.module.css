@@ -1,0 +1,43 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-12) var(--s-9);
+  text-align: center;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-lg);
+  border: 1.5px dashed var(--divider-strong);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+}
+.icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.title {
+  font: var(--t-title);
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+  margin: 0;
+}
+.description {
+  font: var(--t-body-sm);
+  color: var(--ink-3);
+  margin: 0;
+  max-width: 36ch;
+}
+.actions {
+  display: inline-flex;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}

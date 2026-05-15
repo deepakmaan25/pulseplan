@@ -10,18 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { Snackbar } from "../ui/Snackbar/Snackbar";
 
 /**
- * Toast shell. The visual primitive (Snackbar) lands in M1a per the
- * component inventory in HANDOFF.md §6. This shell exposes the API
- * (`toast`, `dismiss`) and a minimal token-styled viewport so feature code
- * can already wire up UNDO flows in M1b without waiting on the polished
- * primitive.
- *
- * Behavior matches HANDOFF.md:
+ * Toast / Snackbar provider. Behavior locked to HANDOFF.md §6:
  *   - position: 92px from bottom (above bottom nav)
  *   - lifetime: 2.4s
- *   - one toast at a time (a new toast replaces the current one)
+ *   - one at a time (a new toast replaces the current)
  */
 
 export type ToastTone = "default" | "primary" | "success" | "error" | "review";
@@ -111,7 +106,22 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastViewport toast={current} onDismiss={() => dismiss()} />
+      {current ? (
+        <Snackbar
+          key={current.id}
+          message={current.message}
+          tone={current.tone ?? "default"}
+          actionLabel={current.actionLabel}
+          onAction={
+            current.actionLabel
+              ? () => {
+                  current.onAction?.();
+                  dismiss(current.id);
+                }
+              : undefined
+          }
+        />
+      ) : null}
     </ToastContext.Provider>
   );
 }
@@ -122,85 +132,4 @@ export function useToast(): ToastContextValue {
     throw new Error("useToast must be used inside <ToastProvider>");
   }
   return ctx;
-}
-
-function ToastViewport({
-  toast,
-  onDismiss,
-}: {
-  toast: Toast | null;
-  onDismiss: () => void;
-}) {
-  if (!toast) return null;
-
-  const accent =
-    toast.tone === "primary"
-      ? "var(--primary)"
-      : toast.tone === "success"
-        ? "var(--success)"
-        : toast.tone === "error"
-          ? "var(--error)"
-          : toast.tone === "review"
-            ? "var(--st-review-fg)"
-            : "var(--ink-3)";
-
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      style={{
-        position: "fixed",
-        left: "50%",
-        bottom: "92px",
-        transform: "translateX(-50%)",
-        display: "flex",
-        alignItems: "center",
-        gap: "var(--s-6)",
-        maxWidth: "min(92vw, 420px)",
-        padding: "var(--s-5) var(--s-7)",
-        background: "var(--surface-4)",
-        color: "var(--ink-1)",
-        border: "1px solid var(--divider)",
-        borderRadius: "var(--r-md)",
-        boxShadow: "var(--e-3)",
-        font: "var(--t-body-sm)",
-        letterSpacing: "var(--ls-body)",
-        zIndex: 60,
-      }}
-    >
-      <span
-        aria-hidden="true"
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: "var(--r-full)",
-          background: accent,
-          flex: "0 0 auto",
-        }}
-      />
-      <span style={{ flex: 1 }}>{toast.message}</span>
-      {toast.actionLabel ? (
-        <button
-          type="button"
-          onClick={() => {
-            toast.onAction?.();
-            onDismiss();
-          }}
-          style={{
-            appearance: "none",
-            background: "transparent",
-            border: 0,
-            padding: "var(--s-2) var(--s-4)",
-            margin: "calc(var(--s-2) * -1) calc(var(--s-2) * -1)",
-            color: "var(--primary)",
-            font: "var(--t-button)",
-            cursor: "pointer",
-            borderRadius: "var(--r-sm)",
-          }}
-        >
-          {toast.actionLabel}
-        </button>
-      ) : null}
-    </div>
-  );
 }
