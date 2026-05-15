@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Tailwind v4 — opt-in dark variant scoped to the handoff's class convention
+   (`.pp2.dark` on <html>). All `dark:*` utilities trigger from this. */
+@custom-variant dark (&:where(.pp2.dark, .pp2.dark *));
+
+/* ─────────────────────────────────────────────────────────────
+ * Baseline screen container — ported from the handoff so component
+ * code can reuse the same helper class names that appear in the spec.
+ * ───────────────────────────────────────────────────────────── */
+html,
+body {
+  height: 100%;
+}
+
+html.pp2 {
+  background: var(--bg-base);
+  color: var(--ink-1);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-feature-settings: "cv11", "ss03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: var(--ls-body);
+}
+
+body {
+  margin: 0;
+}
+
+.pp2 .tabnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Universal, accessible focus ring. */
+.pp2 :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--outline-focus);
+  border-radius: var(--r-sm);
+}
+
+/* Loading skeleton shimmer */
+@keyframes pp2-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes pp2-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pp2-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pp2-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.pp2-skel {
+  background: linear-gradient(
+    90deg,
+    var(--bg-sunken) 0%,
+    var(--divider) 50%,
+    var(--bg-sunken) 100%
+  );
+  background-size: 200% 100%;
+  animation: pp2-shimmer 1.6s linear infinite;
+  border-radius: var(--r-sm);
+}
+
+/* Pressable — `transform: scale(0.97)` for 120ms on press. */
+.pp2-press {
+  transition:
+    transform var(--dur-fast) var(--easing-standard),
+    background var(--dur-fast) var(--easing-standard),
+    box-shadow var(--dur-fast) var(--easing-standard);
+}
+.pp2-press:active {
+  transform: scale(0.97);
+}
+
+/* Touch target — expand hit area to ≥ 44×44 without changing visual size. */
+.pp2-hit {
+  position: relative;
+}
+.pp2-hit::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/* Respect user motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  .pp2 *,
+  .pp2-press,
+  .pp2-skel {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .pp2-press:active {
+    transform: none;
+  }
+}

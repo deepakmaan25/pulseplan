@@ -1,0 +1,248 @@
+/* PulsePlan — design tokens
+ *
+ * Ported from the approved handoff (_handoff/content-planner/project/pp2-tokens.css).
+ * RULE: keep token names verbatim so design files and code stay aligned.
+ *
+ * Scope: tokens live on `.pp2` (light, default) and `.pp2.dark` (dark).
+ * The <html> element carries `class="pp2"` always; `dark` is added by the theme provider.
+ *
+ * Geist / Geist Mono are loaded via next/font (see src/app/layout.tsx).
+ * --font-sans / --font-mono read from CSS variables exposed by next/font, with
+ * platform fallbacks for the brief window before the webfont is ready.
+ */
+
+/* ─────────────────────────────────────────────────────────────
+ * LIGHT (default)
+ * ───────────────────────────────────────────────────────────── */
+.pp2 {
+  /* Surfaces — cool neutral with subtle blue undertone.
+     Light mode uses shadow for elevation (surfaces remain white). */
+  --bg-base: #f2f4f7;
+  --bg-sunken: #e6e9ee;
+  --surface-1: #ffffff;
+  --surface-2: #ffffff;
+  --surface-3: #ffffff;
+  --surface-4: #ffffff;
+  --scrim: rgba(10, 13, 18, 0.48);
+
+  /* Ink (text) — contrast hardened.
+     ink-1 18:1 · ink-2 7.5:1 · ink-3 5.6:1 on bg-base.
+     ink-disabled ≥ 3:1 (non-essential / WCAG 1.4.3 exception). */
+  --ink-1: #0a0d12;
+  --ink-2: #424a56;
+  --ink-3: #5a6270;
+  --ink-4: #828a96;
+  --ink-disabled: #a4abb4;
+  --ink-inverse: #ffffff;
+
+  /* Lines */
+  --divider: rgba(10, 13, 18, 0.07);
+  --divider-strong: rgba(10, 13, 18, 0.11);
+  --outline: rgba(10, 13, 18, 0.1);
+  --outline-strong: rgba(10, 13, 18, 0.16);
+  --outline-focus: rgba(46, 91, 255, 0.45);
+
+  /* Accent — single restrained primary */
+  --primary: #2e5bff;
+  --primary-hover: #2347d6;
+  --primary-press: #1b36a8;
+  --primary-soft: #e5ebff;
+  --primary-ink: #1a3cb8;
+
+  /* Semantic */
+  --success: #0e9f6e;
+  --success-soft: #d6f1e5;
+  --success-ink: #036138;
+  --warning: #d97706;
+  --warning-soft: #fdeed2;
+  --warning-ink: #8a4b00;
+  --error: #dc2626;
+  --error-soft: #fce0e0;
+  --error-ink: #8e1212;
+  --info: #0284c7;
+  --info-soft: #d5eaf7;
+  --info-ink: #03517a;
+
+  /* Workflow status */
+  --st-idea-fg: #4c525e;
+  --st-idea-bg: #eceef2;
+  --st-draft-fg: #b45309;
+  --st-draft-bg: #fdeed2;
+  --st-review-fg: #6d28d9;
+  --st-review-bg: #ece5fb;
+  --st-sched-fg: #1a3cb8;
+  --st-sched-bg: #e5ebff;
+  --st-pub-fg: #036138;
+  --st-pub-bg: #d6f1e5;
+  --st-overdue-fg: #8e1212;
+  --st-overdue-bg: #fce0e0;
+
+  /* Priority */
+  --pri-P0: #dc2626;
+  --pri-P1: #d97706;
+  --pri-P2: #6e7785;
+
+  /* Platform — restrained, each gets exactly one role color */
+  --plat-ig: #c13584;
+  --plat-li: #0a66c2;
+  --plat-x: #0a0d12;
+  --plat-yt: #dc2626;
+  --plat-th: #4b5563;
+  --plat-ig-soft: #f7e1ed;
+  --plat-li-soft: #d9e8f7;
+  --plat-x-soft: #e8e9ea;
+  --plat-yt-soft: #fce0e0;
+  --plat-th-soft: #e7e9ec;
+
+  /* Type — single family. Values come from next/font (see layout.tsx). */
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  /* Type roles (size / line-height) */
+  --t-display: 700 28px/1.15 var(--font-sans);
+  --t-title-lg: 700 22px/1.25 var(--font-sans);
+  --t-title: 600 17px/1.3 var(--font-sans);
+  --t-title-sm: 600 14px/1.35 var(--font-sans);
+  --t-body: 450 14px/1.5 var(--font-sans);
+  --t-body-sm: 450 13px/1.45 var(--font-sans);
+  --t-caption: 500 12px/1.4 var(--font-sans);
+  --t-label: 600 11px/1.3 var(--font-sans);
+  --t-button: 600 14px/1.2 var(--font-sans);
+  --t-mono: 500 11px/1.4 var(--font-mono);
+  --t-mono-sm: 500 11px/1.4 var(--font-mono);
+  --t-tabular: 500 13px/1.4 var(--font-sans);
+
+  --ls-display: -0.025em;
+  --ls-title: -0.015em;
+  --ls-body: -0.005em;
+  --ls-label: 0.04em;
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-full: 9999px;
+
+  /* Spacing (4pt grid) */
+  --s-0: 0;
+  --s-1: 2px;
+  --s-2: 4px;
+  --s-3: 6px;
+  --s-4: 8px;
+  --s-5: 10px;
+  --s-6: 12px;
+  --s-7: 14px;
+  --s-8: 16px;
+  --s-9: 20px;
+  --s-10: 24px;
+  --s-11: 28px;
+  --s-12: 32px;
+  --s-13: 40px;
+  --s-14: 48px;
+  --s-15: 56px;
+  --s-16: 64px;
+
+  /* Elevation — quiet, premium */
+  --e-0: none;
+  --e-1: 0 1px 2px rgba(10, 13, 18, 0.04), 0 1px 1px rgba(10, 13, 18, 0.03);
+  --e-2:
+    0 2px 4px rgba(10, 13, 18, 0.04), 0 4px 8px -2px rgba(10, 13, 18, 0.05);
+  --e-3:
+    0 4px 8px rgba(10, 13, 18, 0.04), 0 12px 24px -6px rgba(10, 13, 18, 0.1);
+  --e-4:
+    0 8px 16px rgba(10, 13, 18, 0.06), 0 24px 48px -12px rgba(10, 13, 18, 0.15);
+  --e-sheet:
+    0 -2px 8px rgba(10, 13, 18, 0.04), 0 -16px 48px rgba(10, 13, 18, 0.1);
+
+  /* Motion */
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --dur-fast: 120ms;
+  --dur-standard: 200ms;
+  --dur-slow: 320ms;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * DARK — proper elevated surface hierarchy (not inverted)
+ * ───────────────────────────────────────────────────────────── */
+.pp2.dark {
+  --bg-base: #0a0c0f;
+  --bg-sunken: #050608;
+  --surface-1: #15181c;
+  --surface-2: #1c2026;
+  --surface-3: #242931;
+  --surface-4: #2d333c;
+  --scrim: rgba(0, 0, 0, 0.68);
+
+  /* Ink — dark contrast hardened. ink-3 5.4:1 on bg-base. */
+  --ink-1: #f2f4f7;
+  --ink-2: #b8bec6;
+  --ink-3: #8e96a1;
+  --ink-4: #62696f;
+  --ink-disabled: #4a5058;
+  --ink-inverse: #0a0d12;
+
+  --divider: rgba(255, 255, 255, 0.07);
+  --divider-strong: rgba(255, 255, 255, 0.12);
+  --outline: rgba(255, 255, 255, 0.1);
+  --outline-strong: rgba(255, 255, 255, 0.16);
+  --outline-focus: rgba(124, 145, 255, 0.55);
+
+  --primary: #6e89ff;
+  --primary-hover: #8aa1ff;
+  --primary-press: #5c7cff;
+  --primary-soft: #1f2547;
+  --primary-ink: #bcc9ff;
+
+  --success: #16c088;
+  --success-soft: #0f2823;
+  --success-ink: #5ee0ac;
+  --warning: #f59e0b;
+  --warning-soft: #2b1f08;
+  --warning-ink: #fcd175;
+  --error: #f0564c;
+  --error-soft: #2a1614;
+  --error-ink: #fb938b;
+  --info: #38bdf8;
+  --info-soft: #0b2330;
+  --info-ink: #80d7f8;
+
+  --st-idea-fg: #acb3bc;
+  --st-idea-bg: #1f242b;
+  --st-draft-fg: #fcd175;
+  --st-draft-bg: #2b1f08;
+  --st-review-fg: #c4b5fd;
+  --st-review-bg: #221a3a;
+  --st-sched-fg: #bcc9ff;
+  --st-sched-bg: #1f2547;
+  --st-pub-fg: #5ee0ac;
+  --st-pub-bg: #0f2823;
+  --st-overdue-fg: #fb938b;
+  --st-overdue-bg: #2a1614;
+
+  --pri-P0: #f0564c;
+  --pri-P1: #f59e0b;
+  --pri-P2: #98a2b3;
+
+  --plat-ig: #e1539a;
+  --plat-li: #4d94e6;
+  --plat-x: #f2f4f7;
+  --plat-yt: #f0564c;
+  --plat-th: #a0a6ad;
+  --plat-ig-soft: #2a1a24;
+  --plat-li-soft: #112233;
+  --plat-x-soft: #1e2125;
+  --plat-yt-soft: #2a1614;
+  --plat-th-soft: #1c1e22;
+
+  --e-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+  --e-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+  --e-3: 0 4px 8px rgba(0, 0, 0, 0.3), 0 12px 24px -6px rgba(0, 0, 0, 0.4);
+  --e-4: 0 8px 16px rgba(0, 0, 0, 0.4), 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+  --e-sheet: 0 -2px 8px rgba(0, 0, 0, 0.2), 0 -16px 48px rgba(0, 0, 0, 0.4);
+}

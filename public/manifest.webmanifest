@@ -1,0 +1,13 @@
+{
+  "name": "PulsePlan",
+  "short_name": "PulsePlan",
+  "description": "A premium content planner for solo creators.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F4F7",
+  "theme_color": "#F2F4F7",
+  "lang": "en",
+  "icons": []
+}
