@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import Link from "next/link";
 import styles from "./BottomNav.module.css";
 
@@ -8,7 +8,7 @@ export interface BottomNavTab {
   key: string;
   label: string;
   icon: ReactNode;
-  href?: string;
+  href?: ComponentProps<typeof Link>["href"];
   onClick?: () => void;
 }
 
