@@ -4,7 +4,7 @@ import { TodayClient } from "./TodayClient";
 
 export default async function TodayPage() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   // Without env vars (local dev without .env.local), skip auth gating and render directly
   if (supabaseUrl && supabaseKey) {
