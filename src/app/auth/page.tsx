@@ -38,8 +38,8 @@ export default function AuthPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/today");
         router.refresh();
+        router.push("/today");
       }
     }
 
