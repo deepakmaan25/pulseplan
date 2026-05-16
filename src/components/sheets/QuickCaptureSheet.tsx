@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Sheet } from "@/components/ui/Sheet/Sheet";
 import { Button } from "@/components/ui/Button/Button";
 import { PILLARS } from "@/mocks/fixtures";
+import { usePosts } from "@/store/PostsContext";
+import { useToast } from "@/components/providers/ToastProvider";
 import type { Platform } from "@/components/ui/chips/PlatformChip";
+import type { Priority } from "@/components/ui/chips/PriorityChip";
 import styles from "./QuickCaptureSheet.module.css";
 
 const PLATFORMS: { value: Platform; label: string }[] = [
@@ -15,30 +18,72 @@ const PLATFORMS: { value: Platform; label: string }[] = [
   { value: "th", label: "Threads" },
 ];
 
+const PRIORITIES: { value: Priority; label: string; color: string }[] = [
+  { value: "P0", label: "Critical", color: "var(--pri-P0)" },
+  { value: "P1", label: "High", color: "var(--pri-P1)" },
+  { value: "P2", label: "Normal", color: "var(--pri-P2)" },
+];
+
 interface QuickCaptureSheetProps {
   open: boolean;
   onClose: () => void;
 }
 
-export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
-  const [title, setTitle] = useState("");
-  const [platform, setPlatform] = useState<Platform | null>(null);
-  const [pillarId, setPillarId] = useState<string | null>(null);
+function resetState() {
+  return {
+    title: "",
+    description: "",
+    platform: null as Platform | null,
+    pillarId: null as string | null,
+    priority: null as Priority | null,
+  };
+}
 
-  function handleAdd() {
-    // M2c: fire optimistic mutation here
-    setTitle("");
-    setPlatform(null);
-    setPillarId(null);
-    onClose();
+export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
+  const { addPost } = usePosts();
+  const { toast } = useToast();
+  const [state, setState] = useState(resetState);
+
+  function set<K extends keyof ReturnType<typeof resetState>>(
+    key: K,
+    value: ReturnType<typeof resetState>[K],
+  ) {
+    setState((prev) => ({ ...prev, [key]: value }));
   }
 
   function handleClose() {
-    setTitle("");
-    setPlatform(null);
-    setPillarId(null);
+    setState(resetState());
     onClose();
   }
+
+  function save(plan: boolean) {
+    const pillar = PILLARS.find((p) => p.id === state.pillarId) ??
+      PILLARS[0] ?? { id: "personal", name: "Personal", color: "#d97706" };
+    const platform = state.platform ?? "ig";
+
+    addPost({
+      title: state.title.trim(),
+      status: plan ? "sched" : "idea",
+      platform,
+      pillar,
+      priority: state.priority ?? undefined,
+      scheduledDate: plan ? "2026-05-16" : undefined,
+    });
+
+    toast({
+      message: plan ? "Planned for today ✓" : "Saved to ideas ✓",
+      tone: "success",
+      actionLabel: "UNDO",
+      onAction: () => {
+        // In M2c: remove optimistic update; for now noop
+      },
+    });
+
+    setState(resetState());
+    onClose();
+  }
+
+  const canSave = state.title.trim().length > 0;
 
   return (
     <Sheet
@@ -47,27 +92,50 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
       title="Quick Capture"
       kicker="New Post"
       footer={
-        <Button
-          variant="filled"
-          size="md"
-          onClick={handleAdd}
-          disabled={!title.trim()}
-          style={{ width: "100%" }}
-        >
-          Add to Ideas
-        </Button>
+        <div className={styles.footerRow}>
+          <Button
+            variant="outlined"
+            size="md"
+            onClick={() => save(false)}
+            disabled={!canSave}
+            style={{ flex: 1 }}
+          >
+            Save as Idea
+          </Button>
+          <Button
+            variant="filled"
+            size="md"
+            onClick={() => save(true)}
+            disabled={!canSave}
+            style={{ flex: 1 }}
+          >
+            Plan for Today
+          </Button>
+        </div>
       }
     >
       <div className={styles.body}>
+        {/* Title */}
         <textarea
           className={styles.titleInput}
           placeholder="What's the post idea?"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          rows={3}
+          value={state.title}
+          onChange={(e) => set("title", e.target.value)}
+          rows={2}
           aria-label="Post idea"
         />
 
+        {/* Description */}
+        <textarea
+          className={`${styles.titleInput} ${styles.descInput}`}
+          placeholder="Add a brief description or hook… (optional)"
+          value={state.description}
+          onChange={(e) => set("description", e.target.value)}
+          rows={2}
+          aria-label="Description"
+        />
+
+        {/* Platform */}
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Platform</p>
           <div className={styles.chips}>
@@ -75,9 +143,11 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
               <button
                 key={value}
                 type="button"
-                aria-pressed={platform === value}
-                onClick={() => setPlatform(platform === value ? null : value)}
-                className={`${styles.chip} ${platform === value ? styles.chipSelected : ""}`}
+                aria-pressed={state.platform === value}
+                onClick={() =>
+                  set("platform", state.platform === value ? null : value)
+                }
+                className={`${styles.chip} ${state.platform === value ? styles.chipSelected : ""}`}
               >
                 {label}
               </button>
@@ -85,6 +155,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
           </div>
         </div>
 
+        {/* Pillar */}
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Pillar</p>
           <div className={styles.chips}>
@@ -92,11 +163,13 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
               <button
                 key={pl.id}
                 type="button"
-                aria-pressed={pillarId === pl.id}
-                onClick={() => setPillarId(pillarId === pl.id ? null : pl.id)}
+                aria-pressed={state.pillarId === pl.id}
+                onClick={() =>
+                  set("pillarId", state.pillarId === pl.id ? null : pl.id)
+                }
                 className={styles.chip}
                 style={
-                  pillarId === pl.id
+                  state.pillarId === pl.id
                     ? {
                         background: pl.color,
                         color: "#fff",
@@ -106,6 +179,35 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
                 }
               >
                 {pl.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Priority */}
+        <div className={styles.section}>
+          <p className={styles.sectionLabel}>Priority</p>
+          <div className={styles.chips}>
+            {PRIORITIES.map(({ value, label, color }) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={state.priority === value}
+                onClick={() =>
+                  set("priority", state.priority === value ? null : value)
+                }
+                className={styles.chip}
+                style={
+                  state.priority === value
+                    ? {
+                        background: color,
+                        color: "#fff",
+                        borderColor: "transparent",
+                      }
+                    : { borderColor: color, color }
+                }
+              >
+                {value} · {label}
               </button>
             ))}
           </div>

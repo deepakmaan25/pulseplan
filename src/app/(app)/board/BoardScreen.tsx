@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar/AppBar";
 import { FilterChip } from "@/components/ui/chips/FilterChip";
 import { BoardCard } from "@/components/post/BoardCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
-import { postsByStatus } from "@/mocks/fixtures";
+import { usePosts } from "@/store/PostsContext";
 import type { PostStatus } from "@/components/ui/chips/StatusChip";
 import styles from "./board.module.css";
 
@@ -20,7 +21,10 @@ const STATUSES: { value: PostStatus; label: string }[] = [
 
 export function BoardScreen() {
   const [active, setActive] = useState<PostStatus>("draft");
-  const posts = postsByStatus(active);
+  const router = useRouter();
+  const { posts } = usePosts();
+
+  const filtered = posts.filter((p) => p.status === active);
   const activeLabel = STATUSES.find((s) => s.value === active)?.label ?? active;
 
   return (
@@ -46,9 +50,9 @@ export function BoardScreen() {
         ))}
       </div>
 
-      {posts.length > 0 ? (
+      {filtered.length > 0 ? (
         <div className={styles.grid}>
-          {posts.map((post) => (
+          {filtered.map((post) => (
             <BoardCard
               key={post.id}
               title={post.title}
@@ -57,6 +61,7 @@ export function BoardScreen() {
               postType={post.postType}
               priority={post.priority}
               dayStamp={post.scheduledDate?.slice(5).replace("-", "/")}
+              onClick={() => router.push(`/post/${post.id}`)}
             />
           ))}
         </div>

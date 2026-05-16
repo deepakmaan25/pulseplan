@@ -1,0 +1,187 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--bg-base);
+  padding-bottom: var(--s-16);
+}
+
+/* ─── Status bar + time ──────────────────────────────────────── */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-6) var(--s-9) 0;
+}
+
+.scheduledTime {
+  font: var(--t-caption);
+  color: var(--ink-3);
+  margin-left: auto;
+}
+
+/* ─── Post title ─────────────────────────────────────────────── */
+.titleArea {
+  padding: var(--s-8) var(--s-9) var(--s-6);
+}
+
+.title {
+  font: var(--t-title-lg);
+  font-size: 20px;
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ─── Metadata card ──────────────────────────────────────────── */
+.metaCard {
+  margin: 0 var(--s-9) var(--s-6);
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-6) var(--s-9);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: var(--e-1);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-6) 0;
+  border-top: 1px solid var(--divider);
+}
+
+.metaRow:first-child {
+  border-top: none;
+}
+
+.metaLabel {
+  font: var(--t-caption);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.metaValue {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+/* ─── Draft / notes sections ─────────────────────────────────── */
+.section {
+  margin: 0 var(--s-9) var(--s-6);
+}
+
+.sectionLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--s-5);
+}
+
+.textBlock {
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-9) var(--s-9);
+  min-height: 80px;
+  font: var(--t-body);
+  color: var(--ink-3);
+  box-shadow: var(--e-1);
+}
+
+.textBlockPlaceholder {
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+/* ─── Action strip ───────────────────────────────────────────── */
+.actions {
+  margin: var(--s-8) var(--s-9) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.actionBtn {
+  appearance: none;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-lg);
+  background: var(--surface-1);
+  padding: var(--s-8) var(--s-9);
+  font: var(--t-body-sm);
+  font-weight: 500;
+  color: var(--ink-1);
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  cursor: pointer;
+  width: 100%;
+  transition:
+    background var(--dur-fast) var(--easing-standard),
+    border-color var(--dur-fast) var(--easing-standard);
+  box-shadow: var(--e-1);
+}
+.actionBtn:hover {
+  background: var(--surface-2);
+}
+.actionBtn:active {
+  transform: scale(0.98);
+}
+
+.actionBtnPrimary {
+  background: var(--primary-soft);
+  border-color: transparent;
+  color: var(--primary-ink);
+}
+.actionBtnPrimary:hover {
+  background: color-mix(in srgb, var(--primary-soft) 90%, var(--primary) 10%);
+}
+
+.actionBtnDanger {
+  color: var(--error);
+  border-color: var(--error-soft);
+}
+.actionBtnDanger:hover {
+  background: var(--error-soft);
+}
+
+.actionIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--divider);
+  margin: var(--s-4) 0;
+}
+
+/* ─── Not-found state ────────────────────────────────────────── */
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: var(--s-12) var(--s-10);
+  gap: var(--s-6);
+  text-align: center;
+}
+
+.notFoundTitle {
+  font: var(--t-title);
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.notFoundSub {
+  font: var(--t-body);
+  color: var(--ink-4);
+  margin: 0;
+}

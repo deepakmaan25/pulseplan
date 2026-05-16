@@ -32,11 +32,20 @@
   font-size: 11px;
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  color: var(--primary-ink);
   background: var(--primary);
   color: #fff;
   padding: 2px var(--s-5);
   border-radius: var(--r-full);
+}
+
+.countBadge {
+  font: var(--t-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  background: var(--bg-sunken);
+  padding: 2px var(--s-4);
+  border-radius: var(--r-full);
+  margin-left: auto;
 }
 
 .list {
@@ -47,6 +56,6 @@
 .emptyDay {
   font: var(--t-body-sm);
   color: var(--ink-4);
-  padding: var(--s-6) var(--s-9) var(--s-8);
+  padding: var(--s-5) var(--s-9) var(--s-7);
   margin: 0;
 }

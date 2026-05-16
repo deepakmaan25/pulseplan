@@ -52,24 +52,30 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
   const activeKey = pathToKey(pathname);
   const [captureOpen, setCaptureOpen] = useState(false);
 
+  const isOnboarding = pathname === "/onboarding";
+
   return (
     <div className={styles.deviceBackground}>
       <div className={styles.device}>
         <StatusBar />
         <div className={styles.scrollArea}>{children}</div>
-        <BottomNav
-          tabs={TABS}
-          activeKey={activeKey}
-          fabIcon={<Plus size={24} />}
-          fabLabel="Quick Capture"
-          onFabClick={() => setCaptureOpen(true)}
-          className={styles.nav}
-        />
+        {!isOnboarding && (
+          <BottomNav
+            tabs={TABS}
+            activeKey={activeKey}
+            fabIcon={<Plus size={24} />}
+            fabLabel="Quick Capture"
+            onFabClick={() => setCaptureOpen(true)}
+            className={styles.nav}
+          />
+        )}
       </div>
-      <QuickCaptureSheet
-        open={captureOpen}
-        onClose={() => setCaptureOpen(false)}
-      />
+      {!isOnboarding && (
+        <QuickCaptureSheet
+          open={captureOpen}
+          onClose={() => setCaptureOpen(false)}
+        />
+      )}
     </div>
   );
 }

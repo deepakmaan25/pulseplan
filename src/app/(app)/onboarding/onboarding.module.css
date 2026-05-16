@@ -1,0 +1,358 @@
+/* ─── Outer container fills the scroll area ─────────────────── */
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 760px; /* ~phone height minus status bar */
+  background: var(--bg-base);
+}
+
+/* ─── Welcome step ───────────────────────────────────────────── */
+.hero {
+  flex: 0 0 auto;
+  height: 320px;
+  background: linear-gradient(
+    160deg,
+    var(--primary) 0%,
+    color-mix(in srgb, var(--primary) 60%, #000) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-8);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 70% 30%,
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 60%
+  );
+}
+
+.heroIcon {
+  width: 72px;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--r-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: relative;
+}
+
+.heroWordmark {
+  font: var(--t-title);
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.welcomeContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-12) var(--s-10) var(--s-14);
+}
+
+.welcomeHeading {
+  font: var(--t-display);
+  letter-spacing: var(--ls-display);
+  color: var(--ink-1);
+  margin: 0 0 var(--s-6);
+}
+
+.welcomeSub {
+  font: var(--t-body);
+  color: var(--ink-3);
+  margin: 0;
+  line-height: 1.55;
+  flex: 1;
+}
+
+/* ─── Step screen ────────────────────────────────────────────── */
+.stepScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-10) var(--s-10) var(--s-14);
+  gap: var(--s-10);
+}
+
+/* ─── Progress dots ──────────────────────────────────────────── */
+.progress {
+  display: flex;
+  gap: var(--s-4);
+  justify-content: center;
+  padding-top: var(--s-6);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--outline-strong);
+  transition:
+    background var(--dur-standard) var(--easing-standard),
+    width var(--dur-standard) var(--easing-standard);
+}
+
+.dotActive {
+  background: var(--primary);
+  width: 20px;
+}
+
+/* ─── Step heading ───────────────────────────────────────────── */
+.stepHeading {
+  font: var(--t-display);
+  font-size: 24px;
+  letter-spacing: var(--ls-display);
+  color: var(--ink-1);
+  margin: 0 0 var(--s-3);
+}
+
+.stepSub {
+  font: var(--t-body);
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* ─── Selection grid (pillars) ───────────────────────────────── */
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-5);
+  flex: 1;
+}
+
+.pillarOption {
+  appearance: none;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-lg);
+  background: var(--surface-1);
+  padding: var(--s-8) var(--s-8);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    background var(--dur-fast) var(--easing-standard);
+}
+.pillarOption:hover {
+  border-color: var(--outline-strong);
+}
+
+.pillarDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+
+.pillarName {
+  font: var(--t-body-sm);
+  color: var(--ink-1);
+  line-height: 1.3;
+}
+
+.pillarOptionSelected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.pillarOptionSelected .pillarName {
+  color: var(--primary-ink);
+}
+
+/* ─── Platform list ──────────────────────────────────────────── */
+.platformList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.platformOption {
+  appearance: none;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-lg);
+  background: var(--surface-1);
+  padding: var(--s-8) var(--s-9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    background var(--dur-fast) var(--easing-standard);
+}
+.platformOption:hover {
+  border-color: var(--outline-strong);
+}
+
+.platformOptionSelected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.platformLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+}
+
+.platformDot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--r-full);
+}
+
+.platformLabel {
+  font: var(--t-body-sm);
+  color: var(--ink-1);
+}
+
+.platformCheck {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-full);
+  border: 1.5px solid var(--outline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  transition: all var(--dur-fast) var(--easing-standard);
+}
+
+.platformOptionSelected .platformCheck {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ─── Cadence options ────────────────────────────────────────── */
+.cadenceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.cadenceOption {
+  appearance: none;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-lg);
+  background: var(--surface-1);
+  padding: var(--s-9) var(--s-9);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    background var(--dur-fast) var(--easing-standard);
+}
+.cadenceOption:hover {
+  border-color: var(--outline-strong);
+}
+
+.cadenceOptionSelected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.cadenceLabel {
+  font: var(--t-title-sm);
+  color: var(--ink-1);
+}
+
+.cadenceOptionSelected .cadenceLabel {
+  color: var(--primary-ink);
+}
+
+.cadenceSub {
+  font: var(--t-caption);
+  color: var(--ink-3);
+}
+
+.cadenceOptionSelected .cadenceSub {
+  color: var(--primary-ink);
+  opacity: 0.75;
+}
+
+/* ─── Completion step ────────────────────────────────────────── */
+.doneScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-12) var(--s-10) var(--s-14);
+  gap: var(--s-10);
+  text-align: center;
+}
+
+.doneIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--r-full);
+  background: var(--success-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--success);
+}
+
+.doneHeading {
+  font: var(--t-display);
+  letter-spacing: var(--ls-display);
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.doneSummary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  width: 100%;
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-9) var(--s-10);
+  box-shadow: var(--e-1);
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  font: var(--t-body-sm);
+  color: var(--ink-2);
+}
+
+.summaryDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+/* ─── Sticky footer button ───────────────────────────────────── */
+.footer {
+  padding: var(--s-4) var(--s-10) var(--s-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: auto;
+}

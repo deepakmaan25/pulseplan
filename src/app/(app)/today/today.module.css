@@ -14,6 +14,10 @@
   margin: 0 0 var(--s-4);
 }
 
+.sectionLabelDanger {
+  color: var(--error);
+}
+
 .list {
   display: flex;
   flex-direction: column;
