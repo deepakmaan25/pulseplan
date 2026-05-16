@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell } from "lucide-react";
-import { AppBar } from "@/components/ui/AppBar/AppBar";
+import { Bell, Settings } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { PostRow } from "@/components/post/PostRow";
@@ -19,18 +18,39 @@ function sortByPriority(posts: MockPost[]): MockPost[] {
     const pa = a.priority ? (PRIORITY_ORDER[a.priority] ?? 3) : 3;
     const pb = b.priority ? (PRIORITY_ORDER[b.priority] ?? 3) : 3;
     if (pa !== pb) return pa - pb;
-    // Then by scheduled time (ascending)
     return (a.time ?? "99:99").localeCompare(b.time ?? "99:99");
   });
 }
 
-function formatKicker(dateStr: string): string {
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function formatHomeDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
   });
+}
+
+interface StatPillProps {
+  count: number;
+  label: string;
+  tone?: "default" | "primary" | "success" | "danger";
+}
+
+function StatPill({ count, label, tone = "default" }: StatPillProps) {
+  return (
+    <div className={`${styles.statPill} ${styles[`statPill_${tone}`]}`} role="listitem">
+      <span className={styles.statCount}>{count}</span>
+      <span className={styles.statLabel}>{label}</span>
+    </div>
+  );
 }
 
 export function TodayClient() {
@@ -43,28 +63,57 @@ export function TodayClient() {
   );
   const hasAnything = overdue.length > 0 || todayPosts.length > 0;
 
+  const statScheduled = posts.filter((p) => p.status === "sched").length;
+  const statInProgress = posts.filter(
+    (p) => p.status === "draft" || p.status === "review",
+  ).length;
+  const statPublished = posts.filter((p) => p.status === "pub").length;
+  const statOverdue = overdue.length;
+
   function openPost(id: string) {
     router.push(`/post/${id}`);
   }
 
   return (
     <div>
-      <AppBar
-        variant="prominent"
-        kicker={formatKicker(TODAY)}
-        title="Today"
-        style={{ paddingTop: "var(--s-4)" }}
-        trailing={
+      {/* Home header — wordmark + action icons */}
+      <div className={styles.homeHeader} style={{ paddingTop: "var(--s-4)" }}>
+        <span className={styles.homeWordmark}>PulsePlan</span>
+        <div className={styles.homeHeaderActions}>
           <IconButton
             icon={<Bell size={20} />}
             label="Notifications"
             variant="ghost"
             size={40}
           />
-        }
-      />
+          <IconButton
+            icon={<Settings size={20} />}
+            label="Settings"
+            variant="ghost"
+            size={40}
+            onClick={() => router.push("/settings")}
+          />
+        </div>
+      </div>
 
       <div className={styles.content}>
+        {/* Greeting */}
+        <div className={styles.greeting}>
+          <p className={styles.greetingLine}>{getGreeting()}, Alex.</p>
+          <p className={styles.greetingDate}>{formatHomeDate(TODAY)}</p>
+        </div>
+
+        {/* Pipeline stat strip */}
+        <div className={styles.statsRow} role="list" aria-label="Content pipeline">
+          <StatPill count={statScheduled} label="Scheduled" tone="primary" />
+          <StatPill count={statInProgress} label="In Progress" tone="default" />
+          <StatPill count={statPublished} label="Published" tone="success" />
+          {statOverdue > 0 && (
+            <StatPill count={statOverdue} label="Overdue" tone="danger" />
+          )}
+        </div>
+
+        {/* Empty state */}
         {!hasAnything && (
           <EmptyState
             icon="✨"
@@ -73,11 +122,10 @@ export function TodayClient() {
           />
         )}
 
+        {/* Overdue */}
         {overdue.length > 0 && (
           <section aria-label="Overdue posts">
-            <p
-              className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}
-            >
+            <p className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}>
               {overdue.length === 1
                 ? "1 post overdue"
                 : `${overdue.length} posts overdue`}
@@ -100,6 +148,7 @@ export function TodayClient() {
           </section>
         )}
 
+        {/* Today's posts */}
         {todayPosts.length > 0 && (
           <section aria-label="Today's posts">
             <p className={styles.sectionLabel}>

@@ -1,10 +1,124 @@
+/* ─── Home header ────────────────────────────────────────────── */
+.homeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--s-6) 0 var(--s-9);
+  height: 52px;
+}
+
+.homeWordmark {
+  font: var(--t-title-sm);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink-1);
+}
+
+.homeHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+/* ─── Content area ───────────────────────────────────────────── */
 .content {
-  padding: var(--s-6) 0 var(--s-16);
+  padding: var(--s-4) 0 var(--s-16);
   display: flex;
   flex-direction: column;
   gap: var(--s-8);
 }
 
+/* ─── Greeting block ─────────────────────────────────────────── */
+.greeting {
+  padding: var(--s-4) var(--s-9) 0;
+}
+
+.greetingLine {
+  font: var(--t-display);
+  font-size: 26px;
+  letter-spacing: var(--ls-display);
+  color: var(--ink-1);
+  margin: 0 0 var(--s-2);
+  line-height: 1.2;
+}
+
+.greetingDate {
+  font: var(--t-body);
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* ─── Pipeline stat strip ────────────────────────────────────── */
+.statsRow {
+  display: flex;
+  gap: var(--s-4);
+  padding: 0 var(--s-9);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.statsRow::-webkit-scrollbar {
+  display: none;
+}
+
+.statPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  min-width: 72px;
+  padding: var(--s-6) var(--s-7);
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  flex-shrink: 0;
+}
+
+:global(.pp2.dark) .statPill {
+  box-shadow: none;
+  border-color: var(--divider-strong);
+}
+
+.statCount {
+  font: var(--t-title);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink-1);
+  line-height: 1;
+}
+
+.statLabel {
+  font: var(--t-mono);
+  font-size: 9px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* Tone variants */
+.statPill_primary .statCount {
+  color: var(--primary);
+}
+.statPill_success .statCount {
+  color: var(--success);
+}
+.statPill_danger {
+  background: var(--error-soft);
+  border-color: transparent;
+}
+.statPill_danger .statCount {
+  color: var(--error);
+}
+.statPill_danger .statLabel {
+  color: var(--error);
+  opacity: 0.75;
+}
+
+/* ─── Section labels ─────────────────────────────────────────── */
 .sectionLabel {
   font: var(--t-label);
   letter-spacing: var(--ls-label);
@@ -18,6 +132,7 @@
   color: var(--error);
 }
 
+/* ─── Post list ──────────────────────────────────────────────── */
 .list {
   display: flex;
   flex-direction: column;
