@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Check, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
+import { createClient } from "@/lib/supabase/client";
 import type { Platform } from "@/components/ui/chips/PlatformChip";
 import styles from "./onboarding.module.css";
 
@@ -53,15 +54,22 @@ export default function OnboardingPage() {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
 
-  // Skip if already completed
+  // Skip if already completed (user_metadata wins; localStorage as fallback for local dev)
   useEffect(() => {
-    try {
-      if (localStorage.getItem("pp2-onboarded")) {
+    async function checkOnboarded() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.user_metadata?.onboarded) {
         router.replace("/today");
+        return;
       }
-    } catch {
-      // localStorage unavailable — proceed normally
+      try {
+        if (localStorage.getItem("pp2-onboarded")) router.replace("/today");
+      } catch {
+        // localStorage unavailable — proceed normally
+      }
     }
+    void checkOnboarded();
   }, [router]);
 
   const togglePillar = useCallback((id: string) => {
@@ -80,7 +88,8 @@ export default function OnboardingPage() {
     );
   }, []);
 
-  function complete() {
+  async function complete() {
+    // Persist onboarding preferences locally for Settings to read
     try {
       localStorage.setItem(
         "pp2-onboarding",
@@ -90,6 +99,9 @@ export default function OnboardingPage() {
     } catch {
       // continue even if storage fails
     }
+    // Mark onboarded on the Supabase user so the server gate lets them through
+    const supabase = createClient();
+    await supabase.auth.updateUser({ data: { onboarded: true } });
     router.push("/today");
   }
 

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppBar } from "@/components/ui/AppBar/AppBar";
 import { PlatformChip } from "@/components/ui/chips/PlatformChip";
 import type { Platform } from "@/components/ui/chips/PlatformChip";
+import { createClient } from "@/lib/supabase/client";
 import { ThemeSection } from "./ThemeSection";
 import styles from "./settings.module.css";
 
@@ -58,6 +60,7 @@ function writeOverdueAlert(enabled: boolean) {
 }
 
 export function SettingsClient() {
+  const router = useRouter();
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
   const [overdueAlert, setOverdueAlert] = useState(true);
@@ -68,6 +71,13 @@ export function SettingsClient() {
     setCadence(data.cadence);
     setOverdueAlert(readOverdueAlert());
   }, []);
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth");
+    router.refresh();
+  }
 
   function toggleOverdue() {
     const next = !overdueAlert;
@@ -202,6 +212,24 @@ export function SettingsClient() {
             <div className={`${styles.row} ${styles.rowBorder}`}>
               <span className={styles.rowLabel}>Build</span>
               <span className={styles.rowValue}>Flight 5</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Account */}
+        <section aria-labelledby="account-heading">
+          <p id="account-heading" className={styles.groupLabel}>
+            Account
+          </p>
+          <div className={styles.card}>
+            <div className={styles.row}>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className={styles.signOutBtn}
+              >
+                Sign out
+              </button>
             </div>
           </div>
         </section>
