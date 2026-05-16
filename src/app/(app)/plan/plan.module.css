@@ -1,0 +1,52 @@
+.content {
+  padding: var(--s-4) 0 var(--s-16);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-8) var(--s-9) var(--s-4);
+  border-top: 1px solid var(--divider);
+}
+
+.dayHeaderToday {
+  background: var(--primary-soft);
+  border-top-color: transparent;
+}
+
+.dayLabel {
+  font: var(--t-title-sm);
+  color: var(--ink-1);
+}
+
+.dayHeaderToday .dayLabel {
+  color: var(--primary-ink);
+}
+
+.todayBadge {
+  font: var(--t-label);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--primary-ink);
+  background: var(--primary);
+  color: #fff;
+  padding: 2px var(--s-5);
+  border-radius: var(--r-full);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyDay {
+  font: var(--t-body-sm);
+  color: var(--ink-4);
+  padding: var(--s-6) var(--s-9) var(--s-8);
+  margin: 0;
+}

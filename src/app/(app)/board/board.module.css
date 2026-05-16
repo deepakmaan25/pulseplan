@@ -1,0 +1,18 @@
+.filterRow {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-6) var(--s-9);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.filterRow::-webkit-scrollbar {
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-6);
+  padding: 0 var(--s-9) var(--s-16);
+}

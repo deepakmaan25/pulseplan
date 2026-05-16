@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import styles from "./BottomNav.module.css";
 
 export interface BottomNavTab {
@@ -58,13 +59,13 @@ function Tab({ tab, active }: { tab: BottomNavTab; active: boolean }) {
   );
   if (tab.href) {
     return (
-      <a
+      <Link
         href={tab.href}
         className={`${styles.tab} pp2-press`}
         aria-current={active ? "page" : undefined}
       >
         {Common}
-      </a>
+      </Link>
     );
   }
   return (
