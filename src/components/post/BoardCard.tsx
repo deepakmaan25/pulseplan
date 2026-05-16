@@ -4,7 +4,7 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { PillarChip } from "../ui/chips/PillarChip";
 import { PlatformChip, type Platform } from "../ui/chips/PlatformChip";
 import { PriorityChip, type Priority } from "../ui/chips/PriorityChip";
-import { StatusChip, type PostStatus } from "../ui/chips/StatusChip";
+import type { PostStatus } from "../ui/chips/StatusChip";
 import styles from "./BoardCard.module.css";
 
 export interface BoardCardProps extends Omit<
@@ -42,6 +42,7 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
       <button
         ref={ref}
         type={type}
+        data-state={status}
         className={`${styles.card} pp2-press ${className ?? ""}`}
         style={
           { "--pp2-pillar": pillar.color, ...style } as React.CSSProperties
@@ -61,7 +62,6 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
             ) : null}
           </span>
           <span className={styles.right}>
-            <StatusChip status={status} size="sm" />
             {dayStamp ? (
               <span className={styles.dayStamp}>{dayStamp}</span>
             ) : null}

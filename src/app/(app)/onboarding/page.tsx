@@ -25,7 +25,7 @@ const PILLAR_OPTIONS = [
 const PLATFORM_OPTIONS: { value: Platform; label: string; color: string }[] = [
   { value: "ig", label: "Instagram", color: "#c13584" },
   { value: "li", label: "LinkedIn", color: "#0a66c2" },
-  { value: "x", label: "X / Twitter", color: "#0a0d12" },
+  { value: "x", label: "X / Twitter", color: "#71767b" },
   { value: "yt", label: "YouTube", color: "#dc2626" },
   { value: "th", label: "Threads", color: "#4b5563" },
 ];
@@ -178,10 +178,10 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
             variant="filled"
             size="lg"
             onClick={onNext}
+            trailingIcon={<ChevronRight size={18} />}
             style={{ width: "100%" }}
           >
             Get Started
-            <ChevronRight size={18} style={{ marginLeft: 4 }} />
           </Button>
         </div>
       </div>
@@ -448,10 +448,10 @@ function DoneStep({
           variant="filled"
           size="lg"
           onClick={onComplete}
+          trailingIcon={<ChevronRight size={18} />}
           style={{ width: "100%" }}
         >
           Open My Planner
-          <ChevronRight size={18} style={{ marginLeft: 4 }} />
         </Button>
       </div>
     </div>

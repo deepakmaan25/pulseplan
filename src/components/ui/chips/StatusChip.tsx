@@ -11,7 +11,7 @@ export type PostStatus =
 
 const LABELS: Record<PostStatus, string> = {
   idea: "Idea",
-  draft: "Drafting",
+  draft: "Draft",
   review: "Review",
   sched: "Scheduled",
   pub: "Published",

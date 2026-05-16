@@ -355,4 +355,5 @@
   flex-direction: column;
   gap: var(--s-4);
   margin-top: auto;
+  align-self: stretch;
 }
