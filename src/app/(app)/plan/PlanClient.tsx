@@ -83,7 +83,9 @@ export function PlanClient() {
                   ))}
                 </div>
               ) : (
-                <p className={styles.emptyDay}>Nothing scheduled</p>
+                <p className={styles.emptyDay}>
+                  {day.isToday ? "Nothing planned — tap + to add" : "Free day"}
+                </p>
               )}
             </section>
           );

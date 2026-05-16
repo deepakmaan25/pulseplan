@@ -10,6 +10,12 @@ import { usePosts } from "@/store/PostsContext";
 import type { PostStatus } from "@/components/ui/chips/StatusChip";
 import styles from "./board.module.css";
 
+function formatDayStamp(dateStr?: string): string | undefined {
+  if (!dateStr) return undefined;
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 const STATUSES: { value: PostStatus; label: string }[] = [
   { value: "idea", label: "Ideas" },
   { value: "draft", label: "Draft" },
@@ -50,6 +56,12 @@ export function BoardScreen() {
         ))}
       </div>
 
+      {filtered.length > 0 && (
+        <p className={styles.countLine}>
+          {filtered.length} {filtered.length === 1 ? "post" : "posts"}
+        </p>
+      )}
+
       {filtered.length > 0 ? (
         <div className={styles.grid}>
           {filtered.map((post) => (
@@ -58,9 +70,10 @@ export function BoardScreen() {
               title={post.title}
               pillar={post.pillar}
               platform={post.platform}
+              status={post.status}
               postType={post.postType}
               priority={post.priority}
-              dayStamp={post.scheduledDate?.slice(5).replace("-", "/")}
+              dayStamp={formatDayStamp(post.scheduledDate)}
               onClick={() => router.push(`/post/${post.id}`)}
             />
           ))}

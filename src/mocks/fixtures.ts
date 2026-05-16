@@ -11,6 +11,7 @@ export interface Pillar {
 export interface MockPost {
   id: string;
   title: string;
+  description?: string;
   status: PostStatus;
   platform: Platform;
   pillar: Pillar;
@@ -32,6 +33,8 @@ export const POSTS: MockPost[] = [
   {
     id: "t1",
     title: "The one habit that changed how I approach every morning session",
+    description:
+      "Walk through the 5-minute pre-work ritual I've used every day for a year. Show the journal, the intention-setting, and why it compounds.",
     status: "sched",
     platform: "ig",
     pillar: MINDSET,
@@ -43,6 +46,8 @@ export const POSTS: MockPost[] = [
   {
     id: "t2",
     title: "Why your content strategy is missing this key element",
+    description:
+      "Most creators plan what to post but not why. Cover the 'distribution-first' mental model — pick the platform before the format, not after.",
     status: "sched",
     platform: "li",
     pillar: BUSINESS,

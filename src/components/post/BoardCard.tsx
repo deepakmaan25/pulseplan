@@ -4,6 +4,7 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { PillarChip } from "../ui/chips/PillarChip";
 import { PlatformChip, type Platform } from "../ui/chips/PlatformChip";
 import { PriorityChip, type Priority } from "../ui/chips/PriorityChip";
+import { StatusChip, type PostStatus } from "../ui/chips/StatusChip";
 import styles from "./BoardCard.module.css";
 
 export interface BoardCardProps extends Omit<
@@ -13,6 +14,7 @@ export interface BoardCardProps extends Omit<
   title: string;
   pillar: { name: string; color: string };
   platform: Platform;
+  status: PostStatus;
   postType?: string;
   priority?: Priority;
   dayStamp?: string;
@@ -25,10 +27,12 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
       title,
       pillar,
       platform,
+      status,
       postType,
       priority,
       dayStamp,
       className,
+      style,
       type = "button",
       ...rest
     },
@@ -39,6 +43,9 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
         ref={ref}
         type={type}
         className={`${styles.card} pp2-press ${className ?? ""}`}
+        style={
+          { "--pp2-pillar": pillar.color, ...style } as React.CSSProperties
+        }
         {...rest}
       >
         <div className={styles.topRow}>
@@ -50,10 +57,15 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
           <span className={styles.left}>
             <PlatformChip platform={platform} size="sm" showLabel={false} />
             {postType ? (
-              <span style={{ textTransform: "uppercase" }}>{postType}</span>
+              <span className={styles.postType}>{postType}</span>
             ) : null}
           </span>
-          {dayStamp ? <span>{dayStamp}</span> : null}
+          <span className={styles.right}>
+            <StatusChip status={status} size="sm" />
+            {dayStamp ? (
+              <span className={styles.dayStamp}>{dayStamp}</span>
+            ) : null}
+          </span>
         </div>
       </button>
     );

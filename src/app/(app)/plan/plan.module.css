@@ -56,6 +56,7 @@
 .emptyDay {
   font: var(--t-body-sm);
   color: var(--ink-4);
+  font-style: italic;
   padding: var(--s-5) var(--s-9) var(--s-7);
   margin: 0;
 }

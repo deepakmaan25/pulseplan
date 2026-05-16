@@ -61,8 +61,10 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
       PILLARS[0] ?? { id: "personal", name: "Personal", color: "#d97706" };
     const platform = state.platform ?? "ig";
 
+    const description = state.description.trim() || undefined;
     addPost({
       title: state.title.trim(),
+      description,
       status: plan ? "sched" : "idea",
       platform,
       pillar,

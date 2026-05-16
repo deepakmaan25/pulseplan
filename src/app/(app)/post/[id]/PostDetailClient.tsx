@@ -112,7 +112,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
 
   if (post.status === "draft") {
     actions.push({
-      label: "Send to Review",
+      label: "Send for Review",
       icon: <Send size={18} />,
       variant: "primary",
       onClick: () => handleStatusChange("review"),
@@ -184,7 +184,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
     <div className={styles.screen}>
       <AppBar
         variant="compact"
-        title={post.postType ?? "Post"}
+        title="Post"
         style={{ paddingTop: "var(--s-4)" }}
         leading={
           <IconButton
@@ -197,9 +197,12 @@ export function PostDetailClient({ postId }: { postId: string }) {
         }
       />
 
-      {/* Status + time */}
+      {/* Status + postType + time */}
       <div className={styles.statusRow}>
         <StatusChip status={post.status} />
+        {post.postType ? (
+          <span className={styles.postTypeBadge}>{post.postType}</span>
+        ) : null}
         {post.time ? (
           <span className={styles.scheduledTime}>
             <Clock
@@ -216,6 +219,13 @@ export function PostDetailClient({ postId }: { postId: string }) {
       <div className={styles.titleArea}>
         <h1 className={styles.title}>{post.title}</h1>
       </div>
+
+      {/* Description — only when captured */}
+      {post.description ? (
+        <div className={styles.descriptionBlock}>
+          <p className={styles.descriptionText}>{post.description}</p>
+        </div>
+      ) : null}
 
       {/* Metadata */}
       <div className={styles.metaCard}>
@@ -280,42 +290,40 @@ export function PostDetailClient({ postId }: { postId: string }) {
       </div>
 
       {/* Actions */}
-      {post.status !== "pub" && (
-        <div className={styles.actions}>
-          {actions.map((action) => (
-            <button
-              key={action.label}
-              type="button"
-              onClick={action.onClick}
-              className={`${styles.actionBtn} ${
-                action.variant === "primary"
-                  ? styles.actionBtnPrimary
-                  : action.variant === "danger"
-                    ? styles.actionBtnDanger
-                    : ""
-              }`}
-            >
-              <span className={styles.actionIcon} aria-hidden="true">
-                {action.icon}
-              </span>
-              {action.label}
-            </button>
-          ))}
-
-          <div className={styles.divider} />
-
+      <div className={styles.actions}>
+        {actions.map((action) => (
           <button
+            key={action.label}
             type="button"
-            onClick={handleDelete}
-            className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+            onClick={action.onClick}
+            className={`${styles.actionBtn} ${
+              action.variant === "primary"
+                ? styles.actionBtnPrimary
+                : action.variant === "danger"
+                  ? styles.actionBtnDanger
+                  : ""
+            }`}
           >
             <span className={styles.actionIcon} aria-hidden="true">
-              <Trash2 size={18} />
+              {action.icon}
             </span>
-            Delete Post
+            {action.label}
           </button>
-        </div>
-      )}
+        ))}
+
+        <div className={styles.divider} />
+
+        <button
+          type="button"
+          onClick={handleDelete}
+          className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+        >
+          <span className={styles.actionIcon} aria-hidden="true">
+            <Trash2 size={18} />
+          </span>
+          Delete Post
+        </button>
+      </div>
     </div>
   );
 }

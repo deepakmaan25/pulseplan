@@ -392,6 +392,7 @@ export default function PlaygroundPage() {
             title="Why I quit publishing on schedule"
             pillar={PILLARS[0]!}
             platform="li"
+            status="draft"
             postType="essay"
             priority="P1"
             dayStamp="Fri · 09:00"
@@ -400,6 +401,7 @@ export default function PlaygroundPage() {
             title="Studio notes: rebuilding the intro segment"
             pillar={PILLARS[1]!}
             platform="ig"
+            status="idea"
             postType="reel"
             dayStamp="Inbox"
           />
