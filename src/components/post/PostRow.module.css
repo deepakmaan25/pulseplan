@@ -19,6 +19,7 @@
 }
 :global(.pp2.dark) .row {
   box-shadow: none;
+  border-color: var(--divider-strong);
 }
 .row:hover {
   background: var(--surface-2);

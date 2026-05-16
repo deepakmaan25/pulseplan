@@ -32,6 +32,18 @@ function getWeekDays(): WeekDay[] {
   });
 }
 
+function weekRangeKicker(days: WeekDay[]): string {
+  const first = days[0];
+  const last = days[days.length - 1];
+  if (!first || !last) return "This Week";
+  const fmt = (d: WeekDay) =>
+    new Date(d.date + "T00:00:00").toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  return `${fmt(first)} – ${fmt(last)}`;
+}
+
 export function PlanClient() {
   const router = useRouter();
   const { posts } = usePosts();
@@ -45,7 +57,7 @@ export function PlanClient() {
     <div>
       <AppBar
         variant="prominent"
-        kicker="May 2026"
+        kicker={weekRangeKicker(days)}
         title="This Week"
         style={{ paddingTop: "var(--s-4)" }}
       />

@@ -19,6 +19,7 @@
 
 :global(.pp2.dark) .card {
   box-shadow: none;
+  border-color: var(--divider-strong);
 }
 
 .card:hover {

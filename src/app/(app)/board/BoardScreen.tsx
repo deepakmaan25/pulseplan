@@ -81,8 +81,14 @@ export function BoardScreen() {
       ) : (
         <EmptyState
           icon="🗂️"
-          title={`No ${activeLabel.toLowerCase()} posts`}
-          description="Capture an idea with the + button."
+          title={`No ${activeLabel.toLowerCase()} yet`}
+          description={
+            active === "idea"
+              ? "Tap + to capture your first post idea."
+              : active === "overdue"
+                ? "You're all caught up — nothing is overdue."
+                : `Move a post to ${activeLabel.toLowerCase()} to see it here.`
+          }
         />
       )}
     </div>

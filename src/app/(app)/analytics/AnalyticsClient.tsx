@@ -128,17 +128,17 @@ export function AnalyticsClient() {
 
         {/* Pace */}
         <section aria-label="Publishing pace">
-          <p className={styles.sectionLabel}>Rolling 7 days</p>
+          <p className={styles.sectionLabel}>Last 7 days</p>
           <div className={styles.grid}>
             <KPI
-              label="Posts published"
+              label="Published"
               value={stats.pace7d}
               trend={
                 stats.pace7d >= 3 ? "up" : stats.pace7d > 0 ? "flat" : "down"
               }
             />
             <KPI
-              label="Daily average"
+              label="Daily avg"
               value={(stats.pace7d / 7).toFixed(1)}
               unit=" / day"
             />
@@ -148,7 +148,7 @@ export function AnalyticsClient() {
         {/* Pillar breakdown */}
         {stats.pillars.length > 0 && (
           <section aria-label="Content pillar breakdown">
-            <p className={styles.sectionLabel}>By pillar</p>
+            <p className={styles.sectionLabel}>Content pillars</p>
             <div className={styles.breakdownList}>
               {stats.pillars.map(({ name, color, count }) => (
                 <div key={name} className={styles.breakdownRow}>
@@ -176,7 +176,7 @@ export function AnalyticsClient() {
         {/* Platform breakdown */}
         {stats.platforms.length > 0 && (
           <section aria-label="Platform breakdown">
-            <p className={styles.sectionLabel}>By platform</p>
+            <p className={styles.sectionLabel}>Platforms</p>
             <div className={styles.breakdownList}>
               {stats.platforms.map(({ key, label, count }) => (
                 <div key={key} className={styles.breakdownRow}>
@@ -205,7 +205,8 @@ export function AnalyticsClient() {
 
         <div className={styles.note}>
           <p>
-            Real engagement metrics sync when you connect platforms in Settings.
+            Engagement data appears here once you connect your platforms in
+            Settings.
           </p>
         </div>
       </div>

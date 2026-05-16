@@ -75,6 +75,13 @@
   border-color: transparent;
 }
 
-.footer {
+.footerRow {
+  display: flex;
+  gap: var(--s-4);
   width: 100%;
+}
+
+.descInput {
+  font: var(--t-body-sm);
+  color: var(--ink-2);
 }

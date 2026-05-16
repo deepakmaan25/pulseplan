@@ -201,7 +201,7 @@ export function SettingsClient() {
             </div>
             <div className={`${styles.row} ${styles.rowBorder}`}>
               <span className={styles.rowLabel}>Build</span>
-              <span className={styles.rowValue}>Flight 3</span>
+              <span className={styles.rowValue}>Flight 5</span>
             </div>
           </div>
         </section>

@@ -13,6 +13,11 @@
   border-top: 1px solid var(--divider);
 }
 
+section:first-child .dayHeader {
+  border-top: none;
+  padding-top: var(--s-6);
+}
+
 .dayHeaderToday {
   background: var(--primary-soft);
   border-top-color: transparent;

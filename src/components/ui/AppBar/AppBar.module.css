@@ -2,13 +2,15 @@
   display: flex;
   align-items: center;
   gap: var(--s-6);
-  background: var(--bg-base);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--divider);
   padding: 52px var(--s-9) 0;
   min-height: 96px;
   width: 100%;
 }
 .appbar[data-variant="compact"] {
   min-height: 96px;
+  padding-bottom: var(--s-6);
 }
 .appbar[data-variant="prominent"] {
   min-height: 118px;

@@ -78,7 +78,9 @@ export function TodayClient() {
             <p
               className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}
             >
-              Overdue · {overdue.length}
+              {overdue.length === 1
+                ? "1 post overdue"
+                : `${overdue.length} posts overdue`}
             </p>
             <div className={styles.list}>
               {overdue.map((post) => (
@@ -101,7 +103,9 @@ export function TodayClient() {
         {todayPosts.length > 0 && (
           <section aria-label="Today's posts">
             <p className={styles.sectionLabel}>
-              Scheduled today · {todayPosts.length}
+              {todayPosts.length === 1
+                ? "1 post today"
+                : `${todayPosts.length} posts today`}
             </p>
             <div className={styles.list}>
               {todayPosts.map((post) => (

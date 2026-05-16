@@ -97,7 +97,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
 
   if (post.status === "idea") {
     actions.push({
-      label: "Start Drafting",
+      label: "Start Draft",
       icon: <FileText size={18} />,
       variant: "primary",
       onClick: () => handleStatusChange("draft"),
@@ -148,7 +148,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
       onClick: () => handleStatusChange("pub"),
     });
     actions.push({
-      label: "Move Back to Draft",
+      label: "Revert to Draft",
       icon: <Undo2 size={18} />,
       variant: "default",
       onClick: () => handleStatusChange("draft"),
@@ -172,11 +172,14 @@ export function PostDetailClient({ postId }: { postId: string }) {
 
   if (post.status === "pub") {
     actions.push({
-      label: "View Metrics",
+      label: "View Insights",
       icon: <Clock size={18} />,
       variant: "default",
       onClick: () =>
-        toast({ message: "Metrics available in M3", tone: "default" }),
+        toast({
+          message: "Insights available once you connect a platform.",
+          tone: "default",
+        }),
     });
   }
 
@@ -321,7 +324,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
           <span className={styles.actionIcon} aria-hidden="true">
             <Trash2 size={18} />
           </span>
-          Delete Post
+          Delete
         </button>
       </div>
     </div>

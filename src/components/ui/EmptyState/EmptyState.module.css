@@ -10,16 +10,18 @@
 .icon {
   width: 56px;
   height: 56px;
-  border-radius: var(--r-lg);
-  border: 1.5px dashed var(--divider-strong);
+  border-radius: var(--r-xl);
+  background: var(--bg-sunken);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--ink-3);
+  font-size: 24px;
+  line-height: 1;
 }
 .icon svg {
   width: 24px;
   height: 24px;
+  color: var(--ink-3);
 }
 
 .title {
