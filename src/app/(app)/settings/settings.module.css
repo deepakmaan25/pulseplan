@@ -169,6 +169,12 @@
   color: var(--error);
   cursor: pointer;
   text-align: left;
+  transition: opacity var(--dur-fast) var(--easing-standard);
+}
+
+.signOutBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {

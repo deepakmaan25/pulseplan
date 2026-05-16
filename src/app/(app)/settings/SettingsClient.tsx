@@ -64,6 +64,7 @@ export function SettingsClient() {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
   const [overdueAlert, setOverdueAlert] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     const data = readOnboarding();
@@ -73,8 +74,11 @@ export function SettingsClient() {
   }, []);
 
   async function handleSignOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    setSigningOut(true);
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    }
     router.refresh();
     router.push("/auth");
   }
@@ -226,9 +230,10 @@ export function SettingsClient() {
               <button
                 type="button"
                 onClick={handleSignOut}
+                disabled={signingOut}
                 className={styles.signOutBtn}
               >
-                Sign out
+                {signingOut ? "Signing out…" : "Sign out"}
               </button>
             </div>
           </div>

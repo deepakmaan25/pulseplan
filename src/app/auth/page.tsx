@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./auth.module.css";
 
@@ -21,14 +22,23 @@ export default function AuthPage() {
     setError(null);
     setLoading(true);
 
+    // Guard for local dev without .env.local
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      setError("Auth not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local");
+      setLoading(false);
+      return;
+    }
+
     const supabase = createClient();
 
     if (mode === "signup") {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         setError(error.message);
+        setLoading(false);
       } else {
         setConfirmSent(true);
+        setLoading(false);
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({
@@ -37,13 +47,13 @@ export default function AuthPage() {
       });
       if (error) {
         setError(error.message);
+        setLoading(false);
       } else {
+        // Keep loading=true — button stays in "Signing in…" state until navigation unmounts this page
         router.refresh();
         router.push("/today");
       }
     }
-
-    setLoading(false);
   }
 
   if (confirmSent) {
@@ -51,14 +61,19 @@ export default function AuthPage() {
       <div className={styles.screen}>
         <div className={styles.card}>
           <p className={styles.wordmark}>PulsePlan</p>
-          <h1 className={styles.heading}>Check your email</h1>
-          <p className={styles.sub}>
-            We sent a confirmation link to <strong>{email}</strong>. Open it to
-            activate your account, then sign in.
-          </p>
+          <div className={styles.confirmBlock}>
+            <div className={styles.confirmIcon}>
+              <CheckCircle2 size={40} strokeWidth={1.5} />
+            </div>
+            <h1 className={styles.heading}>Check your inbox</h1>
+            <p className={styles.sub}>
+              We sent a link to <strong>{email}</strong>. Click it to verify
+              your account, then come back and sign in.
+            </p>
+          </div>
           <button
             type="button"
-            className={styles.linkBtn}
+            className={styles.confirmBtn}
             onClick={() => {
               setConfirmSent(false);
               setMode("signin");
@@ -75,14 +90,16 @@ export default function AuthPage() {
     <div className={styles.screen}>
       <div className={styles.card}>
         <p className={styles.wordmark}>PulsePlan</p>
-        <h1 className={styles.heading}>
-          {mode === "signin" ? "Welcome back" : "Create account"}
-        </h1>
-        <p className={styles.sub}>
-          {mode === "signin"
-            ? "Sign in to your content planner."
-            : "Start planning your content."}
-        </p>
+        <div className={styles.copyBlock}>
+          <h1 className={styles.heading}>
+            {mode === "signin" ? "Welcome back" : "Create account"}
+          </h1>
+          <p className={styles.sub}>
+            {mode === "signin"
+              ? "Pick up where you left off."
+              : "Your content, organized."}
+          </p>
+        </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.field}>
@@ -93,10 +110,14 @@ export default function AuthPage() {
               id="email"
               type="email"
               autoComplete="email"
+              autoFocus
               required
-              className={styles.input}
+              className={`${styles.input} ${error ? styles.inputError : ""}`}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError(null);
+              }}
               placeholder="you@example.com"
             />
           </div>
@@ -112,14 +133,21 @@ export default function AuthPage() {
                 mode === "signup" ? "new-password" : "current-password"
               }
               required
-              className={styles.input}
+              className={`${styles.input} ${error ? styles.inputError : ""}`}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError(null);
+              }}
               placeholder={mode === "signup" ? "8+ characters" : "••••••••"}
             />
           </div>
 
-          {error && <p className={styles.errorMsg}>{error}</p>}
+          {error && (
+            <p className={styles.errorMsg} role="alert">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -127,7 +155,9 @@ export default function AuthPage() {
             disabled={loading}
           >
             {loading
-              ? "Please wait…"
+              ? mode === "signin"
+                ? "Signing in…"
+                : "Creating account…"
               : mode === "signin"
                 ? "Sign in"
                 : "Create account"}
@@ -137,7 +167,7 @@ export default function AuthPage() {
         <p className={styles.toggleRow}>
           {mode === "signin" ? (
             <>
-              No account?{" "}
+              New to PulsePlan?{" "}
               <button
                 type="button"
                 className={styles.linkBtn}
@@ -151,7 +181,7 @@ export default function AuthPage() {
             </>
           ) : (
             <>
-              Already have one?{" "}
+              Have an account?{" "}
               <button
                 type="button"
                 className={styles.linkBtn}

@@ -53,10 +53,17 @@ export default function OnboardingPage() {
   const [pillars, setPillars] = useState<string[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
+  const [completing, setCompleting] = useState(false);
 
   // Skip if already completed (user_metadata wins; localStorage as fallback for local dev)
   useEffect(() => {
     async function checkOnboarded() {
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        try {
+          if (localStorage.getItem("pp2-onboarded")) router.replace("/today");
+        } catch { /* ignore */ }
+        return;
+      }
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user?.user_metadata?.onboarded) {
@@ -89,7 +96,7 @@ export default function OnboardingPage() {
   }, []);
 
   async function complete() {
-    // Persist onboarding preferences locally for Settings to read
+    setCompleting(true);
     try {
       localStorage.setItem(
         "pp2-onboarding",
@@ -99,9 +106,10 @@ export default function OnboardingPage() {
     } catch {
       // continue even if storage fails
     }
-    // Mark onboarded on the Supabase user so the server gate lets them through
-    const supabase = createClient();
-    await supabase.auth.updateUser({ data: { onboarded: true } });
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const supabase = createClient();
+      await supabase.auth.updateUser({ data: { onboarded: true } });
+    }
     router.push("/today");
   }
 
@@ -147,6 +155,7 @@ export default function OnboardingPage() {
       pillars={pillars}
       platforms={platforms}
       cadence={cadence}
+      loading={completing}
       onComplete={complete}
     />
   );
@@ -415,11 +424,13 @@ function DoneStep({
   pillars,
   platforms,
   cadence,
+  loading,
   onComplete,
 }: {
   pillars: string[];
   platforms: Platform[];
   cadence: Cadence | null;
+  loading: boolean;
   onComplete: () => void;
 }) {
   const pillarCount = pillars.length || 1;
@@ -460,6 +471,7 @@ function DoneStep({
           variant="filled"
           size="lg"
           onClick={onComplete}
+          loading={loading}
           trailingIcon={<ChevronRight size={18} />}
           style={{ width: "100%" }}
         >
