@@ -23,6 +23,13 @@
   gap: 0;
 }
 
+/* Profile card */
+.profileCard {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--s-9);
+}
+
 .avatar {
   width: 48px;
   height: 48px;
@@ -34,18 +41,6 @@
   justify-content: center;
   font: var(--t-title);
   flex-shrink: 0;
-}
-
-.card {
-  /* Also used for profile row */
-  flex-direction: column;
-}
-
-/* Profile layout override */
-section:first-of-type .card {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--s-9);
 }
 
 .profileName {
@@ -60,6 +55,7 @@ section:first-of-type .card {
   margin: 0;
 }
 
+/* Rows */
 .row {
   display: flex;
   align-items: center;
@@ -72,6 +68,12 @@ section:first-of-type .card {
   border-top: 1px solid var(--divider);
 }
 
+.rowStack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .rowLabel {
   font: var(--t-body-sm);
   color: var(--ink-1);
@@ -80,8 +82,15 @@ section:first-of-type .card {
 .rowValue {
   font: var(--t-body-sm);
   color: var(--ink-3);
+  text-align: right;
 }
 
+.rowCaption {
+  font: var(--t-caption);
+  color: var(--ink-3);
+}
+
+/* Platform rows */
 .platformRow {
   display: flex;
   align-items: center;
@@ -109,4 +118,46 @@ section:first-of-type .card {
 .connBadgeOn {
   color: var(--success-ink);
   background: var(--success-soft);
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--bg-sunken);
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.toggleOn {
+  background: var(--primary);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+  pointer-events: none;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggleThumb {
+    transition: none;
+  }
 }

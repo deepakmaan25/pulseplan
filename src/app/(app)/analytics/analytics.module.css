@@ -2,7 +2,7 @@
   padding: var(--s-6) var(--s-9) var(--s-16);
   display: flex;
   flex-direction: column;
-  gap: var(--s-12);
+  gap: var(--s-10);
 }
 
 .sectionLabel {
@@ -13,10 +13,108 @@
   margin: 0 0 var(--s-6);
 }
 
+/* KPI grid */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--s-6);
+}
+
+/* Pipeline */
+.pipelineRow {
+  display: flex;
+  gap: var(--s-4);
+}
+
+.pipelineCell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-6) var(--s-4);
+  box-shadow: var(--e-1);
+}
+
+.pipelineCount {
+  font: var(--t-title);
+  color: var(--ink-1);
+}
+
+.pipelineName {
+  font: var(--t-caption);
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.pipelineCellOverdue .pipelineCount {
+  color: var(--error);
+}
+
+.pipelineCellOverdue .pipelineName {
+  color: var(--error);
+}
+
+/* Breakdown bars */
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.breakdownDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.breakdownName {
+  font: var(--t-body-sm);
+  color: var(--ink-2);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.breakdownBarTrack {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-sunken);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.breakdownBar {
+  height: 100%;
+  border-radius: var(--r-full);
+  min-width: 4px;
+  transition: width 0.3s ease;
+}
+
+.breakdownCount {
+  font: var(--t-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  min-width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Footer notes */
+.emptyNote {
+  font: var(--t-body-sm);
+  color: var(--ink-3);
+  text-align: center;
+  padding: var(--s-8) 0;
+  margin: 0;
 }
 
 .note {
