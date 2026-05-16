@@ -63,6 +63,7 @@ export const PostRow = forwardRef<HTMLButtonElement, PostRowProps>(
               <span
                 style={{
                   font: "var(--t-mono)",
+                  fontSize: 11,
                   color: "var(--ink-3)",
                   textTransform: "uppercase",
                   letterSpacing: "var(--ls-label)",

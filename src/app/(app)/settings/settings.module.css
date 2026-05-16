@@ -130,7 +130,7 @@
   border: none;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s;
+  transition: background var(--dur-fast) var(--easing-standard);
   padding: 0;
 }
 
@@ -147,12 +147,17 @@
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s;
+  transition: transform var(--dur-fast) var(--easing-standard);
   pointer-events: none;
 }
 
 .toggleOn .toggleThumb {
   transform: translateX(18px);
+}
+
+:global(.pp2.dark) .card {
+  box-shadow: none;
+  border: 1px solid var(--divider-strong);
 }
 
 @media (prefers-reduced-motion: reduce) {

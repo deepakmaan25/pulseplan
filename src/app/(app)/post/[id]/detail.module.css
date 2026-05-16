@@ -94,6 +94,11 @@
   gap: var(--s-3);
 }
 
+:global(.pp2.dark) .metaCard {
+  box-shadow: none;
+  border: 1px solid var(--divider-strong);
+}
+
 /* ─── Draft / notes sections ─────────────────────────────────── */
 .section {
   margin: 0 var(--s-9) var(--s-6);
@@ -120,6 +125,11 @@
 .textBlockPlaceholder {
   color: var(--ink-4);
   font-style: italic;
+}
+
+:global(.pp2.dark) .textBlock {
+  box-shadow: none;
+  border: 1px solid var(--divider-strong);
 }
 
 /* ─── Action strip ───────────────────────────────────────────── */
@@ -183,6 +193,10 @@
   height: 1px;
   background: var(--divider);
   margin: var(--s-4) 0;
+}
+
+:global(.pp2.dark) .actionBtn {
+  box-shadow: none;
 }
 
 /* ─── Not-found state ────────────────────────────────────────── */

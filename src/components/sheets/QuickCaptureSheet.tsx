@@ -76,9 +76,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
       message: plan ? "Planned for today ✓" : "Saved to ideas ✓",
       tone: "success",
       actionLabel: "UNDO",
-      onAction: () => {
-        // In M2c: remove optimistic update; for now noop
-      },
+      onAction: () => {},
     });
 
     setState(resetState());
