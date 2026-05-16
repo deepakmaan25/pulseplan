@@ -76,7 +76,8 @@
   font: var(--t-body);
   color: var(--ink-1);
   outline: none;
-  transition: border-color var(--dur-fast) var(--easing-standard),
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
     box-shadow var(--dur-fast) var(--easing-standard);
 }
 

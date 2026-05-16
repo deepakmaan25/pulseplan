@@ -46,7 +46,10 @@ interface StatPillProps {
 
 function StatPill({ count, label, tone = "default" }: StatPillProps) {
   return (
-    <div className={`${styles.statPill} ${styles[`statPill_${tone}`]}`} role="listitem">
+    <div
+      className={`${styles.statPill} ${styles[`statPill_${tone}`]}`}
+      role="listitem"
+    >
       <span className={styles.statCount}>{count}</span>
       <span className={styles.statLabel}>{label}</span>
     </div>
@@ -104,7 +107,11 @@ export function TodayClient() {
         </div>
 
         {/* Pipeline stat strip */}
-        <div className={styles.statsRow} role="list" aria-label="Content pipeline">
+        <div
+          className={styles.statsRow}
+          role="list"
+          aria-label="Content pipeline"
+        >
           <StatPill count={statScheduled} label="Scheduled" tone="primary" />
           <StatPill count={statInProgress} label="In Progress" tone="default" />
           <StatPill count={statPublished} label="Published" tone="success" />
@@ -125,7 +132,9 @@ export function TodayClient() {
         {/* Overdue */}
         {overdue.length > 0 && (
           <section aria-label="Overdue posts">
-            <p className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}>
+            <p
+              className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}
+            >
               {overdue.length === 1
                 ? "1 post overdue"
                 : `${overdue.length} posts overdue`}

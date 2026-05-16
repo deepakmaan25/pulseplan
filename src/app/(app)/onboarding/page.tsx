@@ -61,11 +61,15 @@ export default function OnboardingPage() {
       if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
         try {
           if (localStorage.getItem("pp2-onboarded")) router.replace("/today");
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         return;
       }
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user?.user_metadata?.onboarded) {
         router.replace("/today");
         return;
@@ -106,7 +110,10 @@ export default function OnboardingPage() {
     } catch {
       // continue even if storage fails
     }
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    ) {
       const supabase = createClient();
       await supabase.auth.updateUser({ data: { onboarded: true } });
     }

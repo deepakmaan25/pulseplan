@@ -305,7 +305,9 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 aria-label="Draft"
               />
             ) : (
-              <span className={localDraft ? undefined : styles.textBlockPlaceholder}>
+              <span
+                className={localDraft ? undefined : styles.textBlockPlaceholder}
+              >
                 {localDraft || "No draft written."}
               </span>
             )}
@@ -330,7 +332,9 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 aria-label="Notes"
               />
             ) : (
-              <span className={localNotes ? undefined : styles.textBlockPlaceholder}>
+              <span
+                className={localNotes ? undefined : styles.textBlockPlaceholder}
+              >
                 {localNotes || "No notes added."}
               </span>
             )}
