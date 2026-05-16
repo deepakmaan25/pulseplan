@@ -12,6 +12,8 @@ export interface MockPost {
   id: string;
   title: string;
   description?: string;
+  draft?: string;
+  notes?: string;
   status: PostStatus;
   platform: Platform;
   pillar: Pillar;

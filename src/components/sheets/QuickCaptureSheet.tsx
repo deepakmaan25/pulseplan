@@ -123,6 +123,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
           onChange={(e) => set("title", e.target.value)}
           rows={2}
           aria-label="Post idea"
+          autoFocus
         />
 
         {/* Description */}

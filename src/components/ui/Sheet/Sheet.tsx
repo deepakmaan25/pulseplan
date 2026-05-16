@@ -40,6 +40,12 @@ export function Sheet({
   const titleId = useId();
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  // Stable ref so onClose changes never trigger effect re-runs (which would
+  // restore focus mid-session and dismiss the mobile keyboard on each keystroke).
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -60,19 +66,20 @@ export function Sheet({
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && dismissable) {
         event.stopPropagation();
-        onClose();
+        onCloseRef.current();
       }
     };
     document.addEventListener("keydown", onKey);
 
-    // Move focus into the sheet so screen readers and keyboard users land
-    // inside the modal. We focus the first focusable, falling back to the
-    // sheet container itself.
+    // Move focus into the sheet only if nothing inside already has focus
+    // (e.g. an autoFocus textarea). Includes textarea so capture sheets land
+    // on the text field rather than the close button.
     const focusTimer = window.setTimeout(() => {
       const sheet = sheetRef.current;
       if (!sheet) return;
+      if (sheet.contains(document.activeElement)) return;
       const focusable = sheet.querySelector<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
       );
       (focusable ?? sheet).focus();
     }, 50);
@@ -84,7 +91,7 @@ export function Sheet({
       window.clearTimeout(focusTimer);
       previouslyFocused.current?.focus?.();
     };
-  }, [open, onClose, dismissable]);
+  }, [open, dismissable]);
 
   const onScrim = useCallback(() => {
     if (dismissable) onClose();

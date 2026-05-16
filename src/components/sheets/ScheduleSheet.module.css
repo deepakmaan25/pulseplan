@@ -1,0 +1,77 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+  padding-top: var(--s-6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.sectionLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.dateInput {
+  width: 100%;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font: var(--t-body);
+  font-family: var(--font-sans);
+  padding: var(--s-9) var(--s-10);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--dur-fast) var(--easing-standard);
+  -webkit-appearance: none;
+}
+.dateInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--outline-focus);
+}
+
+.timeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.timeChip {
+  appearance: none;
+  background: transparent;
+  border: 1.5px solid var(--outline);
+  border-radius: var(--r-full);
+  padding: var(--s-3) var(--s-7);
+  font: var(--t-label);
+  font-size: 12px;
+  letter-spacing: var(--ls-label);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--easing-standard),
+    color var(--dur-fast) var(--easing-standard),
+    border-color var(--dur-fast) var(--easing-standard);
+}
+.timeChip:hover {
+  border-color: var(--outline-strong);
+  color: var(--ink-1);
+}
+.timeChipSelected {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  border-color: transparent;
+}
+
+.footerRow {
+  display: flex;
+  gap: var(--s-4);
+  width: 100%;
+}

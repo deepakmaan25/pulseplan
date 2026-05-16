@@ -132,6 +132,38 @@
   border: 1px solid var(--divider-strong);
 }
 
+/* Editable textarea inside the textBlock shell */
+.textArea {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font: var(--t-body);
+  color: var(--ink-1);
+  line-height: 1.6;
+  padding: 0;
+}
+.textArea::placeholder {
+  color: var(--ink-4);
+  font-style: italic;
+}
+.textBlock:focus-within {
+  outline: 2px solid var(--outline-focus);
+  outline-offset: 1px;
+}
+
+/* Published read-only indicator */
+.readOnlyHint {
+  font: var(--t-caption);
+  color: var(--ink-4);
+  margin: var(--s-3) 0 0;
+  font-style: italic;
+}
+
 /* ─── Action strip ───────────────────────────────────────────── */
 .actions {
   margin: var(--s-8) var(--s-9) 0;
