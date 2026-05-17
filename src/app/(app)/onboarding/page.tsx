@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Check, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
@@ -44,6 +44,10 @@ const CADENCE_LABELS: Record<Cadence, string> = {
   "2x": "2 posts / week",
   weekly: "1 post / week",
 };
+
+function capitalizeFirst(str: string): string {
+  return str.length > 0 ? (str[0]?.toUpperCase() ?? "") + str.slice(1) : str;
+}
 
 // ── Main component ──────────────────────────────────────────────
 
@@ -196,7 +200,6 @@ function ProgressDots({ active }: { active: 1 | 2 | 3 }) {
 
 function WelcomeStep({ onNext }: { onNext: (name: string) => void }) {
   const [name, setName] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className={styles.screen}>
@@ -218,7 +221,6 @@ function WelcomeStep({ onNext }: { onNext: (name: string) => void }) {
             Your name
           </label>
           <input
-            ref={inputRef}
             id="onb-name"
             type="text"
             className={styles.nameInput}
@@ -486,7 +488,9 @@ function DoneStep({
 
       <div>
         <h2 className={styles.doneHeading}>
-          {name ? `You're all set, ${name}!` : "You're all set!"}
+          {name
+            ? `You're all set, ${capitalizeFirst(name)}!`
+            : "You're all set!"}
         </h2>
       </div>
 

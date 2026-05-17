@@ -79,7 +79,7 @@ export default function AuthPage() {
           </div>
           <button
             type="button"
-            className={styles.confirmBtn}
+            className={`${styles.confirmBtn} pp2-press`}
             onClick={() => {
               setConfirmSent(false);
               setMode("signin");

@@ -30,6 +30,10 @@ function getGreeting(): string {
   return "Good evening";
 }
 
+function capitalizeFirst(str: string): string {
+  return str.length > 0 ? (str[0]?.toUpperCase() ?? "") + str.slice(1) : str;
+}
+
 function formatHomeDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", {
@@ -119,7 +123,7 @@ export function TodayClient() {
         <div className={styles.greeting}>
           <p className={styles.greetingLine}>
             {getGreeting()}
-            {firstName ? `, ${firstName}` : ""}.
+            {firstName ? `, ${capitalizeFirst(firstName)}` : ""}.
           </p>
           <p className={styles.greetingDate}>{formatHomeDate(TODAY)}</p>
         </div>

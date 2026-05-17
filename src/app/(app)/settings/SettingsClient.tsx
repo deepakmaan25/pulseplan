@@ -65,6 +65,10 @@ function writeOverdueAlert(enabled: boolean) {
   }
 }
 
+function capitalizeFirst(str: string): string {
+  return str.length > 0 ? (str[0]?.toUpperCase() ?? "") + str.slice(1) : str;
+}
+
 export function SettingsClient({ email }: { email?: string }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -127,7 +131,7 @@ export function SettingsClient({ email }: { email?: string }) {
             </div>
             <div>
               <p className={styles.profileName}>
-                {name || email || "Your Profile"}
+                {name ? capitalizeFirst(name) : email || "Your Profile"}
               </p>
               {name && email && <p className={styles.profileHandle}>{email}</p>}
             </div>
@@ -244,7 +248,7 @@ export function SettingsClient({ email }: { email?: string }) {
                 type="button"
                 onClick={handleSignOut}
                 disabled={signingOut}
-                className={styles.signOutBtn}
+                className={`${styles.signOutBtn} pp2-press`}
               >
                 {signingOut ? "Signing out…" : "Sign out"}
               </button>
