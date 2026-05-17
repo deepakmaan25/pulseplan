@@ -26,20 +26,26 @@ const ALL_PLATFORMS: { value: Platform; label: string }[] = [
   { value: "th", label: "Threads" },
 ];
 
-function readOnboarding(): { platforms: Platform[]; cadence: Cadence | null } {
+function readOnboarding(): {
+  name: string;
+  platforms: Platform[];
+  cadence: Cadence | null;
+} {
   try {
     const raw = localStorage.getItem("pp2-onboarding");
-    if (!raw) return { platforms: [], cadence: null };
+    if (!raw) return { name: "", platforms: [], cadence: null };
     const parsed = JSON.parse(raw) as {
+      name?: string;
       platforms?: Platform[];
       cadence?: Cadence;
     };
     return {
+      name: parsed.name ?? "",
       platforms: Array.isArray(parsed.platforms) ? parsed.platforms : [],
       cadence: parsed.cadence ?? null,
     };
   } catch {
-    return { platforms: [], cadence: null };
+    return { name: "", platforms: [], cadence: null };
   }
 }
 
@@ -59,8 +65,9 @@ function writeOverdueAlert(enabled: boolean) {
   }
 }
 
-export function SettingsClient() {
+export function SettingsClient({ email }: { email?: string }) {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
   const [overdueAlert, setOverdueAlert] = useState(true);
@@ -68,6 +75,7 @@ export function SettingsClient() {
 
   useEffect(() => {
     const data = readOnboarding();
+    setName(data.name);
     setPlatforms(data.platforms);
     setCadence(data.cadence);
     setOverdueAlert(readOverdueAlert());
@@ -115,11 +123,13 @@ export function SettingsClient() {
           </p>
           <div className={`${styles.card} ${styles.profileCard}`}>
             <div className={styles.avatar} aria-hidden="true">
-              A
+              {(name || email || "?")[0]?.toUpperCase() ?? "?"}
             </div>
             <div>
-              <p className={styles.profileName}>Alex Creator</p>
-              <p className={styles.profileHandle}>@alexcreates</p>
+              <p className={styles.profileName}>
+                {name || email || "Your Profile"}
+              </p>
+              {name && email && <p className={styles.profileHandle}>{email}</p>}
             </div>
           </div>
         </section>

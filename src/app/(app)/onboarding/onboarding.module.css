@@ -74,9 +74,49 @@
 .welcomeSub {
   font: var(--t-body);
   color: var(--ink-3);
-  margin: 0;
+  margin: 0 0 var(--s-8);
   line-height: 1.55;
+}
+
+/* ─── Name field (welcome step) ──────────────────────────────── */
+.nameField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
   flex: 1;
+}
+
+.nameLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.nameInput {
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: var(--s-4) var(--s-5);
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-md);
+  font: var(--t-body);
+  color: var(--ink-1);
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    box-shadow var(--dur-fast) var(--easing-standard);
+}
+
+.nameInput::placeholder {
+  color: var(--ink-4);
+}
+
+.nameInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
 /* ─── Step screen ────────────────────────────────────────────── */

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Settings } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
@@ -59,6 +60,20 @@ function StatPill({ count, label, tone = "default" }: StatPillProps) {
 export function TodayClient() {
   const router = useRouter();
   const { posts } = usePosts();
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("pp2-onboarding");
+      if (raw) {
+        const parsed = JSON.parse(raw) as { name?: string };
+        const full = parsed.name?.trim() ?? "";
+        setFirstName(full ? (full.split(" ")[0] ?? "") : "");
+      }
+    } catch {
+      // storage unavailable
+    }
+  }, []);
 
   const overdue = sortByPriority(posts.filter((p) => p.status === "overdue"));
   const todayPosts = sortByPriority(
@@ -102,7 +117,10 @@ export function TodayClient() {
       <div className={styles.content}>
         {/* Greeting */}
         <div className={styles.greeting}>
-          <p className={styles.greetingLine}>{getGreeting()}, Alex.</p>
+          <p className={styles.greetingLine}>
+            {getGreeting()}
+            {firstName ? `, ${firstName}` : ""}.
+          </p>
           <p className={styles.greetingDate}>{formatHomeDate(TODAY)}</p>
         </div>
 

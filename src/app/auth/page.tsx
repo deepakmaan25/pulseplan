@@ -155,7 +155,11 @@ export default function AuthPage() {
             </p>
           )}
 
-          <button type="submit" className={styles.submitBtn} disabled={loading}>
+          <button
+            type="submit"
+            className={`${styles.submitBtn} pp2-press`}
+            disabled={loading}
+          >
             {loading
               ? mode === "signin"
                 ? "Signing in…"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Check, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button/Button";
@@ -50,6 +50,7 @@ const CADENCE_LABELS: Record<Cadence, string> = {
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [name, setName] = useState("");
   const [pillars, setPillars] = useState<string[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [cadence, setCadence] = useState<Cadence | null>(null);
@@ -104,7 +105,7 @@ export default function OnboardingPage() {
     try {
       localStorage.setItem(
         "pp2-onboarding",
-        JSON.stringify({ pillars, platforms, cadence }),
+        JSON.stringify({ name, pillars, platforms, cadence }),
       );
       localStorage.setItem("pp2-onboarded", "1");
     } catch {
@@ -115,13 +116,20 @@ export default function OnboardingPage() {
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     ) {
       const supabase = createClient();
-      await supabase.auth.updateUser({ data: { onboarded: true } });
+      await supabase.auth.updateUser({ data: { name, onboarded: true } });
     }
     router.push("/today");
   }
 
   if (step === 0) {
-    return <WelcomeStep onNext={() => setStep(1)} />;
+    return (
+      <WelcomeStep
+        onNext={(n) => {
+          setName(n);
+          setStep(1);
+        }}
+      />
+    );
   }
 
   if (step === 1) {
@@ -159,6 +167,7 @@ export default function OnboardingPage() {
 
   return (
     <DoneStep
+      name={name}
       pillars={pillars}
       platforms={platforms}
       cadence={cadence}
@@ -185,7 +194,10 @@ function ProgressDots({ active }: { active: 1 | 2 | 3 }) {
 
 // ── Step: Welcome ──────────────────────────────────────────────
 
-function WelcomeStep({ onNext }: { onNext: () => void }) {
+function WelcomeStep({ onNext }: { onNext: (name: string) => void }) {
+  const [name, setName] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className={styles.screen}>
       <div className={styles.hero}>
@@ -201,11 +213,31 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           Plan posts across every platform. Build consistent creator habits.
           Ship content that grows your audience.
         </p>
+        <div className={styles.nameField}>
+          <label className={styles.nameLabel} htmlFor="onb-name">
+            Your name
+          </label>
+          <input
+            ref={inputRef}
+            id="onb-name"
+            type="text"
+            className={styles.nameInput}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && name.trim()) onNext(name.trim());
+            }}
+            placeholder="e.g. Alex"
+            autoComplete="given-name"
+            maxLength={50}
+          />
+        </div>
         <div className={styles.footer}>
           <Button
             variant="filled"
             size="lg"
-            onClick={onNext}
+            onClick={() => onNext(name.trim())}
+            disabled={!name.trim()}
             trailingIcon={<ChevronRight size={18} />}
             style={{ width: "100%" }}
           >
@@ -249,7 +281,7 @@ function PillarsStep({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => onToggle(id)}
-                className={`${styles.pillarOption} ${selected ? styles.pillarOptionSelected : ""}`}
+                className={`${styles.pillarOption} ${selected ? styles.pillarOptionSelected : ""} pp2-press`}
               >
                 <span
                   className={styles.pillarDot}
@@ -317,7 +349,7 @@ function PlatformsStep({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => onToggle(value)}
-                className={`${styles.platformOption} ${selected ? styles.platformOptionSelected : ""}`}
+                className={`${styles.platformOption} ${selected ? styles.platformOptionSelected : ""} pp2-press`}
               >
                 <div className={styles.platformLeft}>
                   <span
@@ -392,7 +424,7 @@ function CadenceStep({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => onSelect(value)}
-                className={`${styles.cadenceOption} ${selected ? styles.cadenceOptionSelected : ""}`}
+                className={`${styles.cadenceOption} ${selected ? styles.cadenceOptionSelected : ""} pp2-press`}
               >
                 <span className={styles.cadenceLabel}>{label}</span>
                 <span className={styles.cadenceSub}>{sub}</span>
@@ -428,12 +460,14 @@ function CadenceStep({
 // ── Step 4: Done ───────────────────────────────────────────────
 
 function DoneStep({
+  name,
   pillars,
   platforms,
   cadence,
   loading,
   onComplete,
 }: {
+  name: string;
   pillars: string[];
   platforms: Platform[];
   cadence: Cadence | null;
@@ -451,7 +485,9 @@ function DoneStep({
       </div>
 
       <div>
-        <h2 className={styles.doneHeading}>You&apos;re all set!</h2>
+        <h2 className={styles.doneHeading}>
+          {name ? `You're all set, ${name}!` : "You're all set!"}
+        </h2>
       </div>
 
       <div className={styles.doneSummary}>
