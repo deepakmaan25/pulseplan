@@ -3,7 +3,6 @@
   flex-direction: column;
   min-height: 100%;
   background: var(--bg-base);
-  padding-bottom: var(--s-16);
 }
 
 /* ─── Status bar + time ──────────────────────────────────────── */
@@ -156,6 +155,19 @@
   outline-offset: 1px;
 }
 
+/* Character count for draft field */
+.charCount {
+  font: var(--t-caption);
+  color: var(--ink-4);
+  text-align: right;
+  margin: var(--s-3) 0 0;
+}
+
+.charCountOver {
+  color: var(--error);
+  font-weight: 500;
+}
+
 /* Published read-only indicator */
 .readOnlyHint {
   font: var(--t-caption);
@@ -166,10 +178,15 @@
 
 /* ─── Action strip ───────────────────────────────────────────── */
 .actions {
-  margin: var(--s-8) var(--s-9) 0;
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-base);
+  padding: var(--s-4) var(--s-9) var(--s-10);
+  margin-top: var(--s-4);
   display: flex;
   flex-direction: column;
   gap: var(--s-4);
+  z-index: 1;
 }
 
 .actionBtn {

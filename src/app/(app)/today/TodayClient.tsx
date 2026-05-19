@@ -14,12 +14,25 @@ const TODAY = "2026-05-16";
 
 const PRIORITY_ORDER: Record<string, number> = { P0: 0, P1: 1, P2: 2 };
 
+function parseTimeToMinutes(timeStr: string): number {
+  const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(timeStr);
+  if (!match) return 9999;
+  let hours = parseInt(match[1] ?? "0", 10);
+  const minutes = parseInt(match[2] ?? "0", 10);
+  const meridiem = (match[3] ?? "AM").toUpperCase();
+  if (meridiem === "PM" && hours !== 12) hours += 12;
+  if (meridiem === "AM" && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
 function sortByPriority(posts: MockPost[]): MockPost[] {
   return [...posts].sort((a, b) => {
     const pa = a.priority ? (PRIORITY_ORDER[a.priority] ?? 3) : 3;
     const pb = b.priority ? (PRIORITY_ORDER[b.priority] ?? 3) : 3;
     if (pa !== pb) return pa - pb;
-    return (a.time ?? "99:99").localeCompare(b.time ?? "99:99");
+    const ta = a.time ? parseTimeToMinutes(a.time) : 9999;
+    const tb = b.time ? parseTimeToMinutes(b.time) : 9999;
+    return ta - tb;
   });
 }
 

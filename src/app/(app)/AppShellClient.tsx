@@ -53,13 +53,14 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
   const [captureOpen, setCaptureOpen] = useState(false);
 
   const isOnboarding = pathname === "/onboarding";
+  const hideChrome = isOnboarding || pathname.startsWith("/post/");
 
   return (
     <div className={styles.deviceBackground}>
       <div className={styles.device}>
         <StatusBar />
         <div className={styles.scrollArea}>{children}</div>
-        {!isOnboarding && (
+        {!hideChrome && (
           <BottomNav
             tabs={TABS}
             activeKey={activeKey}
@@ -70,7 +71,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
           />
         )}
       </div>
-      {!isOnboarding && (
+      {!hideChrome && (
         <QuickCaptureSheet
           open={captureOpen}
           onClose={() => setCaptureOpen(false)}

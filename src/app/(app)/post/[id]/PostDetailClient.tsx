@@ -12,6 +12,23 @@ import {
   Trash2,
   Undo2,
 } from "lucide-react";
+
+const CHAR_LIMITS: Partial<Record<string, number>> = {
+  x: 280,
+  th: 500,
+  ig: 2200,
+  li: 3000,
+  yt: 5000,
+};
+
+function formatScheduled(date: string, time?: string): string {
+  const d = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  return time ? `${d} · ${time}` : d;
+}
 import { AppBar } from "@/components/ui/AppBar/AppBar";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { StatusChip } from "@/components/ui/chips/StatusChip";
@@ -53,6 +70,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
   const [localDraft, setLocalDraft] = useState(() => post?.draft ?? "");
   const [localNotes, setLocalNotes] = useState(() => post?.notes ?? "");
   const [scheduleOpen, setScheduleOpen] = useState(false);
+  const charLimit = post ? (CHAR_LIMITS[post.platform] ?? null) : null;
 
   function handleStatusChange(status: PostStatus) {
     updatePost(postId, { status });
@@ -129,16 +147,16 @@ export function PostDetailClient({ postId }: { postId: string }) {
 
   if (post.status === "draft") {
     actions.push({
-      label: "Send for Review",
-      icon: <Send size={18} />,
-      variant: "primary",
-      onClick: () => handleStatusChange("review"),
-    });
-    actions.push({
       label: "Schedule",
       icon: <CalendarClock size={18} />,
-      variant: "default",
+      variant: "primary",
       onClick: () => setScheduleOpen(true),
+    });
+    actions.push({
+      label: "Save to Review",
+      icon: <Send size={18} />,
+      variant: "default",
+      onClick: () => handleStatusChange("review"),
     });
   }
 
@@ -218,21 +236,11 @@ export function PostDetailClient({ postId }: { postId: string }) {
           }
         />
 
-        {/* Status + postType + time */}
+        {/* Status + postType */}
         <div className={styles.statusRow}>
           <StatusChip status={post.status} />
           {post.postType ? (
             <span className={styles.postTypeBadge}>{post.postType}</span>
-          ) : null}
-          {post.time ? (
-            <span className={styles.scheduledTime}>
-              <Clock
-                size={12}
-                style={{ display: "inline", marginRight: 4 }}
-                aria-hidden="true"
-              />
-              {post.time}
-            </span>
           ) : null}
         </div>
 
@@ -276,15 +284,12 @@ export function PostDetailClient({ postId }: { postId: string }) {
           ) : null}
           {post.scheduledDate ? (
             <div className={styles.metaRow}>
-              <span className={styles.metaLabel}>Date</span>
+              <span className={styles.metaLabel}>Scheduled</span>
               <span
                 className={styles.metaValue}
                 style={{ font: "var(--t-caption)", color: "var(--ink-2)" }}
               >
-                {new Date(post.scheduledDate + "T00:00:00").toLocaleDateString(
-                  "en-US",
-                  { month: "long", day: "numeric", year: "numeric" },
-                )}
+                {formatScheduled(post.scheduledDate, post.time)}
               </span>
             </div>
           ) : null}
@@ -312,6 +317,13 @@ export function PostDetailClient({ postId }: { postId: string }) {
               </span>
             )}
           </div>
+          {editable && charLimit !== null && (
+            <p
+              className={`${styles.charCount} ${localDraft.length > charLimit ? styles.charCountOver : ""}`}
+            >
+              {localDraft.length} / {charLimit.toLocaleString()}
+            </p>
+          )}
           {!editable && (
             <p className={styles.readOnlyHint}>Published — read only</p>
           )}

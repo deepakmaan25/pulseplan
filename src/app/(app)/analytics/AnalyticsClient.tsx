@@ -89,7 +89,6 @@ export function AnalyticsClient() {
     <div>
       <AppBar
         variant="prominent"
-        kicker="Overview"
         title="Analytics"
         style={{ paddingTop: "var(--s-4)" }}
       />
