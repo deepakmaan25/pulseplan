@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -71,6 +71,27 @@ export function PostDetailClient({ postId }: { postId: string }) {
   const [localNotes, setLocalNotes] = useState(() => post?.notes ?? "");
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const charLimit = post ? (CHAR_LIMITS[post.platform] ?? null) : null;
+
+  // Lift the action strip above the software keyboard on mobile.
+  // visualViewport.height shrinks when the keyboard opens; padding-bottom
+  // on the sticky strip compensates so buttons stay in the visible area.
+  const actionsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    function sync() {
+      const kbHeight = Math.max(
+        0,
+        window.innerHeight - (vv?.height ?? window.innerHeight),
+      );
+      if (actionsRef.current) {
+        actionsRef.current.style.paddingBottom =
+          kbHeight > 0 ? `${kbHeight}px` : "";
+      }
+    }
+    vv.addEventListener("resize", sync);
+    return () => vv.removeEventListener("resize", sync);
+  }, []);
 
   function handleStatusChange(status: PostStatus) {
     updatePost(postId, { status });
@@ -357,7 +378,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
         </div>
 
         {/* Actions */}
-        <div className={styles.actions}>
+        <div ref={actionsRef} className={styles.actions}>
           {actions.map((action) => (
             <button
               key={action.label}
