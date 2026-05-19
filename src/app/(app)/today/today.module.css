@@ -2,22 +2,32 @@
 .homeHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 0 var(--s-6) 0 var(--s-9);
   height: 52px;
 }
 
-.homeWordmark {
+.headerAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-full);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font: var(--t-title-sm);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ink-1);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity var(--dur-fast) var(--easing-standard);
 }
-
-.homeHeaderActions {
-  display: flex;
-  align-items: center;
-  gap: var(--s-1);
+.headerAvatar:hover {
+  opacity: 0.8;
+}
+.headerAvatar:active {
+  opacity: 0.6;
 }
 
 /* ─── Content area ───────────────────────────────────────────── */
@@ -96,6 +106,15 @@
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.statSub {
+  font: var(--t-mono);
+  font-size: 8px;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
   white-space: nowrap;
 }
 

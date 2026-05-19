@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppBar } from "@/components/ui/AppBar/AppBar";
 import { KPI } from "@/components/ui/KPI/KPI";
 import { usePosts } from "@/store/PostsContext";
@@ -18,8 +18,42 @@ const PLATFORM_LABELS: Record<string, string> = {
   th: "Threads",
 };
 
+const CADENCE_GOALS: Record<string, number> = {
+  daily: 7,
+  "3x": 3,
+  "2x": 2,
+  weekly: 1,
+};
+
+const CADENCE_LABELS: Record<string, string> = {
+  daily: "7× / week",
+  "3x": "3× / week",
+  "2x": "2× / week",
+  weekly: "1× / week",
+};
+
 export function AnalyticsClient() {
   const { posts } = usePosts();
+  const [weeklyGoal, setWeeklyGoal] = useState<{
+    count: number;
+    label: string;
+  } | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("pp2-onboarding");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { cadence?: string };
+      const cadence = parsed.cadence ?? "";
+      const count = CADENCE_GOALS[cadence];
+      const label = CADENCE_LABELS[cadence];
+      if (count !== undefined && label !== undefined) {
+        setWeeklyGoal({ count, label });
+      }
+    } catch {
+      // storage unavailable
+    }
+  }, []);
 
   const stats = useMemo(() => {
     const published = posts.filter(
@@ -136,11 +170,27 @@ export function AnalyticsClient() {
                 stats.pace7d >= 3 ? "up" : stats.pace7d > 0 ? "flat" : "down"
               }
             />
-            <KPI
-              label="Daily avg"
-              value={(stats.pace7d / 7).toFixed(1)}
-              unit=" / day"
-            />
+            {weeklyGoal !== null ? (
+              <KPI
+                label="Goal"
+                value={stats.pace7d}
+                unit={` / ${weeklyGoal.count}`}
+                delta={weeklyGoal.label}
+                trend={
+                  stats.pace7d >= weeklyGoal.count
+                    ? "up"
+                    : stats.pace7d > 0
+                      ? "flat"
+                      : "down"
+                }
+              />
+            ) : (
+              <KPI
+                label="Daily avg"
+                value={(stats.pace7d / 7).toFixed(1)}
+                unit=" / day"
+              />
+            )}
           </div>
         </section>
 

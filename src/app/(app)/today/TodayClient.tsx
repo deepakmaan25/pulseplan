@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Settings } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
-import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { PostRow } from "@/components/post/PostRow";
 import { usePosts } from "@/store/PostsContext";
 import type { MockPost } from "@/mocks/fixtures";
@@ -60,9 +58,10 @@ interface StatPillProps {
   count: number;
   label: string;
   tone?: "default" | "primary" | "success" | "danger";
+  sub?: string;
 }
 
-function StatPill({ count, label, tone = "default" }: StatPillProps) {
+function StatPill({ count, label, tone = "default", sub }: StatPillProps) {
   return (
     <div
       className={`${styles.statPill} ${styles[`statPill_${tone}`]}`}
@@ -70,6 +69,7 @@ function StatPill({ count, label, tone = "default" }: StatPillProps) {
     >
       <span className={styles.statCount}>{count}</span>
       <span className={styles.statLabel}>{label}</span>
+      {sub ? <span className={styles.statSub}>{sub}</span> : null}
     </div>
   );
 }
@@ -111,24 +111,16 @@ export function TodayClient() {
 
   return (
     <div>
-      {/* Home header — wordmark + action icons */}
+      {/* Home header — avatar navigates to settings */}
       <div className={styles.homeHeader} style={{ paddingTop: "var(--s-4)" }}>
-        <span className={styles.homeWordmark}>PulsePlan</span>
-        <div className={styles.homeHeaderActions}>
-          <IconButton
-            icon={<Bell size={20} />}
-            label="Notifications"
-            variant="ghost"
-            size={40}
-          />
-          <IconButton
-            icon={<Settings size={20} />}
-            label="Settings"
-            variant="ghost"
-            size={40}
-            onClick={() => router.push("/settings")}
-          />
-        </div>
+        <button
+          type="button"
+          className={styles.headerAvatar}
+          onClick={() => router.push("/settings")}
+          aria-label="Profile and settings"
+        >
+          {(firstName || "?")[0]?.toUpperCase() ?? "?"}
+        </button>
       </div>
 
       <div className={styles.content}>
@@ -149,7 +141,12 @@ export function TodayClient() {
         >
           <StatPill count={statScheduled} label="Scheduled" tone="primary" />
           <StatPill count={statInProgress} label="In Progress" tone="default" />
-          <StatPill count={statPublished} label="Published" tone="success" />
+          <StatPill
+            count={statPublished}
+            label="Published"
+            tone="success"
+            sub="this wk"
+          />
           {statOverdue > 0 && (
             <StatPill count={statOverdue} label="Overdue" tone="danger" />
           )}

@@ -44,6 +44,27 @@
   line-height: 1.3;
 }
 
+.titleInput {
+  appearance: none;
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  font: var(--t-title-lg);
+  font-size: 20px;
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+  margin: 0;
+  line-height: 1.3;
+  padding: 0;
+}
+.titleInput::placeholder {
+  color: var(--ink-4);
+}
+
 /* ─── Description ────────────────────────────────────────────── */
 .descriptionBlock {
   margin: 0 var(--s-9) var(--s-6);
@@ -93,6 +114,11 @@
   gap: var(--s-3);
 }
 
+.metaChevron {
+  color: var(--ink-4);
+  flex-shrink: 0;
+}
+
 :global(.pp2.dark) .metaCard {
   box-shadow: none;
   border: 1px solid var(--divider-strong);
@@ -121,6 +147,12 @@
   box-shadow: var(--e-1);
 }
 
+/* Draft is visually dominant — larger canvas, slightly lighter background */
+.textBlockDraft {
+  min-height: 160px;
+  background: var(--bg-base);
+}
+
 .textBlockPlaceholder {
   color: var(--ink-4);
   font-style: italic;
@@ -129,6 +161,10 @@
 :global(.pp2.dark) .textBlock {
   box-shadow: none;
   border: 1px solid var(--divider-strong);
+}
+
+:global(.pp2.dark) .textBlockDraft {
+  border-color: var(--divider);
 }
 
 /* Editable textarea inside the textBlock shell */

@@ -41,19 +41,21 @@ export function BoardScreen() {
         style={{ paddingTop: "var(--s-4)" }}
       />
 
-      <div
-        className={styles.filterRow}
-        role="group"
-        aria-label="Filter by status"
-      >
-        {STATUSES.map(({ value, label }) => (
-          <FilterChip
-            key={value}
-            label={label}
-            active={active === value}
-            onClick={() => setActive(value)}
-          />
-        ))}
+      <div className={styles.filterWrapper}>
+        <div
+          className={styles.filterRow}
+          role="group"
+          aria-label="Filter by status"
+        >
+          {STATUSES.map(({ value, label }) => (
+            <FilterChip
+              key={value}
+              label={label}
+              active={active === value}
+              onClick={() => setActive(value)}
+            />
+          ))}
+        </div>
       </div>
 
       {filtered.length > 0 && (

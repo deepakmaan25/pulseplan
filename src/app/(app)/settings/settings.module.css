@@ -118,6 +118,23 @@
 .connBadgeOn {
   color: var(--success-ink);
   background: var(--success-soft);
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.connBadgeOn::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0.9;
 }
 
 /* Toggle switch */

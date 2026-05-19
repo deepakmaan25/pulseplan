@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   CalendarClock,
   CheckCircle2,
+  ChevronRight,
   Clock,
   FileText,
   Send,
@@ -67,8 +68,18 @@ export function PostDetailClient({ postId }: { postId: string }) {
 
   // Local editable state — initialized lazily so re-renders from context
   // don't reset what the user is currently typing.
+  const [localTitle, setLocalTitle] = useState(() => post?.title ?? "");
   const [localDraft, setLocalDraft] = useState(() => post?.draft ?? "");
   const [localNotes, setLocalNotes] = useState(() => post?.notes ?? "");
+
+  // Keep title textarea height in sync with content
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [localTitle]);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const charLimit = post ? (CHAR_LIMITS[post.platform] ?? null) : null;
 
@@ -257,17 +268,30 @@ export function PostDetailClient({ postId }: { postId: string }) {
           }
         />
 
-        {/* Status + postType */}
+        {/* Status */}
         <div className={styles.statusRow}>
           <StatusChip status={post.status} />
-          {post.postType ? (
-            <span className={styles.postTypeBadge}>{post.postType}</span>
-          ) : null}
         </div>
 
-        {/* Title */}
+        {/* Title — editable for non-published posts */}
         <div className={styles.titleArea}>
-          <h1 className={styles.title}>{post.title}</h1>
+          {editable ? (
+            <textarea
+              ref={titleRef}
+              className={styles.titleInput}
+              value={localTitle}
+              onChange={(e) => setLocalTitle(e.target.value)}
+              onBlur={() => {
+                if (localTitle.trim())
+                  updatePost(postId, { title: localTitle.trim() });
+              }}
+              rows={1}
+              placeholder="Post title"
+              aria-label="Post title"
+            />
+          ) : (
+            <h1 className={styles.title}>{post.title}</h1>
+          )}
         </div>
 
         {/* Description — captured hook/angle */}
@@ -283,6 +307,11 @@ export function PostDetailClient({ postId }: { postId: string }) {
             <span className={styles.metaLabel}>Platform</span>
             <span className={styles.metaValue}>
               <PlatformChip platform={post.platform} size="sm" />
+              <ChevronRight
+                size={14}
+                className={styles.metaChevron}
+                aria-hidden="true"
+              />
             </span>
           </div>
           <div className={styles.metaRow}>
@@ -293,24 +322,53 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 color={post.pillar.color}
                 size="sm"
               />
+              <ChevronRight
+                size={14}
+                className={styles.metaChevron}
+                aria-hidden="true"
+              />
             </span>
           </div>
+          {post.postType ? (
+            <div className={styles.metaRow}>
+              <span className={styles.metaLabel}>Type</span>
+              <span className={styles.metaValue}>
+                <span className={styles.postTypeBadge}>{post.postType}</span>
+                <ChevronRight
+                  size={14}
+                  className={styles.metaChevron}
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+          ) : null}
           {post.priority ? (
             <div className={styles.metaRow}>
               <span className={styles.metaLabel}>Priority</span>
               <span className={styles.metaValue}>
                 <PriorityChip priority={post.priority} />
+                <ChevronRight
+                  size={14}
+                  className={styles.metaChevron}
+                  aria-hidden="true"
+                />
               </span>
             </div>
           ) : null}
           {post.scheduledDate ? (
             <div className={styles.metaRow}>
               <span className={styles.metaLabel}>Scheduled</span>
-              <span
-                className={styles.metaValue}
-                style={{ font: "var(--t-caption)", color: "var(--ink-2)" }}
-              >
-                {formatScheduled(post.scheduledDate, post.time)}
+              <span className={styles.metaValue}>
+                <span
+                  style={{ font: "var(--t-caption)", color: "var(--ink-2)" }}
+                >
+                  {formatScheduled(post.scheduledDate, post.time)}
+                </span>
+                <ChevronRight
+                  size={14}
+                  className={styles.metaChevron}
+                  aria-hidden="true"
+                />
               </span>
             </div>
           ) : null}
@@ -319,7 +377,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
         {/* Draft body */}
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Draft</p>
-          <div className={styles.textBlock}>
+          <div className={`${styles.textBlock} ${styles.textBlockDraft}`}>
             {editable ? (
               <textarea
                 className={styles.textArea}
