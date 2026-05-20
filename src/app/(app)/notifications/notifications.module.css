@@ -1,0 +1,143 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: var(--s-4) var(--s-6) 0 var(--s-4);
+  gap: var(--s-4);
+  height: 52px;
+}
+
+.headerTitle {
+  flex: 1;
+  font: var(--t-title-sm);
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.markAllBtn {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: var(--s-3) var(--s-5);
+  font: var(--t-body-sm);
+  font-weight: 500;
+  color: var(--primary);
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition: opacity var(--dur-fast) var(--easing-standard);
+}
+
+.markAllBtn:hover {
+  opacity: 0.75;
+}
+
+.markAllBtn:disabled {
+  color: var(--ink-4);
+  cursor: default;
+  opacity: 1;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-4) 0 var(--s-16);
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-5);
+  padding: var(--s-6) var(--s-9);
+  border-bottom: 1px solid var(--divider);
+  cursor: default;
+  position: relative;
+  transition: background var(--dur-fast) var(--easing-standard);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  width: 100%;
+}
+
+.itemTappable {
+  cursor: pointer;
+}
+
+.itemTappable:hover {
+  background: var(--bg-sunken);
+}
+
+.itemUnread {
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
+}
+
+.itemUnread:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.unreadDotHidden {
+  width: 8px;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemTitle {
+  font: var(--t-body-sm);
+  font-weight: 600;
+  color: var(--ink-1);
+  margin: 0 0 var(--s-1);
+}
+
+.itemText {
+  font: var(--t-body-sm);
+  color: var(--ink-2);
+  margin: 0 0 var(--s-2);
+  line-height: 1.4;
+}
+
+.itemTime {
+  font: var(--t-caption);
+  color: var(--ink-4);
+  margin: 0;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  padding: var(--s-16) var(--s-9);
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.emptyTitle {
+  font: var(--t-title-sm);
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.emptyDesc {
+  font: var(--t-body-sm);
+  color: var(--ink-4);
+  margin: 0;
+}

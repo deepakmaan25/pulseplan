@@ -53,7 +53,10 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
   const [captureOpen, setCaptureOpen] = useState(false);
 
   const isOnboarding = pathname === "/onboarding";
-  const hideChrome = isOnboarding || pathname.startsWith("/post/");
+  const hideChrome =
+    isOnboarding ||
+    pathname.startsWith("/post/") ||
+    pathname.startsWith("/notifications");
 
   return (
     <div className={styles.deviceBackground}>

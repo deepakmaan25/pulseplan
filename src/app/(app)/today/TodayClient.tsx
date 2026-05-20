@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { PostRow } from "@/components/post/PostRow";
 import { usePosts } from "@/store/PostsContext";
@@ -34,25 +34,14 @@ function sortByPriority(posts: MockPost[]): MockPost[] {
   });
 }
 
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
-}
-
-function capitalizeFirst(str: string): string {
-  return str.length > 0 ? (str[0]?.toUpperCase() ?? "") + str.slice(1) : str;
-}
-
-function formatHomeDate(dateStr: string): string {
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
+function sortByTime(posts: MockPost[]): MockPost[] {
+  return [...posts].sort((a, b) => {
+    const ta = a.time ? parseTimeToMinutes(a.time) : 9999;
+    const tb = b.time ? parseTimeToMinutes(b.time) : 9999;
+    return ta - tb;
   });
 }
+
 
 interface StatPillProps {
   count: number;
@@ -77,23 +66,9 @@ function StatPill({ count, label, tone = "default", sub }: StatPillProps) {
 export function TodayClient() {
   const router = useRouter();
   const { posts } = usePosts();
-  const [firstName, setFirstName] = useState("");
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("pp2-onboarding");
-      if (raw) {
-        const parsed = JSON.parse(raw) as { name?: string };
-        const full = parsed.name?.trim() ?? "";
-        setFirstName(full ? (full.split(" ")[0] ?? "") : "");
-      }
-    } catch {
-      // storage unavailable
-    }
-  }, []);
 
   const overdue = sortByPriority(posts.filter((p) => p.status === "overdue"));
-  const todayPosts = sortByPriority(
+  const todayPosts = sortByTime(
     posts.filter((p) => p.scheduledDate === TODAY && p.status !== "overdue"),
   );
   const hasAnything = overdue.length > 0 || todayPosts.length > 0;
@@ -111,27 +86,9 @@ export function TodayClient() {
 
   return (
     <div>
-      {/* Home header — avatar navigates to settings */}
-      <div className={styles.homeHeader} style={{ paddingTop: "var(--s-4)" }}>
-        <button
-          type="button"
-          className={styles.headerAvatar}
-          onClick={() => router.push("/settings")}
-          aria-label="Profile and settings"
-        >
-          {(firstName || "?")[0]?.toUpperCase() ?? "?"}
-        </button>
-      </div>
+      <AppHeader showGreeting style={{ paddingTop: "var(--s-4)" }} />
 
       <div className={styles.content}>
-        {/* Greeting */}
-        <div className={styles.greeting}>
-          <p className={styles.greetingLine}>
-            {getGreeting()}
-            {firstName ? `, ${capitalizeFirst(firstName)}` : ""}.
-          </p>
-          <p className={styles.greetingDate}>{formatHomeDate(TODAY)}</p>
-        </div>
 
         {/* Pipeline stat strip */}
         <div

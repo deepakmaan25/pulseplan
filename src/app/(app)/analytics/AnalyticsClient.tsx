@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AppBar } from "@/components/ui/AppBar/AppBar";
+import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { KPI } from "@/components/ui/KPI/KPI";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./analytics.module.css";
@@ -20,6 +20,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 const CADENCE_GOALS: Record<string, number> = {
   daily: 7,
+  "5x": 5,
   "3x": 3,
   "2x": 2,
   weekly: 1,
@@ -27,6 +28,7 @@ const CADENCE_GOALS: Record<string, number> = {
 
 const CADENCE_LABELS: Record<string, string> = {
   daily: "7× / week",
+  "5x": "5× / week",
   "3x": "3× / week",
   "2x": "2× / week",
   weekly: "1× / week",
@@ -121,7 +123,7 @@ export function AnalyticsClient() {
 
   return (
     <div>
-      <AppBar
+      <AppHeader
         variant="prominent"
         title="Analytics"
         style={{ paddingTop: "var(--s-4)" }}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppBar } from "@/components/ui/AppBar/AppBar";
+import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { FilterChip } from "@/components/ui/chips/FilterChip";
 import { BoardCard } from "@/components/post/BoardCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
@@ -35,11 +35,7 @@ export function BoardScreen() {
 
   return (
     <div>
-      <AppBar
-        variant="compact"
-        title="Board"
-        style={{ paddingTop: "var(--s-4)" }}
-      />
+      <AppHeader title="Board" style={{ paddingTop: "var(--s-4)" }} />
 
       <div className={styles.filterWrapper}>
         <div

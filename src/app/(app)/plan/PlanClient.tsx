@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { AppBar } from "@/components/ui/AppBar/AppBar";
+import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { PostRow } from "@/components/post/PostRow";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./plan.module.css";
@@ -55,7 +55,7 @@ export function PlanClient() {
 
   return (
     <div>
-      <AppBar
+      <AppHeader
         variant="prominent"
         kicker={weekRangeKicker(days)}
         title="This Week"

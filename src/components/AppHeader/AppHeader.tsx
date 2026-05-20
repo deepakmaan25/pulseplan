@@ -1,0 +1,118 @@
+"use client";
+
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type HTMLAttributes,
+} from "react";
+import { useRouter } from "next/navigation";
+import { Bell } from "lucide-react";
+import { AppBar } from "@/components/ui/AppBar/AppBar";
+import { IconButton } from "@/components/ui/IconButton/IconButton";
+import { useNotifications } from "@/store/NotificationsContext";
+import styles from "./AppHeader.module.css";
+
+const TODAY_LABEL = "Saturday, May 16";
+
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function capitalizeFirst(str: string): string {
+  return str.length > 0 ? (str[0]?.toUpperCase() ?? "") + str.slice(1) : str;
+}
+
+type AppHeaderVariant = "compact" | "prominent";
+
+interface AppHeaderProps
+  extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+  title?: string;
+  kicker?: string;
+  variant?: AppHeaderVariant;
+  /** Today screen: show greeting + date instead of a title bar */
+  showGreeting?: boolean;
+  style?: CSSProperties;
+}
+
+export function AppHeader({
+  title,
+  kicker,
+  variant = "compact",
+  showGreeting = false,
+  style,
+  ...rest
+}: AppHeaderProps) {
+  const router = useRouter();
+  const { unreadCount } = useNotifications();
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("pp2-onboarding");
+      if (raw) {
+        const parsed = JSON.parse(raw) as { name?: string };
+        const full = parsed.name?.trim() ?? "";
+        setFirstName(full ? (full.split(" ")[0] ?? "") : "");
+      }
+    } catch {
+      // storage unavailable
+    }
+  }, []);
+
+  const avatarLetter = (firstName || "?")[0]?.toUpperCase() ?? "?";
+
+  const actions = (
+    <div className={styles.trailingActions}>
+      <IconButton
+        icon={<Bell size={20} />}
+        label="Notifications"
+        badge={unreadCount > 0}
+        onClick={() => router.push("/notifications" as never)}
+        size={40}
+      />
+      <button
+        type="button"
+        className={styles.avatar}
+        onClick={() => router.push("/settings")}
+        aria-label="Profile and settings"
+      >
+        {avatarLetter}
+      </button>
+    </div>
+  );
+
+  if (showGreeting) {
+    return (
+      <header
+        className={styles.greetingHeader}
+        style={style}
+        aria-label="Home header"
+        {...rest}
+      >
+        <div className={styles.greetingBlock}>
+          <p className={styles.greetingLine}>
+            {getGreeting()}
+            {firstName ? `, ${capitalizeFirst(firstName)}` : ""}.
+          </p>
+          <p className={styles.greetingDate}>{TODAY_LABEL}</p>
+        </div>
+        {actions}
+      </header>
+    );
+  }
+
+  return (
+    <AppBar
+      title={title ?? ""}
+      kicker={kicker}
+      variant={variant}
+      trailing={actions}
+      style={style}
+      {...rest}
+    />
+  );
+}
