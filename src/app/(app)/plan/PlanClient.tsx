@@ -25,7 +25,7 @@ function getWeekDays(): WeekDay[] {
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
-    const iso = d.toISOString().split("T")[0]!;
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     return {
       date: iso,
       label: d.toLocaleDateString("en-US", {
