@@ -73,14 +73,10 @@ export function PlanClient() {
 
   // Unscheduled tray — idea/draft without a scheduled date
   const unscheduled = posts.filter(
-    (p) =>
-      (p.status === "idea" || p.status === "draft") &&
-      !p.scheduledDate,
+    (p) => (p.status === "idea" || p.status === "draft") && !p.scheduledDate,
   );
 
-  const totalPlanned = posts.filter(
-    (p) => p.scheduledDate != null,
-  ).length;
+  const totalPlanned = posts.filter((p) => p.scheduledDate != null).length;
 
   function openPost(id: string) {
     router.push(`/post/${id}`);
@@ -92,11 +88,7 @@ export function PlanClient() {
         variant="prominent"
         kicker={weekRangeKicker(days)}
         title="This Week"
-        subtitle={
-          totalPlanned > 0
-            ? `${totalPlanned} planned`
-            : undefined
-        }
+        subtitle={totalPlanned > 0 ? `${totalPlanned} planned` : undefined}
         style={{ paddingTop: "var(--s-4)" }}
       />
 

@@ -40,11 +40,7 @@ export function BoardScreen() {
 
       {/* Stage rail with counts */}
       <div className={styles.railWrapper}>
-        <div
-          className={styles.rail}
-          role="tablist"
-          aria-label="Content stages"
-        >
+        <div className={styles.rail} role="tablist" aria-label="Content stages">
           {STAGES.map(({ value, label }) => {
             const count = posts.filter((p) => p.status === value).length;
             const isActive = active === value;

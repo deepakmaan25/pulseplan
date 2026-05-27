@@ -28,8 +28,7 @@ function capitalizeFirst(str: string): string {
 
 type AppHeaderVariant = "compact" | "prominent";
 
-interface AppHeaderProps
-  extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+interface AppHeaderProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   title?: string;
   subtitle?: string;
   kicker?: string;

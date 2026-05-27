@@ -275,7 +275,8 @@
   border: 1.5px solid transparent;
   cursor: pointer;
   gap: var(--s-4);
-  transition: border-color var(--dur-fast) var(--easing-standard),
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
     background var(--dur-fast) var(--easing-standard);
   text-align: left;
   width: 100%;
@@ -304,7 +305,8 @@
   border-radius: var(--r-full);
   border: 2px solid var(--divider-strong);
   flex-shrink: 0;
-  transition: border-color var(--dur-fast) var(--easing-standard),
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
     background var(--dur-fast) var(--easing-standard);
 }
 

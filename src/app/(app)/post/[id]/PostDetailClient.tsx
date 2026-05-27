@@ -44,13 +44,7 @@ const STATUS_LABELS: Record<PostStatus, string> = {
   overdue: "Overdue",
 };
 
-const ALL_STATUSES: PostStatus[] = [
-  "idea",
-  "draft",
-  "review",
-  "sched",
-  "pub",
-];
+const ALL_STATUSES: PostStatus[] = ["idea", "draft", "review", "sched", "pub"];
 
 function formatScheduled(date: string, time?: string): string {
   const d = new Date(date + "T00:00:00").toLocaleDateString("en-US", {
@@ -91,11 +85,7 @@ const CHECKLISTS: Partial<Record<Platform, string[]>> = {
     "Media or link attached",
     "Thread formatted correctly",
   ],
-  th: [
-    "Under 500 characters",
-    "Image or link attached",
-    "Reply-to thread set",
-  ],
+  th: ["Under 500 characters", "Image or link attached", "Reply-to thread set"],
 };
 
 // ── Checklist tab ─────────────────────────────────────────────────
@@ -194,7 +184,9 @@ function HookCard({
           aria-label={`Hook variant ${letter}`}
         />
       ) : (
-        <p className={`${styles.hookText} ${!text ? styles.hookTextEmpty : ""}`}>
+        <p
+          className={`${styles.hookText} ${!text ? styles.hookTextEmpty : ""}`}
+        >
           {text || `Hook angle ${letter}`}
         </p>
       )}
@@ -430,7 +422,11 @@ export function PostDetailClient({ postId }: { postId: string }) {
         />
 
         {/* Tab strip */}
-        <div className={styles.tabStrip} role="tablist" aria-label="Post sections">
+        <div
+          className={styles.tabStrip}
+          role="tablist"
+          aria-label="Post sections"
+        >
           {TAB_OPTIONS.map(({ value, label }) => (
             <button
               key={value}

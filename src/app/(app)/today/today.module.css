@@ -292,11 +292,23 @@
   white-space: nowrap;
 }
 
-.statPill_primary .statCount { color: var(--primary); }
-.statPill_success .statCount { color: var(--success); }
-.statPill_danger { background: var(--error-soft); border-color: transparent; }
-.statPill_danger .statCount { color: var(--error); }
-.statPill_danger .statLabel { color: var(--error); opacity: 0.75; }
+.statPill_primary .statCount {
+  color: var(--primary);
+}
+.statPill_success .statCount {
+  color: var(--success);
+}
+.statPill_danger {
+  background: var(--error-soft);
+  border-color: transparent;
+}
+.statPill_danger .statCount {
+  color: var(--error);
+}
+.statPill_danger .statLabel {
+  color: var(--error);
+  opacity: 0.75;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .overdueCallout,

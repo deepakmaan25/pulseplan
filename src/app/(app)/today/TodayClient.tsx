@@ -115,7 +115,9 @@ export function TodayClient() {
 
   // Up next — sched posts after today, sorted by date then time
   const upNext = posts
-    .filter((p) => p.status === "sched" && p.scheduledDate && p.scheduledDate > TODAY)
+    .filter(
+      (p) => p.status === "sched" && p.scheduledDate && p.scheduledDate > TODAY,
+    )
     .sort((a, b) => {
       const dc = (a.scheduledDate ?? "").localeCompare(b.scheduledDate ?? "");
       if (dc !== 0) return dc;

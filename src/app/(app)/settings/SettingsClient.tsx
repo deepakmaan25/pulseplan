@@ -122,8 +122,9 @@ export function SettingsClient({ email }: { email?: string }) {
   const [connecting, setConnecting] = useState(false);
 
   // Platform disconnect sheet
-  const [disconnectPlatform, setDisconnectPlatform] =
-    useState<Platform | null>(null);
+  const [disconnectPlatform, setDisconnectPlatform] = useState<Platform | null>(
+    null,
+  );
 
   useEffect(() => {
     const data = readOnboarding();
@@ -392,12 +393,7 @@ export function SettingsClient({ email }: { email?: string }) {
         onClose={() => setEditProfileOpen(false)}
         title="Edit Profile"
         footer={
-          <Button
-            variant="filled"
-            size="lg"
-            fullWidth
-            onClick={saveProfile}
-          >
+          <Button variant="filled" size="lg" fullWidth onClick={saveProfile}>
             Save
           </Button>
         }
@@ -462,9 +458,7 @@ export function SettingsClient({ email }: { email?: string }) {
               onClick={() => setPendingCadence(value)}
             >
               <span className={styles.cadenceLabel}>{label}</span>
-              {sub ? (
-                <span className={styles.cadenceSub}>{sub}</span>
-              ) : null}
+              {sub ? <span className={styles.cadenceSub}>{sub}</span> : null}
               <span
                 className={`${styles.cadenceRadio} ${pendingCadence === value ? styles.cadenceRadioOn : ""}`}
                 aria-hidden="true"

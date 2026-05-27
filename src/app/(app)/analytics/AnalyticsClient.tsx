@@ -16,11 +16,20 @@ const PERIOD_OPTIONS: { value: Period; label: string }[] = [
 
 const SPARKLINES: Record<Period, number[]> = {
   "7d": [28, 32, 30, 38, 35, 42, 48],
-  "28d": [18, 22, 20, 24, 22, 28, 26, 30, 28, 34, 32, 36, 34, 38, 36, 40, 38, 44, 42, 46, 44, 48, 46, 50, 48, 52, 50, 54],
-  "90d": [5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19, 22, 24, 22, 26, 24, 28, 30, 28, 32, 30, 34, 36, 34, 38, 40, 42],
+  "28d": [
+    18, 22, 20, 24, 22, 28, 26, 30, 28, 34, 32, 36, 34, 38, 36, 40, 38, 44, 42,
+    46, 44, 48, 46, 50, 48, 52, 50, 54,
+  ],
+  "90d": [
+    5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19, 22, 24, 22, 26, 24,
+    28, 30, 28, 32, 30, 34, 36, 34, 38, 40, 42,
+  ],
 };
 
-const HERO: Record<Period, { value: string; delta: string; positive: boolean }> = {
+const HERO: Record<
+  Period,
+  { value: string; delta: string; positive: boolean }
+> = {
   "7d": { value: "48.2K", delta: "+12%", positive: true },
   "28d": { value: "184K", delta: "+8%", positive: true },
   "90d": { value: "520K", delta: "+24%", positive: true },
@@ -30,9 +39,24 @@ const KPI_DATA: Record<
   Period,
   { engagement: string; followers: string; saved: string; avgWatch: string }
 > = {
-  "7d": { engagement: "8.4%", followers: "+342", saved: "1.2K", avgWatch: "72%" },
-  "28d": { engagement: "7.9%", followers: "+1.1K", saved: "4.8K", avgWatch: "68%" },
-  "90d": { engagement: "8.1%", followers: "+3.4K", saved: "14.2K", avgWatch: "71%" },
+  "7d": {
+    engagement: "8.4%",
+    followers: "+342",
+    saved: "1.2K",
+    avgWatch: "72%",
+  },
+  "28d": {
+    engagement: "7.9%",
+    followers: "+1.1K",
+    saved: "4.8K",
+    avgWatch: "68%",
+  },
+  "90d": {
+    engagement: "8.1%",
+    followers: "+3.4K",
+    saved: "14.2K",
+    avgWatch: "71%",
+  },
 };
 
 const MOCK_REACH = [12400, 9800, 7200, 5100, 3900];
@@ -67,10 +91,10 @@ function Sparkline({ points }: { points: number[] }) {
   const range = max - min || 1;
   const n = points.length;
   const xs = points.map((_, i) => (i / (n - 1)) * W);
-  const ys = points.map(
-    (v) => H - PAD - ((v - min) / range) * (H - PAD * 2),
-  );
-  const linePoints = xs.map((x, i) => `${x.toFixed(1)},${ys[i]!.toFixed(1)}`).join(" ");
+  const ys = points.map((v) => H - PAD - ((v - min) / range) * (H - PAD * 2));
+  const linePoints = xs
+    .map((x, i) => `${x.toFixed(1)},${ys[i]!.toFixed(1)}`)
+    .join(" ");
   const areaPoints = `0,${H} ${linePoints} ${W},${H}`;
 
   return (
@@ -178,7 +202,10 @@ export function AnalyticsClient() {
 
       <div className={styles.content}>
         {/* Hero card — dark inverted */}
-        <div className={styles.heroCard} aria-label={`Total reach ${hero.value}`}>
+        <div
+          className={styles.heroCard}
+          aria-label={`Total reach ${hero.value}`}
+        >
           <p className={styles.heroKicker}>Total reach</p>
           <div className={styles.heroRow}>
             <span className={styles.heroValue}>{hero.value}</span>
@@ -223,7 +250,9 @@ export function AnalyticsClient() {
                     {PLATFORM_ABBR[p.platform] ?? p.platform}
                   </span>
                   <span className={styles.topTitle}>{p.title}</span>
-                  <span className={styles.topReach}>{formatReach(p.reach)}</span>
+                  <span className={styles.topReach}>
+                    {formatReach(p.reach)}
+                  </span>
                 </div>
               ))}
             </div>

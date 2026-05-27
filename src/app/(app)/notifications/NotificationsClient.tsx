@@ -14,7 +14,9 @@ import styles from "./notifications.module.css";
 function notifIcon(type: NotificationType) {
   switch (type) {
     case "overdue":
-      return <ToneIcon icon={<AlertCircle size={16} />} tone="error" size={32} />;
+      return (
+        <ToneIcon icon={<AlertCircle size={16} />} tone="error" size={32} />
+      );
     case "streak":
       return <ToneIcon icon={<Flame size={16} />} tone="warning" size={32} />;
     case "reminder":
@@ -59,9 +61,7 @@ function NotifItem({ notif, onTap }: NotifItemProps) {
         <p className={styles.itemText}>{notif.body}</p>
         <p className={styles.itemTime}>{formatTs(notif.ts)}</p>
       </div>
-      {!notif.read && (
-        <span className={styles.unreadDot} aria-label="Unread" />
-      )}
+      {!notif.read && <span className={styles.unreadDot} aria-label="Unread" />}
     </button>
   );
 }
@@ -91,24 +91,27 @@ export function NotificationsClient() {
 
   const allRead = unreadCount === 0;
 
-  const groups: { key: string; label: string; items: NotificationWithRead[] }[] =
-    [
-      {
-        key: "today",
-        label: "Today",
-        items: notifications.filter((n) => getGroup(n.ts) === "today"),
-      },
-      {
-        key: "week",
-        label: "This week",
-        items: notifications.filter((n) => getGroup(n.ts) === "week"),
-      },
-      {
-        key: "earlier",
-        label: "Earlier",
-        items: notifications.filter((n) => getGroup(n.ts) === "earlier"),
-      },
-    ].filter((g) => g.items.length > 0);
+  const groups: {
+    key: string;
+    label: string;
+    items: NotificationWithRead[];
+  }[] = [
+    {
+      key: "today",
+      label: "Today",
+      items: notifications.filter((n) => getGroup(n.ts) === "today"),
+    },
+    {
+      key: "week",
+      label: "This week",
+      items: notifications.filter((n) => getGroup(n.ts) === "week"),
+    },
+    {
+      key: "earlier",
+      label: "Earlier",
+      items: notifications.filter((n) => getGroup(n.ts) === "earlier"),
+    },
+  ].filter((g) => g.items.length > 0);
 
   return (
     <div>

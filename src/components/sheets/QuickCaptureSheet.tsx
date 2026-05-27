@@ -66,13 +66,16 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
   }
 
   function save() {
-    const pillar =
-      PILLARS.find((p) => p.id === state.pillarId) ??
+    const pillar = PILLARS.find((p) => p.id === state.pillarId) ??
       PILLARS[0] ?? { id: "personal", name: "Personal", color: "#d97706" };
     const platform = state.platform ?? "ig";
     const plan = state.mode === "schedule";
     const status =
-      state.mode === "idea" ? "idea" : state.mode === "draft" ? "draft" : "sched";
+      state.mode === "idea"
+        ? "idea"
+        : state.mode === "draft"
+          ? "draft"
+          : "sched";
 
     addPost({
       title: state.title.trim(),
@@ -182,7 +185,11 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
                   className={styles.propChip}
                   style={
                     state.pillarId === pl.id
-                      ? { borderColor: pl.color, color: pl.color, background: `${pl.color}18` }
+                      ? {
+                          borderColor: pl.color,
+                          color: pl.color,
+                          background: `${pl.color}18`,
+                        }
                       : { borderColor: pl.color, color: pl.color }
                   }
                 >
