@@ -167,15 +167,20 @@ export function TodayClient() {
 
       <div className={styles.content}>
         {/* KPI grid — 4 cells in a single Surface card */}
-        <div
-          className={styles.kpiGrid}
-          role="list"
-          aria-label="Content pipeline"
-        >
-          <KpiCell value={kpiToday} label="Today" tone="primary" />
-          <KpiCell value={kpiWk} label="Wk" tone="success" />
-          <KpiCell value={kpiDrafts} label="Drafts" />
-          <KpiCell value={kpiPace} label="Pace" />
+        <div className={styles.kpiWrapper}>
+          <div
+            className={styles.kpiGrid}
+            role="list"
+            aria-label="Content pipeline"
+          >
+            <KpiCell value={kpiToday} label="Today" tone="primary" />
+            <KpiCell value={kpiWk} label="Wk" tone="success" />
+            <KpiCell value={kpiDrafts} label="Drafts" />
+            <KpiCell value={kpiPace} label="Pace" />
+          </div>
+          <span className={styles.paceBadge} aria-hidden="true">
+            ● on pace
+          </span>
         </div>
 
         {/* Empty state — only shown when truly nothing */}

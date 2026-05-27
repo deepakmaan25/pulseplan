@@ -52,8 +52,12 @@
 }
 
 /* ─── KPI Grid ───────────────────────────────────────────────── */
-.kpiGrid {
+.kpiWrapper {
+  position: relative;
   margin: 0 var(--s-9);
+}
+
+.kpiGrid {
   border-radius: var(--r-xs);
   overflow: hidden;
   display: grid;
@@ -103,6 +107,19 @@
 }
 .kpiCell_danger .kpiValue {
   color: var(--error);
+}
+
+.paceBadge {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font: var(--t-mono);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--success);
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ─── Overdue callout ────────────────────────────────────────── */
@@ -237,77 +254,6 @@
   font-weight: 600;
   color: var(--primary);
   flex-shrink: 0;
-}
-
-/* ─── Legacy stat pills (kept for loading skeleton) ──────────── */
-.statsRow {
-  display: flex;
-  gap: var(--s-4);
-  padding: 0 var(--s-9);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.statsRow::-webkit-scrollbar {
-  display: none;
-}
-
-.statPill {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s-1);
-  min-width: 72px;
-  padding: var(--s-6) var(--s-7);
-  background: var(--surface-1);
-  border: 1px solid var(--divider);
-  border-radius: var(--r-lg);
-  box-shadow: var(--e-1);
-  flex-shrink: 0;
-}
-
-.statCount {
-  font: var(--t-title);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--ink-1);
-  line-height: 1;
-}
-
-.statLabel {
-  font: var(--t-mono);
-  font-size: 9px;
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--ink-3);
-  white-space: nowrap;
-}
-
-.statSub {
-  font: var(--t-mono);
-  font-size: 8px;
-  color: var(--ink-4);
-  text-transform: uppercase;
-  letter-spacing: var(--ls-label);
-  white-space: nowrap;
-}
-
-.statPill_primary .statCount {
-  color: var(--primary);
-}
-.statPill_success .statCount {
-  color: var(--success);
-}
-.statPill_danger {
-  background: var(--error-soft);
-  border-color: transparent;
-}
-.statPill_danger .statCount {
-  color: var(--error);
-}
-.statPill_danger .statLabel {
-  color: var(--error);
-  opacity: 0.75;
 }
 
 @media (prefers-reduced-motion: reduce) {
