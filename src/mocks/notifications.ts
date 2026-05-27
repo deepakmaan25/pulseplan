@@ -21,7 +21,7 @@ export const NOTIFICATIONS: MockNotification[] = [
   {
     id: "n2",
     type: "streak",
-    title: "3-day streak 🔥",
+    title: "3-day streak",
     body: "You've published 3 days in a row. Keep it up!",
     ts: "2026-05-14T08:00:00",
   },
