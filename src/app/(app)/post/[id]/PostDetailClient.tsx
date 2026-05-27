@@ -485,6 +485,13 @@ export function PostDetailClient({ postId }: { postId: string }) {
               )}
             </div>
 
+            {/* Description — brief context line seeded at capture time */}
+            {post.description ? (
+              <div className={styles.descriptionBlock}>
+                <p className={styles.descriptionText}>{post.description}</p>
+              </div>
+            ) : null}
+
             {/* Hook variants */}
             <div className={styles.hookSection}>
               <p className={styles.sectionLabel}>Hook variants</p>
@@ -578,11 +585,6 @@ export function PostDetailClient({ postId }: { postId: string }) {
               <span className={styles.metaLabel}>Platform</span>
               <span className={styles.metaValue}>
                 <PlatformChip platform={post.platform} size="sm" />
-                <ChevronRight
-                  size={14}
-                  className={styles.metaChevron}
-                  aria-hidden="true"
-                />
               </span>
             </div>
             <div className={styles.metaRow}>
@@ -593,11 +595,6 @@ export function PostDetailClient({ postId }: { postId: string }) {
                   color={post.pillar.color}
                   size="sm"
                 />
-                <ChevronRight
-                  size={14}
-                  className={styles.metaChevron}
-                  aria-hidden="true"
-                />
               </span>
             </div>
             {post.postType ? (
@@ -605,11 +602,6 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 <span className={styles.metaLabel}>Type</span>
                 <span className={styles.metaValue}>
                   <span className={styles.postTypeBadge}>{post.postType}</span>
-                  <ChevronRight
-                    size={14}
-                    className={styles.metaChevron}
-                    aria-hidden="true"
-                  />
                 </span>
               </div>
             ) : null}
@@ -618,11 +610,6 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 <span className={styles.metaLabel}>Priority</span>
                 <span className={styles.metaValue}>
                   <PriorityChip priority={post.priority} />
-                  <ChevronRight
-                    size={14}
-                    className={styles.metaChevron}
-                    aria-hidden="true"
-                  />
                 </span>
               </div>
             ) : null}
@@ -635,13 +622,6 @@ export function PostDetailClient({ postId }: { postId: string }) {
                   >
                     {formatScheduled(post.scheduledDate, post.time)}
                   </span>
-                  {editable && (
-                    <ChevronRight
-                      size={14}
-                      className={styles.metaChevron}
-                      aria-hidden="true"
-                    />
-                  )}
                 </span>
               </div>
             ) : null}

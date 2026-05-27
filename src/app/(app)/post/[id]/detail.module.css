@@ -114,11 +114,6 @@
   gap: var(--s-3);
 }
 
-.metaChevron {
-  color: var(--ink-4);
-  flex-shrink: 0;
-}
-
 :global(.pp2.dark) .metaCard {
   box-shadow: none;
   border: 1px solid var(--divider-strong);
