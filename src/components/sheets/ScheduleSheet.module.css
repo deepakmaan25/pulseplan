@@ -156,25 +156,48 @@
   border-color: transparent;
 }
 
-/* ── Reminder row ─────────────────────────────────────────────── */
-.reminderRow {
+/* ── Options card (Repeat + Reminder) ────────────────────────── */
+.optionsCard {
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.optionRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--s-5) var(--s-7);
-  background: var(--surface-1);
-  border: 1px solid var(--divider);
-  border-radius: var(--r-md);
 }
 
-.reminderLabel {
+.optionRowBorder {
+  border-top: 1px solid var(--divider);
+}
+
+.optionLabel {
   font: var(--t-body-sm);
   color: var(--ink-2);
 }
 
-.reminderValue {
+.optionValue {
   font: var(--t-caption);
   color: var(--ink-3);
+}
+
+/* ── Custom time input ────────────────────────────────────────── */
+.customTimeInput {
+  appearance: none;
+  background: var(--surface-1);
+  border: 1.5px solid var(--primary);
+  border-radius: var(--r-md);
+  padding: var(--s-3) var(--s-6);
+  font: var(--t-label);
+  font-size: 13px;
+  color: var(--ink-1);
+  cursor: pointer;
+  outline: none;
+  margin-top: var(--s-4);
 }
 
 /* ── Footer ───────────────────────────────────────────────────── */

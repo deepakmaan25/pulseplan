@@ -8,7 +8,8 @@ import styles from "./ScheduleSheet.module.css";
 const TODAY = "2026-05-16";
 const WEEK_START = "2026-05-10";
 
-const TIME_CHIPS = [
+// "8:00 PM" replaced by a dedicated "Custom" chip handled separately
+const PRESET_TIMES = [
   "6:00 AM",
   "7:00 AM",
   "9:00 AM",
@@ -16,7 +17,6 @@ const TIME_CHIPS = [
   "3:00 PM",
   "5:00 PM",
   "6:00 PM",
-  "8:00 PM",
 ];
 
 interface WeekCell {
@@ -51,6 +51,16 @@ function formatDate(dateStr: string): string {
   });
 }
 
+/** Convert 24-hour string ("09:30") → 12-hour display ("9:30 AM") */
+function formatTime(h24: string): string {
+  const parts = h24.split(":");
+  const h = parseInt(parts[0] ?? "9", 10);
+  const m = parseInt(parts[1] ?? "0", 10);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 interface ScheduleSheetProps {
   open: boolean;
   onClose: () => void;
@@ -68,10 +78,22 @@ export function ScheduleSheet({
 }: ScheduleSheetProps) {
   const [date, setDate] = useState(initialDate ?? TODAY);
   const [time, setTime] = useState(initialTime ?? "9:00 AM");
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customHour, setCustomHour] = useState("09:00");
 
   function handleConfirm() {
     onSchedule(date, time);
     onClose();
+  }
+
+  function handlePresetTime(t: string) {
+    setIsCustomMode(false);
+    setTime(t);
+  }
+
+  function handleCustomChange(h24: string) {
+    setCustomHour(h24);
+    setTime(formatTime(h24));
   }
 
   return (
@@ -109,6 +131,7 @@ export function ScheduleSheet({
             type="button"
             className={styles.suggestedBtn}
             onClick={() => {
+              setIsCustomMode(false);
               setDate(TODAY);
               setTime("9:00 AM");
             }}
@@ -141,24 +164,51 @@ export function ScheduleSheet({
         <div className={styles.section}>
           <p className={styles.sectionLabel}>Time</p>
           <div className={styles.timeChips}>
-            {TIME_CHIPS.map((t) => (
+            {PRESET_TIMES.map((t) => (
               <button
                 key={t}
                 type="button"
-                aria-pressed={time === t}
-                onClick={() => setTime(t)}
-                className={`${styles.timeChip} ${time === t ? styles.timeChipSelected : ""}`}
+                aria-pressed={!isCustomMode && time === t}
+                onClick={() => handlePresetTime(t)}
+                className={`${styles.timeChip} ${!isCustomMode && time === t ? styles.timeChipSelected : ""}`}
               >
                 {t}
               </button>
             ))}
+            {/* Custom chip — shows a time input when active */}
+            <button
+              type="button"
+              aria-pressed={isCustomMode}
+              onClick={() => {
+                setIsCustomMode(true);
+                setTime(formatTime(customHour));
+              }}
+              className={`${styles.timeChip} ${isCustomMode ? styles.timeChipSelected : ""}`}
+            >
+              Custom
+            </button>
           </div>
+          {isCustomMode && (
+            <input
+              type="time"
+              className={styles.customTimeInput}
+              value={customHour}
+              onChange={(e) => handleCustomChange(e.target.value)}
+              aria-label="Custom time"
+            />
+          )}
         </div>
 
-        {/* Reminder row */}
-        <div className={styles.reminderRow}>
-          <span className={styles.reminderLabel}>Reminder</span>
-          <span className={styles.reminderValue}>30 min before</span>
+        {/* Repeat + Reminder card */}
+        <div className={styles.optionsCard}>
+          <div className={styles.optionRow}>
+            <span className={styles.optionLabel}>Repeat</span>
+            <span className={styles.optionValue}>Never</span>
+          </div>
+          <div className={`${styles.optionRow} ${styles.optionRowBorder}`}>
+            <span className={styles.optionLabel}>Reminder</span>
+            <span className={styles.optionValue}>30 min before</span>
+          </div>
         </div>
       </div>
     </Sheet>
