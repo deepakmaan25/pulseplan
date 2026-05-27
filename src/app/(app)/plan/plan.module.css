@@ -166,17 +166,6 @@ section:nth-child(2) .dayHeader {
   margin: 0;
 }
 
-.todayBadge {
-  font: var(--t-label);
-  font-size: 11px;
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  background: var(--primary);
-  color: #fff;
-  padding: 2px var(--s-5);
-  border-radius: var(--r-full);
-}
-
 .countBadge {
   font: var(--t-mono);
   font-size: 11px;

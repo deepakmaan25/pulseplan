@@ -1,21 +1,31 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { BoardCard } from "@/components/post/BoardCard";
 import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { PostRow } from "@/components/post/PostRow";
+import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./plan.module.css";
 
 const TODAY = "2026-05-16";
 const WEEK_NUM = 20;
 
+type ViewMode = "wk" | "mo";
+
+const VIEW_OPTIONS = [
+  { value: "wk" as const, label: "Wk" },
+  { value: "mo" as const, label: "Mo", disabled: true },
+] as const;
+
 interface WeekDay {
   date: string;
-  label: string;
-  dayLetter: string;
+  label: string; // full readable, for aria
+  dayDisplay: string; // visual: "Mon · May 11"
+  weekdayShort: string; // "Mon"
+  dayLetter: string; // narrow: "M"
   dayNum: number;
   isToday: boolean;
 }
@@ -26,6 +36,11 @@ function getWeekDays(): WeekDay[] {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
     const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const weekdayShort = d.toLocaleDateString("en-US", { weekday: "short" });
+    const monthDay = d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
     return {
       date: iso,
       label: d.toLocaleDateString("en-US", {
@@ -33,6 +48,8 @@ function getWeekDays(): WeekDay[] {
         month: "short",
         day: "numeric",
       }),
+      dayDisplay: `${weekdayShort} · ${monthDay}`,
+      weekdayShort,
       dayLetter: d.toLocaleDateString("en-US", { weekday: "narrow" }),
       dayNum: d.getDate(),
       isToday: iso === TODAY,
@@ -56,6 +73,7 @@ export function PlanClient() {
   const router = useRouter();
   const { posts } = usePosts();
   const days = getWeekDays();
+  const [viewMode, setViewMode] = useState<ViewMode>("wk");
 
   // Scroll to a day row
   const scrollToDay = useCallback((date: string) => {
@@ -76,11 +94,29 @@ export function PlanClient() {
     (p) => (p.status === "idea" || p.status === "draft") && !p.scheduledDate,
   );
 
-  const totalPlanned = posts.filter((p) => p.scheduledDate != null).length;
+  // Week-total: only posts scheduled within this week
+  const weekStart = days[0]?.date ?? "";
+  const weekEnd = days[6]?.date ?? "";
+  const weekPlanned = posts.filter(
+    (p) =>
+      p.scheduledDate != null &&
+      p.scheduledDate >= weekStart &&
+      p.scheduledDate <= weekEnd,
+  ).length;
 
   function openPost(id: string) {
     router.push(`/post/${id}`);
   }
+
+  const periodControl = (
+    <Segmented
+      options={VIEW_OPTIONS}
+      value={viewMode}
+      onChange={setViewMode}
+      ariaLabel="View period"
+      size="sm"
+    />
+  );
 
   return (
     <div>
@@ -88,7 +124,8 @@ export function PlanClient() {
         variant="prominent"
         kicker={weekRangeKicker(days)}
         title="This Week"
-        subtitle={totalPlanned > 0 ? `${totalPlanned} planned` : undefined}
+        subtitle={weekPlanned > 0 ? `${weekPlanned} this week` : undefined}
+        trailingExtra={periodControl}
         style={{ paddingTop: "var(--s-4)" }}
       />
 
@@ -174,10 +211,7 @@ export function PlanClient() {
               aria-label={day.label}
             >
               <div className={styles.dayHeader}>
-                <span className={styles.dayLabel}>{day.label}</span>
-                {day.isToday && (
-                  <span className={styles.todayBadge}>Today</span>
-                )}
+                <span className={styles.dayLabel}>{day.dayDisplay}</span>
                 {dayPosts.length > 0 && (
                   <span className={styles.countBadge}>{dayPosts.length}</span>
                 )}
@@ -208,7 +242,7 @@ export function PlanClient() {
                   onClick={() => openPost("new")}
                   aria-label={`Schedule for ${day.label}`}
                 >
-                  + Schedule for {day.label.split(",")[0]}
+                  + Schedule for {day.weekdayShort}
                 </button>
               )}
             </section>

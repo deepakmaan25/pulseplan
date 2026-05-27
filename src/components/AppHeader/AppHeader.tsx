@@ -5,6 +5,7 @@ import {
   useState,
   type CSSProperties,
   type HTMLAttributes,
+  type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
@@ -36,6 +37,8 @@ interface AppHeaderProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   /** Today screen: show greeting + date instead of a title bar */
   showGreeting?: boolean;
   style?: CSSProperties;
+  /** Extra content inserted in the trailing actions zone, before the bell */
+  trailingExtra?: ReactNode;
 }
 
 export function AppHeader({
@@ -45,6 +48,7 @@ export function AppHeader({
   variant = "compact",
   showGreeting = false,
   style,
+  trailingExtra,
   ...rest
 }: AppHeaderProps) {
   const router = useRouter();
@@ -68,6 +72,7 @@ export function AppHeader({
 
   const actions = (
     <div className={styles.trailingActions}>
+      {trailingExtra}
       <IconButton
         icon={<Bell size={20} />}
         label="Notifications"
