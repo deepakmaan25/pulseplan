@@ -1,3 +1,87 @@
+/* ─── Week strip ─────────────────────────────────────────────── */
+.weekStrip {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: var(--s-3) var(--s-5);
+  gap: 0;
+}
+
+.stripCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--s-3) var(--s-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition: background var(--dur-fast) var(--easing-standard);
+}
+
+.stripCell:hover {
+  background: var(--bg-sunken);
+}
+
+.stripCellToday {
+  background: var(--ink-1);
+}
+
+.stripCellToday:hover {
+  background: var(--ink-2);
+}
+
+.stripLetter {
+  font: var(--t-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--ink-4);
+}
+
+.stripCellToday .stripLetter {
+  color: var(--ink-inverse);
+  opacity: 0.65;
+}
+
+.stripNum {
+  font: var(--t-label);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-1);
+  line-height: 1;
+}
+
+.stripCellToday .stripNum {
+  color: var(--ink-inverse);
+}
+
+.stripPips {
+  display: flex;
+  gap: 2px;
+  min-height: 5px;
+  align-items: center;
+}
+
+.stripPip {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--r-full);
+  background: var(--ink-4);
+  flex-shrink: 0;
+}
+
+.stripPipToday {
+  background: var(--ink-inverse);
+  opacity: 0.55;
+}
+
+/* ─── Content area ───────────────────────────────────────────── */
 .content {
   padding: var(--s-4) 0 var(--s-16);
   display: flex;
@@ -5,6 +89,64 @@
   gap: 0;
 }
 
+/* ─── Unscheduled tray ───────────────────────────────────────── */
+.trayLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: var(--s-6) var(--s-9) var(--s-4);
+  margin: 0;
+}
+
+.trayWrapper {
+  position: relative;
+}
+
+.trayWrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  background: linear-gradient(to right, transparent, var(--bg-base));
+  pointer-events: none;
+}
+
+.tray {
+  display: flex;
+  gap: var(--s-4);
+  padding: 0 var(--s-9) var(--s-6);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.tray::-webkit-scrollbar {
+  display: none;
+}
+
+.trayCard {
+  flex-shrink: 0;
+  width: 180px;
+  scroll-snap-align: start;
+}
+
+/* ─── Overdue section ────────────────────────────────────────── */
+.callouts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: 0 var(--s-9) var(--s-6);
+}
+
+.dayLabelDanger {
+  color: var(--error);
+}
+
+/* ─── Day header ─────────────────────────────────────────────── */
 .dayHeader {
   display: flex;
   align-items: center;
@@ -13,23 +155,15 @@
   border-top: 1px solid var(--divider);
 }
 
-section:first-child .dayHeader {
+section:first-child .dayHeader,
+section:nth-child(2) .dayHeader {
   border-top: none;
-  padding-top: var(--s-6);
-}
-
-.dayHeaderToday {
-  background: var(--primary-soft);
-  border-top-color: transparent;
 }
 
 .dayLabel {
   font: var(--t-title-sm);
   color: var(--ink-1);
-}
-
-.dayHeaderToday .dayLabel {
-  color: var(--primary-ink);
+  margin: 0;
 }
 
 .todayBadge {
@@ -58,10 +192,32 @@ section:first-child .dayHeader {
   flex-direction: column;
 }
 
-.emptyDay {
+/* ─── Empty day dashed CTA ───────────────────────────────────── */
+.emptyDayCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 var(--s-9) var(--s-4);
+  height: 44px;
+  border: 1px dashed var(--divider-strong);
+  border-radius: var(--r-md);
+  background: transparent;
   font: var(--t-body-sm);
   color: var(--ink-4);
-  font-style: italic;
-  padding: var(--s-5) var(--s-9) var(--s-7);
-  margin: 0;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    color var(--dur-fast) var(--easing-standard);
+}
+
+.emptyDayCta:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stripCell,
+  .emptyDayCta {
+    transition: none;
+  }
 }

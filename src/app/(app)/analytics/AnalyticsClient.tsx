@@ -1,14 +1,49 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader/AppHeader";
-import { KPI } from "@/components/ui/KPI/KPI";
+import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./analytics.module.css";
 
-const TODAY = "2026-05-16";
-const MONTH_PREFIX = "2026-05";
-const WEEK_START = "2026-05-10";
+type Period = "7d" | "28d" | "90d";
+
+const PERIOD_OPTIONS: { value: Period; label: string }[] = [
+  { value: "7d", label: "7d" },
+  { value: "28d", label: "28d" },
+  { value: "90d", label: "90d" },
+];
+
+const SPARKLINES: Record<Period, number[]> = {
+  "7d": [28, 32, 30, 38, 35, 42, 48],
+  "28d": [18, 22, 20, 24, 22, 28, 26, 30, 28, 34, 32, 36, 34, 38, 36, 40, 38, 44, 42, 46, 44, 48, 46, 50, 48, 52, 50, 54],
+  "90d": [5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19, 22, 24, 22, 26, 24, 28, 30, 28, 32, 30, 34, 36, 34, 38, 40, 42],
+};
+
+const HERO: Record<Period, { value: string; delta: string; positive: boolean }> = {
+  "7d": { value: "48.2K", delta: "+12%", positive: true },
+  "28d": { value: "184K", delta: "+8%", positive: true },
+  "90d": { value: "520K", delta: "+24%", positive: true },
+};
+
+const KPI_DATA: Record<
+  Period,
+  { engagement: string; followers: string; saved: string; avgWatch: string }
+> = {
+  "7d": { engagement: "8.4%", followers: "+342", saved: "1.2K", avgWatch: "72%" },
+  "28d": { engagement: "7.9%", followers: "+1.1K", saved: "4.8K", avgWatch: "68%" },
+  "90d": { engagement: "8.1%", followers: "+3.4K", saved: "14.2K", avgWatch: "71%" },
+};
+
+const MOCK_REACH = [12400, 9800, 7200, 5100, 3900];
+
+const PLATFORM_ABBR: Record<string, string> = {
+  ig: "IG",
+  li: "LI",
+  x: "X",
+  yt: "YT",
+  th: "TH",
+};
 
 const PLATFORM_LABELS: Record<string, string> = {
   ig: "Instagram",
@@ -18,190 +53,189 @@ const PLATFORM_LABELS: Record<string, string> = {
   th: "Threads",
 };
 
-const CADENCE_GOALS: Record<string, number> = {
-  daily: 7,
-  "5x": 5,
-  "3x": 3,
-  "2x": 2,
-  weekly: 1,
-};
+function formatReach(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return String(n);
+}
 
-const CADENCE_LABELS: Record<string, string> = {
-  daily: "7× / week",
-  "5x": "5× / week",
-  "3x": "3× / week",
-  "2x": "2× / week",
-  weekly: "1× / week",
-};
+function Sparkline({ points }: { points: number[] }) {
+  const W = 160;
+  const H = 40;
+  const PAD = 4;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+  const n = points.length;
+  const xs = points.map((_, i) => (i / (n - 1)) * W);
+  const ys = points.map(
+    (v) => H - PAD - ((v - min) / range) * (H - PAD * 2),
+  );
+  const linePoints = xs.map((x, i) => `${x.toFixed(1)},${ys[i]!.toFixed(1)}`).join(" ");
+  const areaPoints = `0,${H} ${linePoints} ${W},${H}`;
+
+  return (
+    <svg
+      width={W}
+      height={H}
+      viewBox={`0 0 ${W} ${H}`}
+      aria-hidden="true"
+      className={styles.sparkline}
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id="spkFillAnalytics" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPoints} fill="url(#spkFillAnalytics)" />
+      <polyline
+        points={linePoints}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 export function AnalyticsClient() {
   const { posts } = usePosts();
-  const [weeklyGoal, setWeeklyGoal] = useState<{
-    count: number;
-    label: string;
-  } | null>(null);
+  const [period, setPeriod] = useState<Period>("7d");
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("pp2-onboarding");
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { cadence?: string };
-      const cadence = parsed.cadence ?? "";
-      const count = CADENCE_GOALS[cadence];
-      const label = CADENCE_LABELS[cadence];
-      if (count !== undefined && label !== undefined) {
-        setWeeklyGoal({ count, label });
-      }
-    } catch {
-      // storage unavailable
-    }
-  }, []);
+  const hero = HERO[period];
+  const kpi = KPI_DATA[period];
+  const sparkPoints = SPARKLINES[period];
 
-  const stats = useMemo(() => {
-    const published = posts.filter(
-      (p) => p.status === "pub" && p.scheduledDate?.startsWith(MONTH_PREFIX),
-    ).length;
-    const scheduled = posts.filter((p) => p.status === "sched").length;
-    const idea = posts.filter((p) => p.status === "idea").length;
-    const inProgress = posts.filter(
-      (p) => p.status === "draft" || p.status === "review",
-    ).length;
-    const overdue = posts.filter((p) => p.status === "overdue").length;
-    const pace7d = posts.filter(
-      (p) =>
-        p.status === "pub" &&
-        p.scheduledDate != null &&
-        p.scheduledDate >= WEEK_START &&
-        p.scheduledDate <= TODAY,
-    ).length;
-
-    const pillarMap = new Map<
-      string,
-      { name: string; color: string; count: number }
-    >();
-    posts.forEach((p) => {
-      const entry = pillarMap.get(p.pillar.id);
-      if (entry) {
-        entry.count++;
-      } else {
-        pillarMap.set(p.pillar.id, {
-          name: p.pillar.name,
-          color: p.pillar.color,
-          count: 1,
-        });
-      }
-    });
-    const pillars = [...pillarMap.values()].sort((a, b) => b.count - a.count);
-    const maxPillarCount = Math.max(...pillars.map((p) => p.count), 1);
-
-    const platformMap = new Map<string, number>();
-    posts.forEach((p) => {
-      platformMap.set(p.platform, (platformMap.get(p.platform) ?? 0) + 1);
-    });
-    const platforms = [...platformMap.entries()]
-      .map(([key, count]) => ({
-        key,
-        label: PLATFORM_LABELS[key] ?? key,
-        count,
-      }))
-      .sort((a, b) => b.count - a.count);
-    const maxPlatformCount = Math.max(...platforms.map((p) => p.count), 1);
-
-    return {
-      published,
-      scheduled,
-      idea,
-      inProgress,
-      overdue,
-      pace7d,
-      pillars,
-      platforms,
-      maxPillarCount,
-      maxPlatformCount,
-    };
+  const topPosts = useMemo(() => {
+    const pubPosts = posts.filter((p) => p.status === "pub");
+    return pubPosts.slice(0, 5).map((p, i) => ({
+      ...p,
+      reach: MOCK_REACH[i] ?? (5 - i) * 800 + 400,
+    }));
   }, [posts]);
 
+  const { pillars, platforms, maxPillarCount, maxPlatformCount } =
+    useMemo(() => {
+      const pillarMap = new Map<
+        string,
+        { name: string; color: string; count: number }
+      >();
+      posts.forEach((p) => {
+        const entry = pillarMap.get(p.pillar.id);
+        if (entry) {
+          entry.count++;
+        } else {
+          pillarMap.set(p.pillar.id, {
+            name: p.pillar.name,
+            color: p.pillar.color,
+            count: 1,
+          });
+        }
+      });
+      const pillars = [...pillarMap.values()].sort((a, b) => b.count - a.count);
+
+      const platformMap = new Map<string, number>();
+      posts.forEach((p) => {
+        platformMap.set(p.platform, (platformMap.get(p.platform) ?? 0) + 1);
+      });
+      const platforms = [...platformMap.entries()]
+        .map(([key, count]) => ({
+          key,
+          label: PLATFORM_LABELS[key] ?? key,
+          count,
+        }))
+        .sort((a, b) => b.count - a.count);
+
+      return {
+        pillars,
+        platforms,
+        maxPillarCount: Math.max(...pillars.map((p) => p.count), 1),
+        maxPlatformCount: Math.max(...platforms.map((p) => p.count), 1),
+      };
+    }, [posts]);
+
   return (
-    <div>
+    <div className={styles.screen}>
       <AppHeader
         variant="prominent"
         title="Analytics"
         style={{ paddingTop: "var(--s-4)" }}
       />
 
+      {/* Period picker */}
+      <div className={styles.periodBar}>
+        <Segmented
+          options={PERIOD_OPTIONS}
+          value={period}
+          onChange={(v) => setPeriod(v)}
+          ariaLabel="Analytics period"
+          size="sm"
+        />
+      </div>
+
       <div className={styles.content}>
-        {/* Pipeline */}
-        <section aria-label="Content pipeline">
-          <p className={styles.sectionLabel}>Pipeline</p>
-          <div className={styles.pipelineRow}>
-            <div className={styles.pipelineCell}>
-              <span className={styles.pipelineCount}>{stats.idea}</span>
-              <span className={styles.pipelineName}>Ideas</span>
-            </div>
-            <div className={styles.pipelineCell}>
-              <span className={styles.pipelineCount}>{stats.inProgress}</span>
-              <span className={styles.pipelineName}>In progress</span>
-            </div>
-            <div className={styles.pipelineCell}>
-              <span className={styles.pipelineCount}>{stats.scheduled}</span>
-              <span className={styles.pipelineName}>Scheduled</span>
-            </div>
-            <div className={styles.pipelineCell}>
-              <span className={styles.pipelineCount}>{stats.published}</span>
-              <span className={styles.pipelineName}>Published</span>
-            </div>
-            {stats.overdue > 0 && (
-              <div
-                className={`${styles.pipelineCell} ${styles.pipelineCellOverdue}`}
-              >
-                <span className={styles.pipelineCount}>{stats.overdue}</span>
-                <span className={styles.pipelineName}>Overdue</span>
-              </div>
-            )}
+        {/* Hero card — dark inverted */}
+        <div className={styles.heroCard} aria-label={`Total reach ${hero.value}`}>
+          <p className={styles.heroKicker}>Total reach</p>
+          <div className={styles.heroRow}>
+            <span className={styles.heroValue}>{hero.value}</span>
+            <span
+              className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
+            >
+              {hero.delta}
+            </span>
           </div>
-        </section>
+          <Sparkline points={sparkPoints} />
+        </div>
 
-        {/* Pace */}
-        <section aria-label="Publishing pace">
-          <p className={styles.sectionLabel}>Last 7 days</p>
-          <div className={styles.grid}>
-            <KPI
-              label="Published"
-              value={stats.pace7d}
-              trend={
-                stats.pace7d >= 3 ? "up" : stats.pace7d > 0 ? "flat" : "down"
-              }
-            />
-            {weeklyGoal !== null ? (
-              <KPI
-                label="Goal"
-                value={stats.pace7d}
-                unit={` / ${weeklyGoal.count}`}
-                delta={weeklyGoal.label}
-                trend={
-                  stats.pace7d >= weeklyGoal.count
-                    ? "up"
-                    : stats.pace7d > 0
-                      ? "flat"
-                      : "down"
-                }
-              />
-            ) : (
-              <KPI
-                label="Daily avg"
-                value={(stats.pace7d / 7).toFixed(1)}
-                unit=" / day"
-              />
-            )}
+        {/* 2×2 KPI grid */}
+        <div className={styles.kpiGrid} aria-label="Key metrics">
+          <div className={styles.kpiCell}>
+            <span className={styles.kpiValue}>{kpi.engagement}</span>
+            <span className={styles.kpiLabel}>Engagement</span>
           </div>
-        </section>
+          <div className={styles.kpiCell}>
+            <span className={styles.kpiValue}>{kpi.followers}</span>
+            <span className={styles.kpiLabel}>Followers</span>
+          </div>
+          <div className={styles.kpiCell}>
+            <span className={styles.kpiValue}>{kpi.saved}</span>
+            <span className={styles.kpiLabel}>Saved</span>
+          </div>
+          <div className={styles.kpiCell}>
+            <span className={styles.kpiValue}>{kpi.avgWatch}</span>
+            <span className={styles.kpiLabel}>Avg watch</span>
+          </div>
+        </div>
 
-        {/* Pillar breakdown */}
-        {stats.pillars.length > 0 && (
+        {/* Top Posts */}
+        {topPosts.length > 0 && (
+          <section aria-label="Top posts">
+            <p className={styles.sectionLabel}>Top posts</p>
+            <div className={styles.topList}>
+              {topPosts.map((p, i) => (
+                <div key={p.id} className={styles.topRow}>
+                  <span className={styles.topRank}>{i + 1}</span>
+                  <span className={styles.topPlatform}>
+                    {PLATFORM_ABBR[p.platform] ?? p.platform}
+                  </span>
+                  <span className={styles.topTitle}>{p.title}</span>
+                  <span className={styles.topReach}>{formatReach(p.reach)}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Content pillars */}
+        {pillars.length > 0 && (
           <section aria-label="Content pillar breakdown">
             <p className={styles.sectionLabel}>Content pillars</p>
             <div className={styles.breakdownList}>
-              {stats.pillars.map(({ name, color, count }) => (
+              {pillars.map(({ name, color, count }) => (
                 <div key={name} className={styles.breakdownRow}>
                   <span
                     className={styles.breakdownDot}
@@ -212,7 +246,7 @@ export function AnalyticsClient() {
                     <div
                       className={styles.breakdownBar}
                       style={{
-                        width: `${(count / stats.maxPillarCount) * 100}%`,
+                        width: `${(count / maxPillarCount) * 100}%`,
                         background: color,
                       }}
                     />
@@ -224,19 +258,19 @@ export function AnalyticsClient() {
           </section>
         )}
 
-        {/* Platform breakdown */}
-        {stats.platforms.length > 0 && (
+        {/* Platforms */}
+        {platforms.length > 0 && (
           <section aria-label="Platform breakdown">
             <p className={styles.sectionLabel}>Platforms</p>
             <div className={styles.breakdownList}>
-              {stats.platforms.map(({ key, label, count }) => (
+              {platforms.map(({ key, label, count }) => (
                 <div key={key} className={styles.breakdownRow}>
                   <span className={styles.breakdownName}>{label}</span>
                   <div className={styles.breakdownBarTrack}>
                     <div
                       className={styles.breakdownBar}
                       style={{
-                        width: `${(count / stats.maxPlatformCount) * 100}%`,
+                        width: `${(count / maxPlatformCount) * 100}%`,
                         background: "var(--primary)",
                       }}
                     />
@@ -253,13 +287,6 @@ export function AnalyticsClient() {
             Add your first post idea to start tracking your pipeline.
           </p>
         )}
-
-        <div className={styles.note}>
-          <p>
-            Engagement data appears here once you connect your platforms in
-            Settings.
-          </p>
-        </div>
       </div>
     </div>
   );

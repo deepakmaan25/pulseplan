@@ -1,0 +1,61 @@
+.callout {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-5) var(--s-6);
+  background: var(--error-soft);
+  border: 1px solid color-mix(in oklab, var(--error) 22%, transparent);
+  border-radius: var(--r-lg);
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: opacity var(--dur-fast) var(--easing-standard);
+}
+
+.callout:hover {
+  opacity: 0.85;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.kicker {
+  font: var(--t-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--error-ink);
+}
+
+.title {
+  font: var(--t-body-sm);
+  font-weight: 600;
+  color: var(--error-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font: var(--t-caption);
+  font-weight: 600;
+  color: var(--error-ink);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .callout {
+    transition: none;
+  }
+}

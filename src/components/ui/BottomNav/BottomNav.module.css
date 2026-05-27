@@ -52,15 +52,15 @@
   background: var(--primary);
   color: var(--ink-inverse);
   border: 0;
-  border-radius: var(--r-full);
-  width: 52px;
-  height: 52px;
+  border-radius: var(--r-md);
+  width: 56px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   cursor: pointer;
-  box-shadow: var(--e-3);
+  box-shadow: 0 4px 12px rgba(46, 91, 255, 0.25);
 }
 .fab:hover {
   background: var(--primary-hover);

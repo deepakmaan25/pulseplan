@@ -1,5 +1,22 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--bg-base);
+}
+
+/* ── Period picker bar ────────────────────────────────────────── */
+.periodBar {
+  padding: var(--s-5) var(--s-9);
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--divider);
+  background: var(--bg-base);
+}
+
+/* ── Page content ─────────────────────────────────────────────── */
 .content {
-  padding: var(--s-6) var(--s-9) var(--s-16);
+  padding: var(--s-7) var(--s-9) var(--s-16);
   display: flex;
   flex-direction: column;
   gap: var(--s-10);
@@ -13,57 +30,167 @@
   margin: 0 0 var(--s-6);
 }
 
-/* KPI grid */
-.grid {
+/* ── Hero card ────────────────────────────────────────────────── */
+.heroCard {
+  background: var(--ink-1);
+  border-radius: var(--r-xl);
+  padding: var(--s-8) var(--s-9) var(--s-6);
+  color: var(--ink-inverse);
+  overflow: hidden;
+  position: relative;
+}
+
+.heroKicker {
+  font: var(--t-mono);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink-inverse) 55%, transparent);
+  margin: 0 0 var(--s-3);
+}
+
+.heroRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-5);
+  margin-bottom: var(--s-6);
+}
+
+.heroValue {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink-inverse);
+  font-variant-numeric: tabular-nums;
+}
+
+.heroDelta {
+  font: var(--t-label);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px var(--s-5);
+  border-radius: var(--r-full);
+}
+
+.heroDeltaPos {
+  background: color-mix(in srgb, #0e9f6e 20%, transparent);
+  color: #6ee7b7;
+}
+
+.heroDeltaNeg {
+  background: color-mix(in srgb, var(--error) 20%, transparent);
+  color: #fca5a5;
+}
+
+.sparkline {
+  display: block;
+  width: 100%;
+  height: 40px;
+  color: var(--ink-inverse);
+}
+
+/* ── 2×2 KPI grid ─────────────────────────────────────────────── */
+.kpiGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--s-6);
+  gap: 1px;
+  background: var(--divider);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--divider);
 }
 
-/* Pipeline */
-.pipelineRow {
-  display: flex;
-  gap: var(--s-4);
-}
-
-.pipelineCell {
-  flex: 1;
-  min-width: 0;
+.kpiCell {
+  background: var(--surface-1);
+  padding: var(--s-7) var(--s-8);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  gap: var(--s-2);
+}
+
+.kpiValue {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-1);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.kpiLabel {
+  font: var(--t-mono);
+  font-size: 9px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── Top Posts list ───────────────────────────────────────────── */
+.topList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   background: var(--surface-1);
   border-radius: var(--r-lg);
-  padding: var(--s-6) var(--s-4);
-  box-shadow: var(--e-1);
+  overflow: hidden;
+  border: 1px solid var(--divider);
 }
 
-.pipelineCount {
-  font: var(--t-title);
-  color: var(--ink-1);
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-6) var(--s-7);
+  border-bottom: 1px solid var(--divider);
 }
 
-.pipelineName {
-  font: var(--t-caption);
-  font-size: 10px;
-  color: var(--ink-3);
+.topRow:last-child {
+  border-bottom: none;
+}
+
+.topRank {
+  font: var(--t-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-4);
+  min-width: 14px;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.topPlatform {
+  font: var(--t-mono);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--bg-sunken);
+  padding: 2px var(--s-4);
+  border-radius: var(--r-sm);
+  flex-shrink: 0;
+}
+
+.topTitle {
+  flex: 1;
+  min-width: 0;
+  font: var(--t-body-sm);
+  color: var(--ink-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
 }
 
-.pipelineCellOverdue .pipelineCount {
-  color: var(--error);
+.topReach {
+  font: var(--t-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
-.pipelineCellOverdue .pipelineName {
-  color: var(--error);
-}
-
-/* Breakdown bars */
+/* ── Breakdown bars ───────────────────────────────────────────── */
 .breakdownList {
   display: flex;
   flex-direction: column;
@@ -114,28 +241,11 @@
   flex-shrink: 0;
 }
 
-:global(.pp2.dark) .pipelineCell {
-  box-shadow: none;
-  border: 1px solid var(--divider-strong);
-}
-
-/* Footer notes */
+/* ── Empty / footer ───────────────────────────────────────────── */
 .emptyNote {
   font: var(--t-body-sm);
   color: var(--ink-3);
   text-align: center;
   padding: var(--s-8) 0;
-  margin: 0;
-}
-
-.note {
-  background: var(--surface-2);
-  border-radius: var(--r-lg);
-  padding: var(--s-9) var(--s-10);
-}
-
-.note p {
-  font: var(--t-body-sm);
-  color: var(--ink-3);
   margin: 0;
 }

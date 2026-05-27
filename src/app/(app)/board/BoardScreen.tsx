@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Archive } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader/AppHeader";
-import { FilterChip } from "@/components/ui/chips/FilterChip";
+import { ToneIcon } from "@/components/ui/ToneIcon/ToneIcon";
 import { BoardCard } from "@/components/post/BoardCard";
 import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
 import { usePosts } from "@/store/PostsContext";
@@ -16,13 +17,13 @@ function formatDayStamp(dateStr?: string): string | undefined {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-const STATUSES: { value: PostStatus; label: string }[] = [
-  { value: "idea", label: "Ideas" },
-  { value: "draft", label: "Draft" },
+// Overdue is a derived callout state, not a kanban stage — excluded from rail
+const STAGES: { value: PostStatus; label: string }[] = [
+  { value: "idea", label: "Idea" },
+  { value: "draft", label: "Drafting" },
   { value: "review", label: "Review" },
   { value: "sched", label: "Scheduled" },
   { value: "pub", label: "Published" },
-  { value: "overdue", label: "Overdue" },
 ];
 
 export function BoardScreen() {
@@ -31,34 +32,49 @@ export function BoardScreen() {
   const { posts } = usePosts();
 
   const filtered = posts.filter((p) => p.status === active);
-  const activeLabel = STATUSES.find((s) => s.value === active)?.label ?? active;
+  const activeLabel = STAGES.find((s) => s.value === active)?.label ?? active;
 
   return (
     <div>
       <AppHeader title="Board" style={{ paddingTop: "var(--s-4)" }} />
 
-      <div className={styles.filterWrapper}>
+      {/* Stage rail with counts */}
+      <div className={styles.railWrapper}>
         <div
-          className={styles.filterRow}
-          role="group"
-          aria-label="Filter by status"
+          className={styles.rail}
+          role="tablist"
+          aria-label="Content stages"
         >
-          {STATUSES.map(({ value, label }) => (
-            <FilterChip
-              key={value}
-              label={label}
-              active={active === value}
-              onClick={() => setActive(value)}
-            />
-          ))}
+          {STAGES.map(({ value, label }) => {
+            const count = posts.filter((p) => p.status === value).length;
+            const isActive = active === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActive(value)}
+                className={`${styles.railCell} ${isActive ? styles.railCellActive : ""}`}
+              >
+                <span className={styles.railLabel}>{label}</span>
+                <span
+                  className={`${styles.railCount} ${isActive ? styles.railCountActive : ""}`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {filtered.length > 0 && (
-        <p className={styles.countLine}>
-          {filtered.length} {filtered.length === 1 ? "post" : "posts"}
-        </p>
-      )}
+      {/* Active column header */}
+      <div className={styles.columnHeader}>
+        <span className={styles.columnDot} aria-hidden="true" />
+        <span className={styles.columnTitle}>{activeLabel}</span>
+        <span className={styles.columnCount}>{filtered.length}</span>
+      </div>
 
       {filtered.length > 0 ? (
         <div className={styles.grid}>
@@ -78,14 +94,14 @@ export function BoardScreen() {
         </div>
       ) : (
         <EmptyState
-          icon="🗂️"
+          icon={
+            <ToneIcon icon={<Archive size={18} />} tone="neutral" size={36} />
+          }
           title={`No ${activeLabel.toLowerCase()} yet`}
           description={
             active === "idea"
               ? "Tap + to capture your first post idea."
-              : active === "overdue"
-                ? "You're all caught up — nothing is overdue."
-                : `Move a post to ${activeLabel.toLowerCase()} to see it here.`
+              : `Move a post to ${activeLabel.toLowerCase()} to see it here.`
           }
         />
       )}

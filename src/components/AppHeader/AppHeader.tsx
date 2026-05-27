@@ -13,7 +13,7 @@ import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { useNotifications } from "@/store/NotificationsContext";
 import styles from "./AppHeader.module.css";
 
-const TODAY_LABEL = "Saturday, May 16";
+const TODAY_KICKER = "SAT · MAY 16 · WK 20";
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -31,6 +31,7 @@ type AppHeaderVariant = "compact" | "prominent";
 interface AppHeaderProps
   extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   title?: string;
+  subtitle?: string;
   kicker?: string;
   variant?: AppHeaderVariant;
   /** Today screen: show greeting + date instead of a title bar */
@@ -40,6 +41,7 @@ interface AppHeaderProps
 
 export function AppHeader({
   title,
+  subtitle,
   kicker,
   variant = "compact",
   showGreeting = false,
@@ -94,11 +96,11 @@ export function AppHeader({
         {...rest}
       >
         <div className={styles.greetingBlock}>
+          <p className={styles.greetingKicker}>{TODAY_KICKER}</p>
           <p className={styles.greetingLine}>
             {getGreeting()}
             {firstName ? `, ${capitalizeFirst(firstName)}` : ""}.
           </p>
-          <p className={styles.greetingDate}>{TODAY_LABEL}</p>
         </div>
         {actions}
       </header>
@@ -108,6 +110,7 @@ export function AppHeader({
   return (
     <AppBar
       title={title ?? ""}
+      subtitle={subtitle}
       kicker={kicker}
       variant={variant}
       trailing={actions}

@@ -1,4 +1,4 @@
-/* ─── Home header ────────────────────────────────────────────── */
+/* ─── Home header (kept for loading skeleton) ────────────────── */
 .homeHeader {
   display: flex;
   align-items: center;
@@ -11,8 +11,8 @@
   width: 36px;
   height: 36px;
   border-radius: var(--r-full);
-  background: var(--primary-soft);
-  color: var(--primary-ink);
+  background: var(--ink-1);
+  color: var(--ink-inverse);
   border: none;
   display: inline-flex;
   align-items: center;
@@ -21,24 +21,9 @@
   font-weight: 700;
   cursor: pointer;
   flex-shrink: 0;
-  transition: opacity var(--dur-fast) var(--easing-standard);
-}
-.headerAvatar:hover {
-  opacity: 0.8;
-}
-.headerAvatar:active {
-  opacity: 0.6;
 }
 
-/* ─── Content area ───────────────────────────────────────────── */
-.content {
-  padding: var(--s-4) 0 var(--s-16);
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-8);
-}
-
-/* ─── Greeting block ─────────────────────────────────────────── */
+/* ─── Greeting (kept for loading skeleton) ───────────────────── */
 .greeting {
   padding: var(--s-4) var(--s-9) 0;
 }
@@ -58,14 +43,209 @@
   margin: 0;
 }
 
-/* ─── Pipeline stat strip ────────────────────────────────────── */
+/* ─── Content area ───────────────────────────────────────────── */
+.content {
+  padding: var(--s-4) 0 var(--s-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+/* ─── KPI Grid ───────────────────────────────────────────────── */
+.kpiGrid {
+  margin: 0 var(--s-9);
+  border-radius: var(--r-xs);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--divider);
+  box-shadow: var(--e-1);
+}
+
+:global(.pp2.dark) .kpiGrid {
+  box-shadow: none;
+  border: 1px solid var(--divider-strong);
+  background: var(--divider-strong);
+}
+
+.kpiCell {
+  background: var(--surface-1);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kpiValue {
+  font: var(--t-tabular);
+  font-size: 20px;
+  font-weight: 700;
+  font-feature-settings: "tnum";
+  color: var(--ink-1);
+  line-height: 1;
+}
+
+.kpiLabel {
+  font: var(--t-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--ink-4);
+  white-space: nowrap;
+}
+
+.kpiCell_primary .kpiValue {
+  color: var(--primary);
+}
+.kpiCell_success .kpiValue {
+  color: var(--success);
+}
+.kpiCell_danger .kpiValue {
+  color: var(--error);
+}
+
+/* ─── Overdue callout ────────────────────────────────────────── */
+.calloutList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: 0 var(--s-9);
+}
+
+.overdueCallout {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  padding: var(--s-5) var(--s-6);
+  background: var(--error-soft);
+  border: 1px solid color-mix(in oklab, var(--error) 22%, transparent);
+  border-radius: var(--r-lg);
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  transition: opacity var(--dur-fast) var(--easing-standard);
+}
+
+.overdueCallout:hover {
+  opacity: 0.85;
+}
+
+.overdueBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.overdueKicker {
+  font: var(--t-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--error-ink);
+}
+
+.overdueTitle {
+  font: var(--t-body-sm);
+  font-weight: 600;
+  color: var(--error-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.overdueAction {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font: var(--t-caption);
+  font-weight: 600;
+  color: var(--error-ink);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ─── Section labels ─────────────────────────────────────────── */
+.sectionLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 var(--s-9);
+  margin: 0 0 var(--s-3);
+}
+
+.sectionLabelDanger {
+  color: var(--error);
+}
+
+/* ─── Post list ──────────────────────────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Just shipped card ──────────────────────────────────────── */
+.shippedCard {
+  margin: 0 var(--s-9);
+  width: calc(100% - 2 * var(--s-9));
+  box-sizing: border-box;
+  background: var(--surface-1);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  border: 1px solid var(--divider);
+  padding: var(--s-5) var(--s-7);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  text-align: left;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--easing-standard);
+}
+
+:global(.pp2.dark) .shippedCard {
+  box-shadow: none;
+  border-color: var(--divider-strong);
+}
+
+.shippedCard:hover {
+  opacity: 0.8;
+}
+
+.shippedTitle {
+  flex: 1;
+  font: var(--t-body-sm);
+  font-weight: 500;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shippedDate {
+  font: var(--t-caption);
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.shippedCta {
+  font: var(--t-caption);
+  font-weight: 600;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* ─── Legacy stat pills (kept for loading skeleton) ──────────── */
 .statsRow {
   display: flex;
   gap: var(--s-4);
   padding: 0 var(--s-9);
   overflow-x: auto;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 .statsRow::-webkit-scrollbar {
   display: none;
@@ -86,16 +266,10 @@
   flex-shrink: 0;
 }
 
-:global(.pp2.dark) .statPill {
-  box-shadow: none;
-  border-color: var(--divider-strong);
-}
-
 .statCount {
   font: var(--t-title);
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.02em;
   color: var(--ink-1);
   line-height: 1;
 }
@@ -118,41 +292,15 @@
   white-space: nowrap;
 }
 
-/* Tone variants */
-.statPill_primary .statCount {
-  color: var(--primary);
-}
-.statPill_success .statCount {
-  color: var(--success);
-}
-.statPill_danger {
-  background: var(--error-soft);
-  border-color: transparent;
-}
-.statPill_danger .statCount {
-  color: var(--error);
-}
-.statPill_danger .statLabel {
-  color: var(--error);
-  opacity: 0.75;
-}
+.statPill_primary .statCount { color: var(--primary); }
+.statPill_success .statCount { color: var(--success); }
+.statPill_danger { background: var(--error-soft); border-color: transparent; }
+.statPill_danger .statCount { color: var(--error); }
+.statPill_danger .statLabel { color: var(--error); opacity: 0.75; }
 
-/* ─── Section labels ─────────────────────────────────────────── */
-.sectionLabel {
-  font: var(--t-label);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--ink-3);
-  padding: 0 var(--s-9);
-  margin: 0 0 var(--s-4);
-}
-
-.sectionLabelDanger {
-  color: var(--error);
-}
-
-/* ─── Post list ──────────────────────────────────────────────── */
-.list {
-  display: flex;
-  flex-direction: column;
+@media (prefers-reduced-motion: reduce) {
+  .overdueCallout,
+  .shippedCard {
+    transition: none;
+  }
 }

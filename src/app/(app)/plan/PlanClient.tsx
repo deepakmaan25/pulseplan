@@ -1,16 +1,22 @@
 "use client";
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader/AppHeader";
+import { BoardCard } from "@/components/post/BoardCard";
+import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { PostRow } from "@/components/post/PostRow";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./plan.module.css";
 
 const TODAY = "2026-05-16";
+const WEEK_NUM = 20;
 
 interface WeekDay {
   date: string;
   label: string;
+  dayLetter: string;
+  dayNum: number;
   isToday: boolean;
 }
 
@@ -23,10 +29,12 @@ function getWeekDays(): WeekDay[] {
     return {
       date: iso,
       label: d.toLocaleDateString("en-US", {
-        weekday: "long",
+        weekday: "short",
         month: "short",
         day: "numeric",
       }),
+      dayLetter: d.toLocaleDateString("en-US", { weekday: "narrow" }),
+      dayNum: d.getDate(),
       isToday: iso === TODAY,
     };
   });
@@ -35,19 +43,44 @@ function getWeekDays(): WeekDay[] {
 function weekRangeKicker(days: WeekDay[]): string {
   const first = days[0];
   const last = days[days.length - 1];
-  if (!first || !last) return "This Week";
+  if (!first || !last) return `WK ${WEEK_NUM}`;
   const fmt = (d: WeekDay) =>
     new Date(d.date + "T00:00:00").toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     });
-  return `${fmt(first)} – ${fmt(last)}`;
+  return `${fmt(first)} – ${fmt(last)} · WK ${WEEK_NUM}`;
 }
 
 export function PlanClient() {
   const router = useRouter();
   const { posts } = usePosts();
   const days = getWeekDays();
+
+  // Scroll to a day row
+  const scrollToDay = useCallback((date: string) => {
+    document
+      .getElementById(`plan-day-${date}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  // Overdue posts
+  const overduePosts = posts.filter((p) => p.status === "overdue");
+
+  // Posts per day (all statuses except overdue)
+  const postsForDay = (date: string) =>
+    posts.filter((p) => p.scheduledDate === date && p.status !== "overdue");
+
+  // Unscheduled tray — idea/draft without a scheduled date
+  const unscheduled = posts.filter(
+    (p) =>
+      (p.status === "idea" || p.status === "draft") &&
+      !p.scheduledDate,
+  );
+
+  const totalPlanned = posts.filter(
+    (p) => p.scheduledDate != null,
+  ).length;
 
   function openPost(id: string) {
     router.push(`/post/${id}`);
@@ -59,17 +92,96 @@ export function PlanClient() {
         variant="prominent"
         kicker={weekRangeKicker(days)}
         title="This Week"
+        subtitle={
+          totalPlanned > 0
+            ? `${totalPlanned} planned`
+            : undefined
+        }
         style={{ paddingTop: "var(--s-4)" }}
       />
 
-      <div className={styles.content}>
+      {/* Sticky week strip */}
+      <div className={styles.weekStrip} aria-label="Week navigation">
         {days.map((day) => {
-          const dayPosts = posts.filter((p) => p.scheduledDate === day.date);
+          const count = postsForDay(day.date).length;
+          const pipCount = Math.min(count, 3);
           return (
-            <section key={day.date} aria-label={day.label}>
-              <div
-                className={`${styles.dayHeader} ${day.isToday ? styles.dayHeaderToday : ""}`}
-              >
+            <button
+              key={day.date}
+              type="button"
+              className={`${styles.stripCell} ${day.isToday ? styles.stripCellToday : ""}`}
+              onClick={() => scrollToDay(day.date)}
+              aria-label={`${day.label}${count > 0 ? `, ${count} posts` : ""}`}
+              aria-current={day.isToday ? "date" : undefined}
+            >
+              <span className={styles.stripLetter}>{day.dayLetter}</span>
+              <span className={styles.stripNum}>{day.dayNum}</span>
+              <span className={styles.stripPips} aria-hidden="true">
+                {Array.from({ length: pipCount }, (_, i) => (
+                  <span
+                    key={i}
+                    className={`${styles.stripPip} ${day.isToday ? styles.stripPipToday : ""}`}
+                  />
+                ))}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className={styles.content}>
+        {/* Unscheduled tray */}
+        {unscheduled.length > 0 && (
+          <section aria-label="Unscheduled posts">
+            <p className={styles.trayLabel}>Unscheduled</p>
+            <div className={styles.trayWrapper}>
+              <div className={styles.tray}>
+                {unscheduled.map((post) => (
+                  <div key={post.id} className={styles.trayCard}>
+                    <BoardCard
+                      title={post.title}
+                      pillar={post.pillar}
+                      platform={post.platform}
+                      status={post.status}
+                      postType={post.postType}
+                      priority={post.priority}
+                      onClick={() => openPost(post.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Overdue callouts */}
+        {overduePosts.length > 0 && (
+          <section aria-label="Overdue posts">
+            <p className={`${styles.dayLabel} ${styles.dayLabelDanger}`}>
+              Overdue
+            </p>
+            <div className={styles.callouts}>
+              {overduePosts.map((post) => (
+                <OverdueCallout
+                  key={post.id}
+                  title={post.title}
+                  onTap={() => openPost(post.id)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Day rows */}
+        {days.map((day) => {
+          const dayPosts = postsForDay(day.date);
+          return (
+            <section
+              key={day.date}
+              id={`plan-day-${day.date}`}
+              aria-label={day.label}
+            >
+              <div className={styles.dayHeader}>
                 <span className={styles.dayLabel}>{day.label}</span>
                 {day.isToday && (
                   <span className={styles.todayBadge}>Today</span>
@@ -85,6 +197,9 @@ export function PlanClient() {
                       key={post.id}
                       title={post.title}
                       time={post.time}
+                      reminderHint={
+                        post.status === "sched" ? "30m before" : undefined
+                      }
                       status={post.status}
                       pillar={post.pillar}
                       platform={post.platform}
@@ -95,9 +210,14 @@ export function PlanClient() {
                   ))}
                 </div>
               ) : (
-                <p className={styles.emptyDay}>
-                  {day.isToday ? "Nothing planned — tap + to add" : "Free day"}
-                </p>
+                <button
+                  type="button"
+                  className={styles.emptyDayCta}
+                  onClick={() => openPost("new")}
+                  aria-label={`Schedule for ${day.label}`}
+                >
+                  + Schedule for {day.label.split(",")[0]}
+                </button>
               )}
             </section>
           );

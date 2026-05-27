@@ -326,10 +326,10 @@
   margin: 0 0 var(--s-6);
 }
 
-/* Fix avatar contrast */
+/* Avatar uses ink-1/ink-inverse — no brand color */
 .avatar {
-  background: #4f46e5 !important;
-  color: #ffffff !important;
+  background: var(--ink-1) !important;
+  color: var(--ink-inverse) !important;
 }
 
 .signOutBtn {

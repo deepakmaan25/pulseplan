@@ -1,8 +1,9 @@
-.filterWrapper {
+/* ─── Stage rail ─────────────────────────────────────────────── */
+.railWrapper {
   position: relative;
 }
 
-.filterWrapper::after {
+.railWrapper::after {
   content: "";
   position: absolute;
   top: 0;
@@ -13,28 +14,108 @@
   pointer-events: none;
 }
 
-.filterRow {
+.rail {
   display: flex;
-  gap: var(--s-3);
-  padding: var(--s-6) var(--s-9);
+  padding: var(--s-5) var(--s-9);
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  gap: var(--s-2);
 }
-.filterRow::-webkit-scrollbar {
+
+.rail::-webkit-scrollbar {
   display: none;
 }
 
-.countLine {
-  font: var(--t-caption);
-  color: var(--ink-4);
-  padding: 0 var(--s-9) var(--s-5);
-  margin: 0;
+.railCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--s-4) var(--s-6);
+  min-width: 68px;
+  background: var(--surface-1);
+  border: 1.5px solid var(--divider);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color var(--dur-fast) var(--easing-standard),
+    background var(--dur-fast) var(--easing-standard);
 }
 
+.railCell:hover {
+  border-color: var(--outline-strong);
+}
+
+.railCellActive {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+.railLabel {
+  font: var(--t-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.railCellActive .railLabel {
+  color: var(--primary-ink);
+}
+
+.railCount {
+  font: var(--t-label);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-1);
+  line-height: 1;
+  font-feature-settings: "tnum";
+}
+
+.railCountActive {
+  color: var(--primary);
+}
+
+/* ─── Column header ──────────────────────────────────────────── */
+.columnHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-6) var(--s-9) var(--s-4);
+}
+
+.columnDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.columnTitle {
+  font: var(--t-title-sm);
+  color: var(--ink-1);
+  font-weight: 600;
+}
+
+.columnCount {
+  font: var(--t-caption);
+  color: var(--ink-3);
+}
+
+/* ─── Card grid ──────────────────────────────────────────────── */
 .grid {
   display: flex;
   flex-direction: column;
   gap: var(--s-4);
   padding: 0 var(--s-9) var(--s-16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .railCell {
+    transition: none;
+  }
 }

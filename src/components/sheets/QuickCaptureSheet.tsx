@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sheet } from "@/components/ui/Sheet/Sheet";
 import { Button } from "@/components/ui/Button/Button";
+import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { PILLARS } from "@/mocks/fixtures";
 import { usePosts } from "@/store/PostsContext";
 import { useToast } from "@/components/providers/ToastProvider";
@@ -10,18 +11,26 @@ import type { Platform } from "@/components/ui/chips/PlatformChip";
 import type { Priority } from "@/components/ui/chips/PriorityChip";
 import styles from "./QuickCaptureSheet.module.css";
 
-const PLATFORMS: { value: Platform; label: string }[] = [
-  { value: "ig", label: "Instagram" },
-  { value: "li", label: "LinkedIn" },
-  { value: "x", label: "X / Twitter" },
-  { value: "yt", label: "YouTube" },
-  { value: "th", label: "Threads" },
+type CaptureMode = "idea" | "draft" | "schedule";
+
+const MODE_OPTIONS: { value: CaptureMode; label: string }[] = [
+  { value: "idea", label: "Idea" },
+  { value: "draft", label: "Draft" },
+  { value: "schedule", label: "Schedule" },
 ];
 
-const PRIORITIES: { value: Priority; label: string; color: string }[] = [
-  { value: "P0", label: "Critical", color: "var(--pri-P0)" },
-  { value: "P1", label: "High", color: "var(--pri-P1)" },
-  { value: "P2", label: "Normal", color: "var(--pri-P2)" },
+const PLATFORMS: { value: Platform; label: string }[] = [
+  { value: "ig", label: "IG" },
+  { value: "li", label: "LI" },
+  { value: "x", label: "X" },
+  { value: "yt", label: "YT" },
+  { value: "th", label: "TH" },
+];
+
+const PRIORITIES: { value: Priority; label: string }[] = [
+  { value: "P0", label: "P0" },
+  { value: "P1", label: "P1" },
+  { value: "P2", label: "P2" },
 ];
 
 interface QuickCaptureSheetProps {
@@ -32,10 +41,10 @@ interface QuickCaptureSheetProps {
 function resetState() {
   return {
     title: "",
-    description: "",
     platform: null as Platform | null,
     pillarId: null as string | null,
     priority: null as Priority | null,
+    mode: "idea" as CaptureMode,
   };
 }
 
@@ -56,16 +65,18 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
     onClose();
   }
 
-  function save(plan: boolean) {
-    const pillar = PILLARS.find((p) => p.id === state.pillarId) ??
+  function save() {
+    const pillar =
+      PILLARS.find((p) => p.id === state.pillarId) ??
       PILLARS[0] ?? { id: "personal", name: "Personal", color: "#d97706" };
     const platform = state.platform ?? "ig";
+    const plan = state.mode === "schedule";
+    const status =
+      state.mode === "idea" ? "idea" : state.mode === "draft" ? "draft" : "sched";
 
-    const description = state.description.trim() || undefined;
     addPost({
       title: state.title.trim(),
-      description,
-      status: plan ? "sched" : "idea",
+      status,
       platform,
       pillar,
       priority: state.priority ?? undefined,
@@ -73,7 +84,12 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
     });
 
     toast({
-      message: plan ? "Planned for today ✓" : "Saved to ideas ✓",
+      message:
+        state.mode === "idea"
+          ? "Saved to ideas ✓"
+          : state.mode === "draft"
+            ? "Saved to drafts ✓"
+            : "Planned for today ✓",
       tone: "success",
       actionLabel: "UNDO",
       onAction: () => {},
@@ -92,29 +108,32 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
       title="Quick Capture"
       kicker="New Post"
       footer={
-        <div className={styles.footerRow}>
-          <Button
-            variant="outlined"
-            size="md"
-            onClick={() => save(false)}
-            disabled={!canSave}
-            style={{ flex: 1 }}
-          >
-            Save as Idea
-          </Button>
-          <Button
-            variant="filled"
-            size="md"
-            onClick={() => save(true)}
-            disabled={!canSave}
-            style={{ flex: 1 }}
-          >
-            Plan for Today
-          </Button>
-        </div>
+        <Button
+          variant="filled"
+          size="lg"
+          fullWidth
+          onClick={save}
+          disabled={!canSave}
+        >
+          {state.mode === "idea"
+            ? "Save as Idea"
+            : state.mode === "draft"
+              ? "Save as Draft"
+              : "Plan for Today"}
+        </Button>
       }
     >
       <div className={styles.body}>
+        {/* Mode segmented */}
+        <Segmented
+          options={MODE_OPTIONS}
+          value={state.mode}
+          onChange={(v) => set("mode", v)}
+          ariaLabel="Post mode"
+          size="sm"
+          className={styles.modeSegmented}
+        />
+
         {/* Title */}
         <textarea
           className={styles.titleInput}
@@ -126,91 +145,75 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
           autoFocus
         />
 
-        {/* Description */}
-        <textarea
-          className={`${styles.titleInput} ${styles.descInput}`}
-          placeholder="Add a brief description or hook… (optional)"
-          value={state.description}
-          onChange={(e) => set("description", e.target.value)}
-          rows={2}
-          aria-label="Description"
-        />
-
-        {/* Platform */}
-        <div className={styles.section}>
-          <p className={styles.sectionLabel}>Platform</p>
-          <div className={styles.chips}>
-            {PLATFORMS.map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={state.platform === value}
-                onClick={() =>
-                  set("platform", state.platform === value ? null : value)
-                }
-                className={`${styles.chip} ${state.platform === value ? styles.chipSelected : ""}`}
-              >
-                {label}
-              </button>
-            ))}
+        {/* Properties card */}
+        <div className={styles.propsCard}>
+          {/* Platform row */}
+          <div className={styles.propRow}>
+            <span className={styles.propLabel}>Platform</span>
+            <div className={styles.propChips}>
+              {PLATFORMS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={state.platform === value}
+                  onClick={() =>
+                    set("platform", state.platform === value ? null : value)
+                  }
+                  className={`${styles.propChip} ${state.platform === value ? styles.propChipSelected : ""}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Pillar */}
-        <div className={styles.section}>
-          <p className={styles.sectionLabel}>Pillar</p>
-          <div className={styles.chips}>
-            {PILLARS.map((pl) => (
-              <button
-                key={pl.id}
-                type="button"
-                aria-pressed={state.pillarId === pl.id}
-                onClick={() =>
-                  set("pillarId", state.pillarId === pl.id ? null : pl.id)
-                }
-                className={styles.chip}
-                style={
-                  state.pillarId === pl.id
-                    ? {
-                        background: pl.color,
-                        color: "#fff",
-                        borderColor: "transparent",
-                      }
-                    : { borderColor: pl.color, color: pl.color }
-                }
-              >
-                {pl.name}
-              </button>
-            ))}
+          {/* Pillar row */}
+          <div className={`${styles.propRow} ${styles.propRowBorder}`}>
+            <span className={styles.propLabel}>Pillar</span>
+            <div className={styles.propChips}>
+              {PILLARS.map((pl) => (
+                <button
+                  key={pl.id}
+                  type="button"
+                  aria-pressed={state.pillarId === pl.id}
+                  onClick={() =>
+                    set("pillarId", state.pillarId === pl.id ? null : pl.id)
+                  }
+                  className={styles.propChip}
+                  style={
+                    state.pillarId === pl.id
+                      ? { borderColor: pl.color, color: pl.color, background: `${pl.color}18` }
+                      : { borderColor: pl.color, color: pl.color }
+                  }
+                >
+                  <span
+                    className={styles.pillarDot}
+                    style={{ background: pl.color }}
+                  />
+                  {pl.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Priority */}
-        <div className={styles.section}>
-          <p className={styles.sectionLabel}>Priority</p>
-          <div className={styles.chips}>
-            {PRIORITIES.map(({ value, label, color }) => (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={state.priority === value}
-                onClick={() =>
-                  set("priority", state.priority === value ? null : value)
-                }
-                className={styles.chip}
-                style={
-                  state.priority === value
-                    ? {
-                        background: color,
-                        color: "#fff",
-                        borderColor: "transparent",
-                      }
-                    : { borderColor: color, color }
-                }
-              >
-                {value} · {label}
-              </button>
-            ))}
+          {/* Priority row */}
+          <div className={`${styles.propRow} ${styles.propRowBorder}`}>
+            <span className={styles.propLabel}>Priority</span>
+            <div className={styles.propChips}>
+              {PRIORITIES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={state.priority === value}
+                  onClick={() =>
+                    set("priority", state.priority === value ? null : value)
+                  }
+                  className={`${styles.propChip} ${state.priority === value ? styles.propChipSelected : ""}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

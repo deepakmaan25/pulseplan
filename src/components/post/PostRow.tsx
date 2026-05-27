@@ -76,8 +76,8 @@ export const PostRow = forwardRef<HTMLButtonElement, PostRowProps>(
           </div>
           <p className={styles.title}>{title}</p>
           <div className={styles.meta}>
-            <StatusChip status={status} size="sm" />
             <PillarChip name={pillar.name} color={pillar.color} size="sm" />
+            <StatusChip status={status} size="sm" />
           </div>
         </div>
         <span className={styles.chevron} aria-hidden="true">
