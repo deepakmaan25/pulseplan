@@ -11,22 +11,23 @@
 
 .titleInput {
   width: 100%;
-  border: 1.5px solid var(--outline);
-  border-radius: var(--r-md);
-  background: var(--surface-2);
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  border-radius: 0;
+  background: transparent;
   color: var(--ink-1);
   font: var(--t-body);
-  padding: var(--s-7) var(--s-8);
+  font-size: 16px;
+  line-height: 1.5;
+  padding: var(--s-2) 0 var(--s-4);
   resize: none;
   outline: none;
   box-sizing: border-box;
-  font-family: var(--font-sans);
-  transition: border-color var(--dur-fast) var(--easing-standard);
+  overflow: hidden;
 }
 
 .titleInput:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--outline-focus);
+  border-bottom-color: var(--primary);
 }
 
 .titleInput::placeholder {
@@ -105,4 +106,15 @@
   height: 6px;
   border-radius: var(--r-full);
   flex-shrink: 0;
+  background: var(--pl-color);
+}
+
+/* Pillar chips inherit their accent from --pl-color set inline */
+.pillarChip {
+  border-color: var(--pl-color);
+  color: var(--pl-color);
+}
+
+.pillarChipActive {
+  background: color-mix(in srgb, var(--pl-color) 12%, transparent);
 }

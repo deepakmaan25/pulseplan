@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { Sheet } from "@/components/ui/Sheet/Sheet";
 import { Button } from "@/components/ui/Button/Button";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
@@ -52,6 +52,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
   const { addPost } = usePosts();
   const { toast } = useToast();
   const [state, setState] = useState(resetState);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
 
   function set<K extends keyof ReturnType<typeof resetState>>(
     key: K,
@@ -139,19 +140,47 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
 
         {/* Title */}
         <textarea
+          ref={titleRef}
           className={styles.titleInput}
           placeholder="What's the post idea?"
           value={state.title}
-          onChange={(e) => set("title", e.target.value)}
-          rows={2}
+          onChange={(e) => {
+            set("title", e.target.value);
+            const el = e.currentTarget;
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }}
+          rows={1}
           aria-label="Post idea"
           autoFocus
         />
 
         {/* Properties card */}
         <div className={styles.propsCard}>
-          {/* Platform row */}
+          {/* Pillar row (first — no top border) */}
           <div className={styles.propRow}>
+            <span className={styles.propLabel}>Pillar</span>
+            <div className={styles.propChips}>
+              {PILLARS.map((pl) => (
+                <button
+                  key={pl.id}
+                  type="button"
+                  aria-pressed={state.pillarId === pl.id}
+                  onClick={() =>
+                    set("pillarId", state.pillarId === pl.id ? null : pl.id)
+                  }
+                  className={`${styles.propChip} ${styles.pillarChip} ${state.pillarId === pl.id ? styles.pillarChipActive : ""}`}
+                  style={{ "--pl-color": pl.color } as CSSProperties}
+                >
+                  <span className={styles.pillarDot} />
+                  {pl.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Platform row */}
+          <div className={`${styles.propRow} ${styles.propRowBorder}`}>
             <span className={styles.propLabel}>Platform</span>
             <div className={styles.propChips}>
               {PLATFORMS.map(({ value, label }) => (
@@ -165,39 +194,6 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
                   className={`${styles.propChip} ${state.platform === value ? styles.propChipSelected : ""}`}
                 >
                   {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Pillar row */}
-          <div className={`${styles.propRow} ${styles.propRowBorder}`}>
-            <span className={styles.propLabel}>Pillar</span>
-            <div className={styles.propChips}>
-              {PILLARS.map((pl) => (
-                <button
-                  key={pl.id}
-                  type="button"
-                  aria-pressed={state.pillarId === pl.id}
-                  onClick={() =>
-                    set("pillarId", state.pillarId === pl.id ? null : pl.id)
-                  }
-                  className={styles.propChip}
-                  style={
-                    state.pillarId === pl.id
-                      ? {
-                          borderColor: pl.color,
-                          color: pl.color,
-                          background: `${pl.color}18`,
-                        }
-                      : { borderColor: pl.color, color: pl.color }
-                  }
-                >
-                  <span
-                    className={styles.pillarDot}
-                    style={{ background: pl.color }}
-                  />
-                  {pl.name}
                 </button>
               ))}
             </div>
@@ -222,6 +218,20 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
               ))}
             </div>
           </div>
+
+          {/* When row — schedule mode only */}
+          {state.mode === "schedule" && (
+            <div className={`${styles.propRow} ${styles.propRowBorder}`}>
+              <span className={styles.propLabel}>When</span>
+              <div className={styles.propChips}>
+                <span
+                  className={`${styles.propChip} ${styles.propChipSelected}`}
+                >
+                  Today
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Sheet>
