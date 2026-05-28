@@ -135,7 +135,7 @@ export function AnalyticsClient() {
 
   const topPosts = useMemo(() => {
     const pubPosts = posts.filter((p) => p.status === "pub");
-    return pubPosts.slice(0, 5).map((p, i) => ({
+    return pubPosts.slice(0, 4).map((p, i) => ({
       ...p,
       reach: MOCK_REACH[i] ?? (5 - i) * 800 + 400,
     }));
@@ -187,18 +187,16 @@ export function AnalyticsClient() {
         variant="prominent"
         title="Analytics"
         style={{ paddingTop: "var(--s-4)" }}
+        trailingExtra={
+          <Segmented
+            options={PERIOD_OPTIONS}
+            value={period}
+            onChange={(v) => setPeriod(v)}
+            ariaLabel="Analytics period"
+            size="sm"
+          />
+        }
       />
-
-      {/* Period picker */}
-      <div className={styles.periodBar}>
-        <Segmented
-          options={PERIOD_OPTIONS}
-          value={period}
-          onChange={(v) => setPeriod(v)}
-          ariaLabel="Analytics period"
-          size="sm"
-        />
-      </div>
 
       <div className={styles.content}>
         {/* Hero card — dark inverted */}
