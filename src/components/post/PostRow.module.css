@@ -81,11 +81,19 @@
   min-width: 0;
   justify-content: center;
 }
-.chips {
+.metaTop {
   display: inline-flex;
   align-items: center;
   gap: var(--s-3);
   flex-wrap: wrap;
+}
+.typeLabel {
+  font: var(--t-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 .title {
   font: var(--t-body);

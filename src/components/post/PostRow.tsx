@@ -57,20 +57,10 @@ export const PostRow = forwardRef<HTMLButtonElement, PostRowProps>(
         </div>
         <span className={styles.divider} aria-hidden="true" />
         <div className={styles.body}>
-          <div className={styles.chips}>
+          <div className={styles.metaTop}>
             <PlatformChip platform={platform} size="sm" showLabel={false} />
             {postType ? (
-              <span
-                style={{
-                  font: "var(--t-mono)",
-                  fontSize: 11,
-                  color: "var(--ink-3)",
-                  textTransform: "uppercase",
-                  letterSpacing: "var(--ls-label)",
-                }}
-              >
-                {postType}
-              </span>
+              <span className={styles.typeLabel}>{postType}</span>
             ) : null}
             {priority ? <PriorityChip priority={priority} /> : null}
           </div>

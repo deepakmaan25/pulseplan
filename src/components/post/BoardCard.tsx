@@ -50,16 +50,16 @@ export const BoardCard = forwardRef<HTMLButtonElement, BoardCardProps>(
         {...rest}
       >
         <div className={styles.topRow}>
-          <PillarChip name={pillar.name} color={pillar.color} size="sm" />
+          <PlatformChip platform={platform} size="sm" showLabel={false} />
+          {postType ? (
+            <span className={styles.typeLabel}>{postType}</span>
+          ) : null}
           {priority ? <PriorityChip priority={priority} /> : null}
         </div>
         <p className={styles.title}>{title}</p>
         <div className={styles.bottomRow}>
           <span className={styles.left}>
-            <PlatformChip platform={platform} size="sm" showLabel={false} />
-            {postType ? (
-              <span className={styles.postType}>{postType}</span>
-            ) : null}
+            <PillarChip name={pillar.name} color={pillar.color} size="sm" />
           </span>
           <span className={styles.right}>
             {dayStamp ? (

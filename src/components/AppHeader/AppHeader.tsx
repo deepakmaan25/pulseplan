@@ -36,6 +36,8 @@ interface AppHeaderProps extends Omit<HTMLAttributes<HTMLElement>, "children"> {
   variant?: AppHeaderVariant;
   /** Today screen: show greeting + date instead of a title bar */
   showGreeting?: boolean;
+  /** Sub-line beneath the greeting (Today screen) */
+  greetingSub?: string;
   style?: CSSProperties;
   /** Extra content inserted in the trailing actions zone, before the bell */
   trailingExtra?: ReactNode;
@@ -47,6 +49,7 @@ export function AppHeader({
   kicker,
   variant = "compact",
   showGreeting = false,
+  greetingSub,
   style,
   trailingExtra,
   ...rest
@@ -105,6 +108,9 @@ export function AppHeader({
             {getGreeting()}
             {firstName ? `, ${capitalizeFirst(firstName)}` : ""}.
           </p>
+          {greetingSub ? (
+            <p className={styles.greetingSub}>{greetingSub}</p>
+          ) : null}
         </div>
         {actions}
       </header>

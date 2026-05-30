@@ -8,12 +8,12 @@ import { ToneIcon } from "@/components/ui/ToneIcon/ToneIcon";
 import { PlatformChip } from "@/components/ui/chips/PlatformChip";
 import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { PostRow } from "@/components/post/PostRow";
+import { WeekHero } from "@/components/today/WeekHero";
 import { usePosts } from "@/store/PostsContext";
 import type { MockPost } from "@/mocks/fixtures";
 import styles from "./today.module.css";
 
 const TODAY = "2026-05-16";
-const WEEK_START = "2026-05-10";
 
 const PRIORITY_ORDER: Record<string, number> = { P0: 0, P1: 1, P2: 2 };
 
@@ -50,26 +50,6 @@ function sortByTime(posts: MockPost[]): MockPost[] {
 function formatDayStamp(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-// ── KPI Grid ─────────────────────────────────────────────────────
-
-interface KpiCellProps {
-  value: number | string;
-  label: string;
-  tone?: "default" | "primary" | "success" | "danger";
-}
-
-function KpiCell({ value, label, tone = "default" }: KpiCellProps) {
-  return (
-    <div
-      className={`${styles.kpiCell} ${tone !== "default" ? styles[`kpiCell_${tone}`] : ""}`}
-      role="listitem"
-    >
-      <span className={styles.kpiValue}>{value}</span>
-      <span className={styles.kpiLabel}>{label}</span>
-    </div>
-  );
 }
 
 // ── Just shipped card ─────────────────────────────────────────────
@@ -139,20 +119,6 @@ export function TodayClient() {
       (b.scheduledDate ?? "").localeCompare(a.scheduledDate ?? ""),
     )[0];
 
-  // KPI values
-  const kpiToday = todayPosts.length;
-  const kpiWk = posts.filter(
-    (p) =>
-      p.status === "pub" &&
-      p.scheduledDate != null &&
-      p.scheduledDate >= WEEK_START &&
-      p.scheduledDate <= TODAY,
-  ).length;
-  const kpiDrafts = posts.filter(
-    (p) => p.status === "draft" || p.status === "review",
-  ).length;
-  const kpiPace = kpiWk;
-
   const hasToday = todayPosts.length > 0 || overdue.length > 0;
   const hasOther =
     upNext.length > 0 || needsEyes.length > 0 || justShipped !== undefined;
@@ -161,27 +127,22 @@ export function TodayClient() {
     router.push(`/post/${id}`);
   }
 
+  const greetingSub = (() => {
+    if (todayPosts.length === 0) return "Nothing scheduled today";
+    const count = todayPosts.length;
+    const label = count === 1 ? "post" : "posts";
+    const first = todayPosts[0];
+    const nextTime = first?.time ? ` · next at ${first.time}` : "";
+    return `${count} ${label} today${nextTime}`;
+  })();
+
   return (
     <div>
-      <AppHeader showGreeting style={{ paddingTop: "var(--s-4)" }} />
+      <AppHeader showGreeting greetingSub={greetingSub} />
 
       <div className={styles.content}>
-        {/* KPI grid — 4 cells in a single Surface card */}
-        <div className={styles.kpiWrapper}>
-          <div
-            className={styles.kpiGrid}
-            role="list"
-            aria-label="Content pipeline"
-          >
-            <KpiCell value={kpiToday} label="Today" tone="primary" />
-            <KpiCell value={kpiWk} label="Wk" tone="success" />
-            <KpiCell value={kpiDrafts} label="Drafts" />
-            <KpiCell value={kpiPace} label="Pace" />
-          </div>
-          <span className={styles.paceBadge} aria-hidden="true">
-            ● on pace
-          </span>
-        </div>
+        {/* Week hero — replaces the KPI grid */}
+        <WeekHero posts={posts} />
 
         {/* Empty state — only shown when truly nothing */}
         {!hasToday && !hasOther && (

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   CalendarDays,
   CalendarRange,
-  Columns3,
+  SquareKanban,
   BarChart2,
   Plus,
 } from "lucide-react";
@@ -30,7 +30,7 @@ const TABS: [BottomNavTab, BottomNavTab, BottomNavTab, BottomNavTab] = [
   {
     key: "board",
     label: "Board",
-    icon: <Columns3 size={22} />,
+    icon: <SquareKanban size={22} />,
     href: "/board",
   },
   {
@@ -64,7 +64,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
           <BottomNav
             tabs={TABS}
             activeKey={activeKey}
-            fabIcon={<Plus size={24} />}
+            fabIcon={<Plus size={24} strokeWidth={2.4} />}
             fabLabel="Quick Capture"
             onFabClick={() => setCaptureOpen(true)}
             className={styles.nav}

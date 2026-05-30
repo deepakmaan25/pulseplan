@@ -52,7 +52,7 @@
   background: var(--primary);
   color: var(--ink-inverse);
   border: 0;
-  border-radius: var(--r-md);
+  border-radius: 14px;
   width: 56px;
   height: 48px;
   display: inline-flex;
