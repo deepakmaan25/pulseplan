@@ -28,11 +28,12 @@
   color: var(--ink-3);
 }
 
-.heroTotal {
+.heroRange {
   font: var(--t-mono);
   font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-2);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
 }
 
 /* ── 7-day strip ──────────────────────────────────────────────── */
@@ -127,10 +128,11 @@
 }
 
 .statValue {
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
   color: var(--ink-1);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   line-height: 1;
 }
 

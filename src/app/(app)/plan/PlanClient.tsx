@@ -59,7 +59,7 @@ function getWeekDays(): WeekDay[] {
   });
 }
 
-function weekRangeKicker(days: WeekDay[], planned: number): string {
+function weekRangeKicker(days: WeekDay[]): string {
   const first = days[0];
   const last = days[days.length - 1];
   if (!first || !last) return `WK ${WEEK_NUM}`;
@@ -67,7 +67,7 @@ function weekRangeKicker(days: WeekDay[], planned: number): string {
     new Date(d.date + "T00:00:00")
       .toLocaleDateString("en-US", { month: "short", day: "numeric" })
       .toUpperCase();
-  return `WK ${WEEK_NUM} · ${fmt(first)} — ${fmt(last)} · ${planned} PLANNED`;
+  return `WK ${WEEK_NUM} · ${fmt(first)} — ${fmt(last)}`;
 }
 
 function weekdayFull(iso: string): string {
@@ -119,8 +119,11 @@ export function PlanClient() {
     <div>
       <AppHeader
         variant="prominent"
-        kicker={weekRangeKicker(days, weekPlanned)}
+        kicker={weekRangeKicker(days)}
         title="Plan"
+        subtitle={
+          weekPlanned > 0 ? `${weekPlanned} planned this week` : undefined
+        }
         trailingExtra={
           <>
             <IconButton

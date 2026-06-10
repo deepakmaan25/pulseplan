@@ -38,11 +38,18 @@ export function WeekHero({ posts }: WeekHeroProps) {
     (p) => p.status === "draft" || p.status === "review",
   ).length;
 
+  const first = new Date(WEEK_START + "T00:00:00");
+  const last = new Date(WEEK_END + "T00:00:00");
+  const range = `${first.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  })} – ${last.getDate()}`;
+
   return (
     <div className={styles.hero} aria-label="This week overview">
       <div className={styles.heroTop}>
         <span className={styles.heroLabel}>This week</span>
-        <span className={styles.heroTotal}>{weekTotal} planned</span>
+        <span className={styles.heroRange}>{range}</span>
       </div>
 
       <div className={styles.strip} aria-hidden="true">

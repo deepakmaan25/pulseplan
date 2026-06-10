@@ -22,13 +22,25 @@
 }
 
 /* ── Hero card ────────────────────────────────────────────────── */
+/* Bold inverted "spotlight" card. Light mode: near-black surface.
+   Dark mode: a real elevated dark surface — never flips to white.
+   --hero-fg drives every foreground so both themes stay legible. */
 .heroCard {
+  --hero-fg: var(--ink-inverse);
   background: var(--ink-1);
   border-radius: var(--r-xl);
   padding: var(--s-8) var(--s-9) var(--s-6);
-  color: var(--ink-inverse);
+  color: var(--hero-fg);
   overflow: hidden;
   position: relative;
+  box-shadow: var(--e-3);
+}
+
+:global(.pp2.dark) .heroCard {
+  --hero-fg: var(--ink-1);
+  background: var(--surface-3);
+  border: 1px solid var(--divider-strong);
+  box-shadow: var(--e-2);
 }
 
 .heroKicker {
@@ -36,7 +48,7 @@
   font-size: 10px;
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--ink-inverse) 55%, transparent);
+  color: color-mix(in srgb, var(--hero-fg) 55%, transparent);
   margin: 0 0 var(--s-3);
 }
 
@@ -48,11 +60,11 @@
 }
 
 .heroValue {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
-  color: var(--ink-inverse);
+  color: var(--hero-fg);
   font-variant-numeric: tabular-nums;
 }
 
@@ -65,20 +77,20 @@
 }
 
 .heroDeltaPos {
-  background: color-mix(in srgb, #0e9f6e 20%, transparent);
-  color: #6ee7b7;
+  background: color-mix(in srgb, var(--success) 22%, transparent);
+  color: var(--success);
 }
 
 .heroDeltaNeg {
-  background: color-mix(in srgb, var(--error) 20%, transparent);
-  color: #fca5a5;
+  background: color-mix(in srgb, var(--error) 22%, transparent);
+  color: var(--error);
 }
 
 .sparkline {
   display: block;
   width: 100%;
   height: 40px;
-  color: var(--ink-inverse);
+  color: var(--hero-fg);
 }
 
 /* ── 2×2 KPI grid ─────────────────────────────────────────────── */
