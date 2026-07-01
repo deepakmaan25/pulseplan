@@ -40,19 +40,22 @@
   --divider-strong: rgba(10, 13, 18, 0.11);
   --outline: rgba(10, 13, 18, 0.1);
   --outline-strong: rgba(10, 13, 18, 0.16);
-  --outline-focus: rgba(46, 91, 255, 0.45);
+  --outline-focus: rgba(13, 159, 110, 0.45);
 
-  /* Accent — single restrained primary */
-  --primary: #2e5bff;
-  --primary-hover: #2347d6;
-  --primary-press: #1b36a8;
-  --primary-soft: #e5ebff;
-  --primary-ink: #1a3cb8;
+  /* Accent — single restrained primary (emerald, aligned to redesign).
+   * Rationed to ONE primary action + selected state per screen. Kept a
+   * distinct hue from --success below so "primary" ≠ "succeeded". */
+  --primary: #0d9f6e;
+  --primary-hover: #0b8a5f;
+  --primary-press: #086b4a;
+  --primary-soft: #e5f6ef;
+  --primary-ink: #086b4a;
 
-  /* Semantic */
-  --success: #0e9f6e;
-  --success-soft: #d6f1e5;
-  --success-ink: #036138;
+  /* Semantic — success shifted deeper/cooler so it reads apart from the
+   * emerald primary in context (published/connected/done states). */
+  --success: #059669;
+  --success-soft: #d1fae5;
+  --success-ink: #065f46;
   --warning: #d97706;
   --warning-soft: #fdeed2;
   --warning-ink: #8a4b00;
@@ -215,13 +218,13 @@
   --divider-strong: rgba(255, 255, 255, 0.12);
   --outline: rgba(255, 255, 255, 0.1);
   --outline-strong: rgba(255, 255, 255, 0.16);
-  --outline-focus: rgba(124, 145, 255, 0.55);
+  --outline-focus: rgba(36, 201, 141, 0.55);
 
-  --primary: #6e89ff;
-  --primary-hover: #8aa1ff;
-  --primary-press: #5c7cff;
-  --primary-soft: #1f2547;
-  --primary-ink: #bcc9ff;
+  --primary: #24c98d;
+  --primary-hover: #3fd79e;
+  --primary-press: #1fb37e;
+  --primary-soft: #113026;
+  --primary-ink: #7ff0c4;
 
   --success: #16c088;
   --success-soft: #0f2823;
