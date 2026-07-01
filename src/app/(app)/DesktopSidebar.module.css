@@ -1,1 +1,83 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-10) var(--s-8);
+  background: var(--bg-base);
+  border-right: 1px solid var(--divider);
+}
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: 0 var(--s-4);
+  margin-bottom: var(--s-6);
+  height: 44px;
+}
+
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-md);
+  background: var(--success);
+  color: var(--ink-inverse);
+  flex-shrink: 0;
+}
+
+.brandName {
+  font: var(--t-title);
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+}
+
+.capture {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: var(--s-6);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-5) var(--s-5);
+  border-radius: var(--r-md);
+  color: var(--ink-2);
+  text-decoration: none;
+  font: var(--t-title-sm);
+  transition:
+    background var(--dur-fast) var(--easing-standard),
+    color var(--dur-fast) var(--easing-standard);
+}
+
+.navItem:hover {
+  background: var(--bg-sunken);
+}
+
+.navItem[data-active] {
+  background: var(--success-soft);
+  color: var(--success-ink);
+}
+
+.navIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.navLabel {
+  color: currentColor;
+}
