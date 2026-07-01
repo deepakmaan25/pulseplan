@@ -1,7 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { cookies } from "next/headers";
 import { AppProviders } from "@/components/providers";
+import {
+  LAYOUT_COOKIE,
+  isLayoutPref,
+  type LayoutPref,
+} from "@/lib/layout/constants";
 import { THEME_MEDIA_QUERY, THEME_STORAGE_KEY } from "@/lib/theme/constants";
 import "@/styles/globals.css";
 
@@ -42,11 +48,16 @@ export const viewport: Viewport = {
  */
 const noFlashScript = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var s=null;try{s=localStorage.getItem(k);}catch(e){}var m=false;try{m=window.matchMedia(${JSON.stringify(THEME_MEDIA_QUERY)}).matches;}catch(e){}var d=s==="dark"||((s===null||s==="auto")&&m);if(d){document.documentElement.classList.add("dark");}}catch(e){}})();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const layoutCookie = cookieStore.get(LAYOUT_COOKIE)?.value;
+  const initialLayoutPref: LayoutPref = isLayoutPref(layoutCookie)
+    ? layoutCookie
+    : "auto";
   return (
     <html
       lang="en"
@@ -57,7 +68,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: noFlashScript }} />
       </head>
       <body>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders initialLayoutPref={initialLayoutPref}>
+          {children}
+        </AppProviders>
         <Analytics />
       </body>
     </html>
