@@ -1,0 +1,201 @@
+.page {
+  padding: var(--s-10) var(--s-12) var(--s-12);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  gap: var(--s-8);
+  align-items: start;
+  margin-top: var(--s-6);
+}
+
+/* Left rail stacks its summary cards. */
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.mainHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mainTitle {
+  font: var(--t-title);
+  letter-spacing: var(--ls-title);
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.mainMeta,
+.viewAll {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.viewAll {
+  color: var(--primary-ink);
+  text-transform: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.emptyLine {
+  color: var(--ink-3);
+  font: var(--t-body);
+  padding: var(--s-6) 0;
+}
+
+.upNext {
+  margin-top: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+/* ── Generic summary card ─────────────────────────────────────── */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-2);
+  padding: var(--s-8);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-6);
+}
+
+.cardKicker {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+
+.cardMeta {
+  font: var(--t-mono-sm);
+  color: var(--ink-3);
+}
+
+/* ── This week's mix ──────────────────────────────────────────── */
+.mixList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.mixRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.mixTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mixName {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  font: var(--t-body-sm);
+  color: var(--ink-2);
+}
+
+.mixDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+
+.mixCount {
+  font: var(--t-mono-sm);
+  color: var(--ink-3);
+}
+
+.mixTrack {
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--bg-sunken);
+  overflow: hidden;
+}
+
+.mixFill {
+  height: 100%;
+  border-radius: var(--r-full);
+  min-width: 4px;
+}
+
+/* ── Streak card (dark) ───────────────────────────────────────── */
+.streak {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-6);
+  background: var(--ink-1);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-2);
+  padding: var(--s-7) var(--s-8);
+}
+
+.streakText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.streakValue {
+  font: var(--t-title-lg);
+  font-family: var(--font-mono, inherit);
+  color: var(--surface-1);
+  letter-spacing: -0.02em;
+}
+
+.streakUnit {
+  font-size: 0.6em;
+  color: var(--surface-1);
+  opacity: 0.7;
+}
+
+.streakSub {
+  font: var(--t-body-sm);
+  color: var(--surface-1);
+  opacity: 0.72;
+}
+
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+  color: var(--ink-inverse);
+  flex-shrink: 0;
+}
+
+/* ── Tablet: collapse to single column ────────────────────────── */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
