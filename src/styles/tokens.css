@@ -17,8 +17,8 @@
 .pp2 {
   /* Surfaces — cool neutral with subtle blue undertone.
      Light mode uses shadow for elevation (surfaces remain white). */
-  --bg-base: #f2f4f7;
-  --bg-sunken: #e6e9ee;
+  --bg-base: #eceef2;
+  --bg-sunken: #e2e5ea;
   --surface-1: #ffffff;
   --surface-2: #ffffff;
   --surface-3: #ffffff;
@@ -151,6 +151,10 @@
   /* Elevation — quiet, premium */
   --e-0: none;
   --e-1: 0 1px 2px rgba(10, 13, 18, 0.04), 0 1px 1px rgba(10, 13, 18, 0.03);
+  /* Card lift (Option B): two-layer, for full cards only — NOT small chrome. */
+  --shadow-card:
+    0 1px 2px rgba(16, 20, 25, 0.05),
+    0 6px 14px -3px rgba(16, 20, 25, 0.1);
   --e-2:
     0 2px 4px rgba(10, 13, 18, 0.04), 0 4px 8px -2px rgba(10, 13, 18, 0.05);
   --e-3:
@@ -269,6 +273,7 @@
 
   --e-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
   --e-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 18px -4px rgba(0, 0, 0, 0.45);
   --e-3: 0 4px 8px rgba(0, 0, 0, 0.3), 0 12px 24px -6px rgba(0, 0, 0, 0.4);
   --e-4: 0 8px 16px rgba(0, 0, 0, 0.4), 0 24px 48px -12px rgba(0, 0, 0, 0.5);
   --e-sheet: 0 -2px 8px rgba(0, 0, 0, 0.2), 0 -16px 48px rgba(0, 0, 0, 0.4);
