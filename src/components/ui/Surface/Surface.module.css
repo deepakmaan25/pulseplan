@@ -2,7 +2,7 @@
   background: var(--surface-1);
   border: 1px solid var(--divider);
   border-radius: var(--r-md);
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
   color: var(--ink-1);
   display: block;
 }
