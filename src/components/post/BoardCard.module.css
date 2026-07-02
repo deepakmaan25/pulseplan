@@ -10,7 +10,7 @@
   border: 1px solid var(--divider);
   border-left: 3px solid var(--pp2-pillar, var(--divider-strong));
   border-radius: var(--r-md);
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   color: inherit;
   font: inherit;
