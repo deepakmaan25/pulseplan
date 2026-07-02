@@ -72,7 +72,11 @@ export function TodayMobile() {
         {!hasToday && !hasOther && (
           <EmptyState
             icon={
-              <ToneIcon icon={<Sparkles size={18} />} tone="primary" size={36} />
+              <ToneIcon
+                icon={<Sparkles size={18} />}
+                tone="primary"
+                size={36}
+              />
             }
             title="You're all clear"
             description="Nothing scheduled today. Tap + to capture an idea."
@@ -81,7 +85,9 @@ export function TodayMobile() {
 
         {overdue.length > 0 && (
           <section aria-label="Overdue posts">
-            <p className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}>
+            <p
+              className={`${styles.sectionLabel} ${styles.sectionLabelDanger}`}
+            >
               {overdue.length === 1
                 ? "1 post overdue"
                 : `${overdue.length} posts overdue`}

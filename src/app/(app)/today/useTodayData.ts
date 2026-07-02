@@ -62,7 +62,9 @@ export interface TodayData {
  * render identical data in different arrangements. Pure w.r.t. its inputs
  * (posts + referenceDate); trivially unit-testable.
  */
-export function useTodayData(referenceDate: string = DEMO_REFERENCE_DATE): TodayData {
+export function useTodayData(
+  referenceDate: string = DEMO_REFERENCE_DATE,
+): TodayData {
   const { posts } = usePosts();
 
   return useMemo<TodayData>(() => {

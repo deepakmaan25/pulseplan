@@ -21,10 +21,30 @@ import styles from "./layout.module.css";
  * Plan tab via an in-screen Plan|Board toggle (product decision). The desktop
  * sidebar lists Board separately. */
 const TABS: [BottomNavTab, BottomNavTab, BottomNavTab, BottomNavTab] = [
-  { key: "today", label: "Today", icon: <CalendarDays size={22} />, href: "/today" },
-  { key: "plan", label: "Plan", icon: <CalendarRange size={22} />, href: "/plan" },
-  { key: "board", label: "Board", icon: <SquareKanban size={22} />, href: "/board" },
-  { key: "stats", label: "Stats", icon: <BarChart2 size={22} />, href: "/analytics" },
+  {
+    key: "today",
+    label: "Today",
+    icon: <CalendarDays size={22} />,
+    href: "/today",
+  },
+  {
+    key: "plan",
+    label: "Plan",
+    icon: <CalendarRange size={22} />,
+    href: "/plan",
+  },
+  {
+    key: "board",
+    label: "Board",
+    icon: <SquareKanban size={22} />,
+    href: "/board",
+  },
+  {
+    key: "stats",
+    label: "Stats",
+    icon: <BarChart2 size={22} />,
+    href: "/analytics",
+  },
 ];
 
 function pathToKey(pathname: string): string {

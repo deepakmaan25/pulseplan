@@ -22,11 +22,36 @@ export interface SidebarNavItem {
 }
 
 const NAV: SidebarNavItem[] = [
-  { key: "today", label: "Today", href: "/today" as Route, icon: <CalendarDays size={18} /> },
-  { key: "plan", label: "Plan", href: "/plan" as Route, icon: <CalendarRange size={18} /> },
-  { key: "board", label: "Board", href: "/board" as Route, icon: <SquareKanban size={18} /> },
-  { key: "stats", label: "Stats", href: "/analytics" as Route, icon: <BarChart2 size={18} /> },
-  { key: "profile", label: "Profile", href: "/settings" as Route, icon: <User size={18} /> },
+  {
+    key: "today",
+    label: "Today",
+    href: "/today" as Route,
+    icon: <CalendarDays size={18} />,
+  },
+  {
+    key: "plan",
+    label: "Plan",
+    href: "/plan" as Route,
+    icon: <CalendarRange size={18} />,
+  },
+  {
+    key: "board",
+    label: "Board",
+    href: "/board" as Route,
+    icon: <SquareKanban size={18} />,
+  },
+  {
+    key: "stats",
+    label: "Stats",
+    href: "/analytics" as Route,
+    icon: <BarChart2 size={18} />,
+  },
+  {
+    key: "profile",
+    label: "Profile",
+    href: "/settings" as Route,
+    icon: <User size={18} />,
+  },
 ];
 
 export function DesktopSidebar({

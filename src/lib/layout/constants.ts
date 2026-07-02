@@ -39,7 +39,10 @@ export function isLayoutPref(value: unknown): value is LayoutPref {
 }
 
 /** Resolve a pref + viewport signal into a concrete layout mode. */
-export function resolveLayout(pref: LayoutPref, viewportIsWide: boolean): LayoutMode {
+export function resolveLayout(
+  pref: LayoutPref,
+  viewportIsWide: boolean,
+): LayoutMode {
   if (pref === "mobile" || pref === "desktop") return pref;
   return viewportIsWide ? "desktop" : "mobile";
 }

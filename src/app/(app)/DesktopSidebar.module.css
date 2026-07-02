@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: var(--s-2);
   padding: var(--s-10) var(--s-8);
-  background: var(--bg-base);
+  background: var(--surface-1);
   border-right: 1px solid var(--divider);
 }
 

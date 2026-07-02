@@ -26,13 +26,7 @@ function pillarMix(posts: MockPost[]) {
 
 export function TodayDesktop() {
   const router = useRouter();
-  const {
-    posts,
-    overdue,
-    todayPosts,
-    upNext,
-    greetingSub,
-  } = useTodayData();
+  const { posts, overdue, todayPosts, upNext, greetingSub } = useTodayData();
 
   const openPost = (id: string) => router.push(`/post/${id}`);
   const mix = pillarMix(posts);
@@ -69,10 +63,7 @@ export function TodayDesktop() {
           )}
 
           {/* This week's mix */}
-          <section
-            className={styles.card}
-            aria-label="This week's pillar mix"
-          >
+          <section className={styles.card} aria-label="This week's pillar mix">
             <div className={styles.cardHead}>
               <span className={styles.cardKicker}>This week&rsquo;s mix</span>
               <span className={styles.cardMeta}>{weekTotal} posts</span>
@@ -126,8 +117,7 @@ export function TodayDesktop() {
           <div className={styles.mainHead}>
             <h2 className={styles.mainTitle}>Today&rsquo;s schedule</h2>
             <span className={styles.mainMeta}>
-              {todayPosts.length}{" "}
-              {todayPosts.length === 1 ? "post" : "posts"}
+              {todayPosts.length} {todayPosts.length === 1 ? "post" : "posts"}
             </span>
           </div>
 
