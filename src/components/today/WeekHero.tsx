@@ -52,28 +52,40 @@ export function WeekHero({ posts }: WeekHeroProps) {
         <span className={styles.heroRange}>{range}</span>
       </div>
 
-      <div className={styles.strip} aria-hidden="true">
+      <ul className={styles.strip}>
         {WEEK_DAYS.map((d) => {
           const count = posts.filter((p) => p.scheduledDate === d.iso).length;
           const isToday = "today" in d && d.today;
+          const loaded = count > 0;
+          const dayName = new Date(d.iso + "T00:00:00").toLocaleDateString(
+            "en-US",
+            { weekday: "long", month: "short", day: "numeric" },
+          );
+          const postText =
+            count === 0
+              ? "no posts"
+              : count === 1
+                ? "1 post"
+                : `${count} posts`;
+          const label = `${dayName}${isToday ? ", today" : ""}, ${postText}`;
           return (
-            <div
+            <li
               key={d.iso}
-              className={`${styles.dayCell} ${isToday ? styles.dayCellToday : ""}`}
+              className={[
+                styles.dayCell,
+                loaded ? styles.dayCellLoad : styles.dayCellEmpty,
+                isToday ? styles.dayCellToday : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-label={label}
             >
               <span className={styles.dayLetter}>{d.letter}</span>
               <span className={styles.dayNum}>{d.n}</span>
-              <span className={styles.pipRow}>
-                {count > 0 ? (
-                  <span
-                    className={`${styles.pip} ${isToday ? styles.pipToday : ""}`}
-                  />
-                ) : null}
-              </span>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       <div className={styles.stats}>
         <div className={styles.stat}>
