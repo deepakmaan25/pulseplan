@@ -15,7 +15,7 @@
   text-align: left;
   width: 100%;
   font: inherit;
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
 }
 :global(.pp2.dark) .row {
   box-shadow: none;
