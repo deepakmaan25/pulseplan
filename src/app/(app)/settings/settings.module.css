@@ -17,7 +17,7 @@
   background: var(--surface-1);
   border-radius: var(--r-lg);
   padding: var(--s-6) var(--s-9);
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: 0;
