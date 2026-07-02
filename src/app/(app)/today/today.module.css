@@ -64,7 +64,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--divider);
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
 }
 
 :global(.pp2.dark) .kpiGrid {
@@ -213,7 +213,7 @@
   box-sizing: border-box;
   background: var(--surface-1);
   border-radius: var(--r-lg);
-  box-shadow: var(--e-1);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--divider);
   padding: var(--s-5) var(--s-7);
   display: flex;
