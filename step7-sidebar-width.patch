@@ -1,0 +1,13 @@
+diff --git a/src/styles/tokens.css b/src/styles/tokens.css
+index 4b32295..2acd595 100644
+--- a/src/styles/tokens.css
++++ b/src/styles/tokens.css
+@@ -195,7 +195,7 @@
+   --bp-xl: 1280px;
+ 
+   /* Desktop content well + sidebar geometry (from Figma desktop frames) */
+-  --layout-sidebar-w: 232px;
++  --layout-sidebar-w: 260px;
+   --layout-content-max: 1280px;
+ }
+ 

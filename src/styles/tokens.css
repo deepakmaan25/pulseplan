@@ -195,7 +195,7 @@
   --bp-xl: 1280px;
 
   /* Desktop content well + sidebar geometry (from Figma desktop frames) */
-  --layout-sidebar-w: 232px;
+  --layout-sidebar-w: 260px;
   --layout-content-max: 1280px;
 }
 
