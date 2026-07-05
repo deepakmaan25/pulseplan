@@ -10,6 +10,7 @@ import {
   Play,
 } from "lucide-react";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
+import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./analytics.module.css";
 
@@ -238,177 +239,167 @@ export function AnalyticsClient() {
     }, [posts]);
 
   return (
-    <div className={styles.screen}>
-      <div className={styles.panel}>
-        {/* Page header — inside the surface */}
-        <header className={styles.pageHead}>
-          <h1 className={styles.pageTitle}>Analytics</h1>
-          <Segmented
-            options={PERIOD_OPTIONS}
-            value={period}
-            onChange={(v) => setPeriod(v)}
-            ariaLabel="Analytics period"
-            size="sm"
-          />
-        </header>
-
-        {/* Hero — total reach feature block */}
-        <section
-          className={styles.sec}
-          aria-label={`Total reach ${hero.value}`}
-        >
-          <div className={styles.heroCard}>
-            <div className={styles.heroGrid}>
-              <div className={styles.heroLeft}>
-                <p className={styles.heroKicker}>Total reach</p>
-                <span className={styles.heroValue}>{hero.value}</span>
-                <span
-                  className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
-                >
-                  {hero.positive ? (
-                    <ArrowUp size={12} strokeWidth={2.5} />
-                  ) : (
-                    <ArrowDown size={12} strokeWidth={2.5} />
-                  )}
-                  {hero.delta} vs last week
-                </span>
-                <p className={styles.heroSub}>
-                  Across {platforms.length} platforms · {posts.length} posts
-                </p>
-              </div>
-              <div className={styles.heroChart}>
-                <Sparkline points={sparkPoints} />
-              </div>
+    <PageSurface
+      flushBody
+      title="Analytics"
+      actions={
+        <Segmented
+          options={PERIOD_OPTIONS}
+          value={period}
+          onChange={(v) => setPeriod(v)}
+          ariaLabel="Analytics period"
+          size="sm"
+        />
+      }
+    >
+      {/* Hero — total reach feature block */}
+      <Section ariaLabel={`Total reach ${hero.value}`}>
+        <div className={styles.heroCard}>
+          <div className={styles.heroGrid}>
+            <div className={styles.heroLeft}>
+              <p className={styles.heroKicker}>Total reach</p>
+              <span className={styles.heroValue}>{hero.value}</span>
+              <span
+                className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
+              >
+                {hero.positive ? (
+                  <ArrowUp size={12} strokeWidth={2.5} />
+                ) : (
+                  <ArrowDown size={12} strokeWidth={2.5} />
+                )}
+                {hero.delta} vs last week
+              </span>
+              <p className={styles.heroSub}>
+                Across {platforms.length} platforms · {posts.length} posts
+              </p>
+            </div>
+            <div className={styles.heroChart}>
+              <Sparkline points={sparkPoints} />
             </div>
           </div>
-        </section>
+        </div>
+      </Section>
 
-        {/* KPI row */}
-        <section className={styles.sec} aria-label="Key metrics">
-          <div className={styles.kpiGrid}>
-            {KPI_META.map(
-              ({ key, label, Icon, accent, accentBg, delta, up }) => (
-                <div
-                  key={key}
-                  className={styles.kpiCell}
-                  style={
-                    {
-                      "--accent": accent,
-                      "--accent-bg": accentBg,
-                    } as React.CSSProperties
-                  }
+      {/* KPI row */}
+      <Section ariaLabel="Key metrics">
+        <div className={styles.kpiGrid}>
+          {KPI_META.map(({ key, label, Icon, accent, accentBg, delta, up }) => (
+            <div
+              key={key}
+              className={styles.kpiCell}
+              style={
+                {
+                  "--accent": accent,
+                  "--accent-bg": accentBg,
+                } as React.CSSProperties
+              }
+            >
+              <div className={styles.kpiTop}>
+                <span className={styles.kpiIcon}>
+                  <Icon size={14} strokeWidth={2} />
+                </span>
+                <span
+                  className={`${styles.kpiTrend} ${up ? styles.kpiTrendUp : styles.kpiTrendDown}`}
                 >
-                  <div className={styles.kpiTop}>
-                    <span className={styles.kpiIcon}>
-                      <Icon size={14} strokeWidth={2} />
-                    </span>
-                    <span
-                      className={`${styles.kpiTrend} ${up ? styles.kpiTrendUp : styles.kpiTrendDown}`}
-                    >
-                      {up ? (
-                        <ArrowUp size={11} strokeWidth={2.5} />
-                      ) : (
-                        <ArrowDown size={11} strokeWidth={2.5} />
-                      )}
-                      {delta}
-                    </span>
-                  </div>
-                  <span className={styles.kpiValue}>{kpi[key]}</span>
-                  <span className={styles.kpiLabel}>{label}</span>
+                  {up ? (
+                    <ArrowUp size={11} strokeWidth={2.5} />
+                  ) : (
+                    <ArrowDown size={11} strokeWidth={2.5} />
+                  )}
+                  {delta}
+                </span>
+              </div>
+              <span className={styles.kpiValue}>{kpi[key]}</span>
+              <span className={styles.kpiLabel}>{label}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Top Posts */}
+      {topPosts.length > 0 && (
+        <Section label="Top posts" ariaLabel="Top posts">
+          <div className={styles.topList}>
+            {topPosts.map((p, i) => (
+              <div key={p.id} className={styles.topRow}>
+                <span className={styles.topRank}>{i + 1}</span>
+                <span className={styles.topPlatform}>
+                  {PLATFORM_ABBR[p.platform] ?? p.platform}
+                </span>
+                <span className={styles.topTitle}>{p.title}</span>
+                <span className={styles.topReach}>{formatReach(p.reach)}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {/* Breakdowns — pillars + platforms side by side */}
+      {(pillars.length > 0 || platforms.length > 0) && (
+        <Section ariaLabel="Breakdowns">
+          <div className={styles.breakdownCols}>
+            {pillars.length > 0 && (
+              <div aria-label="Content pillar breakdown">
+                <p className={styles.sectionLabel}>Content pillars</p>
+                <div className={styles.breakdownList}>
+                  {pillars.map(({ name, color, count }) => (
+                    <div key={name} className={styles.breakdownRow}>
+                      <span className={styles.breakdownName}>
+                        <span
+                          className={styles.breakdownDot}
+                          style={{ background: color }}
+                        />
+                        {name}
+                      </span>
+                      <div className={styles.breakdownBarTrack}>
+                        <div
+                          className={styles.breakdownBar}
+                          style={{
+                            width: `${(count / maxPillarCount) * 100}%`,
+                            background: color,
+                          }}
+                        />
+                      </div>
+                      <span className={styles.breakdownCount}>{count}</span>
+                    </div>
+                  ))}
                 </div>
-              ),
+              </div>
+            )}
+
+            {platforms.length > 0 && (
+              <div aria-label="Platform breakdown">
+                <p className={styles.sectionLabel}>Platforms</p>
+                <div className={styles.breakdownList}>
+                  {platforms.map(({ key, label, count }) => (
+                    <div key={key} className={styles.breakdownRow}>
+                      <span className={styles.breakdownName}>{label}</span>
+                      <div className={styles.breakdownBarTrack}>
+                        <div
+                          className={styles.breakdownBar}
+                          style={{
+                            width: `${(count / maxPlatformCount) * 100}%`,
+                            background: "var(--primary)",
+                          }}
+                        />
+                      </div>
+                      <span className={styles.breakdownCount}>{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
-        </section>
+        </Section>
+      )}
 
-        {/* Top Posts */}
-        {topPosts.length > 0 && (
-          <section className={styles.sec} aria-label="Top posts">
-            <p className={styles.sectionLabel}>Top posts</p>
-            <div className={styles.topList}>
-              {topPosts.map((p, i) => (
-                <div key={p.id} className={styles.topRow}>
-                  <span className={styles.topRank}>{i + 1}</span>
-                  <span className={styles.topPlatform}>
-                    {PLATFORM_ABBR[p.platform] ?? p.platform}
-                  </span>
-                  <span className={styles.topTitle}>{p.title}</span>
-                  <span className={styles.topReach}>
-                    {formatReach(p.reach)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Breakdowns — pillars + platforms side by side */}
-        {(pillars.length > 0 || platforms.length > 0) && (
-          <section className={styles.sec} aria-label="Breakdowns">
-            <div className={styles.breakdownCols}>
-              {pillars.length > 0 && (
-                <div aria-label="Content pillar breakdown">
-                  <p className={styles.sectionLabel}>Content pillars</p>
-                  <div className={styles.breakdownList}>
-                    {pillars.map(({ name, color, count }) => (
-                      <div key={name} className={styles.breakdownRow}>
-                        <span className={styles.breakdownName}>
-                          <span
-                            className={styles.breakdownDot}
-                            style={{ background: color }}
-                          />
-                          {name}
-                        </span>
-                        <div className={styles.breakdownBarTrack}>
-                          <div
-                            className={styles.breakdownBar}
-                            style={{
-                              width: `${(count / maxPillarCount) * 100}%`,
-                              background: color,
-                            }}
-                          />
-                        </div>
-                        <span className={styles.breakdownCount}>{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {platforms.length > 0 && (
-                <div aria-label="Platform breakdown">
-                  <p className={styles.sectionLabel}>Platforms</p>
-                  <div className={styles.breakdownList}>
-                    {platforms.map(({ key, label, count }) => (
-                      <div key={key} className={styles.breakdownRow}>
-                        <span className={styles.breakdownName}>{label}</span>
-                        <div className={styles.breakdownBarTrack}>
-                          <div
-                            className={styles.breakdownBar}
-                            style={{
-                              width: `${(count / maxPlatformCount) * 100}%`,
-                              background: "var(--primary)",
-                            }}
-                          />
-                        </div>
-                        <span className={styles.breakdownCount}>{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {posts.length === 0 && (
-          <section className={styles.sec}>
-            <p className={styles.emptyNote}>
-              Add your first post idea to start tracking your pipeline.
-            </p>
-          </section>
-        )}
-      </div>
-    </div>
+      {posts.length === 0 && (
+        <Section>
+          <p className={styles.emptyNote}>
+            Add your first post idea to start tracking your pipeline.
+          </p>
+        </Section>
+      )}
+    </PageSurface>
   );
 }

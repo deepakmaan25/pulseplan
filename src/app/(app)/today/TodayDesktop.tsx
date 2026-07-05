@@ -2,14 +2,23 @@
 
 import { useRouter } from "next/navigation";
 import { Flame } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { PostRow } from "@/components/post/PostRow";
 import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { WeekHero } from "@/components/today/WeekHero";
+import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { PILLARS, type MockPost } from "@/mocks/fixtures";
 import { useTodayData } from "./useTodayData";
 import shared from "./today.module.css";
 import styles from "./todayDesktop.module.css";
+
+const TODAY_KICKER = "SAT · MAY 16 · WK 20";
+
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 /** Count posts per pillar for the "This week's mix" card. */
 function pillarMix(posts: MockPost[]) {
@@ -33,9 +42,11 @@ export function TodayDesktop() {
   const weekTotal = posts.length;
 
   return (
-    <div className={styles.page}>
-      <AppHeader showGreeting greetingSub={greetingSub} />
-
+    <PageSurface
+      eyebrow={TODAY_KICKER}
+      title={`${getGreeting()}.`}
+      subtitle={greetingSub}
+    >
       <div className={styles.grid}>
         {/* ── Left rail: summary ─────────────────────────────── */}
         <aside className={styles.rail}>
@@ -166,6 +177,6 @@ export function TodayDesktop() {
           )}
         </main>
       </div>
-    </div>
+    </PageSurface>
   );
 }

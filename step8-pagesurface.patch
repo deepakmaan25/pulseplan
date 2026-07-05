@@ -1,0 +1,657 @@
+diff --git a/src/app/(app)/analytics/AnalyticsClient.tsx b/src/app/(app)/analytics/AnalyticsClient.tsx
+index 73f2c3c..1d97608 100644
+--- a/src/app/(app)/analytics/AnalyticsClient.tsx
++++ b/src/app/(app)/analytics/AnalyticsClient.tsx
+@@ -10,6 +10,7 @@ import {
+   Play,
+ } from "lucide-react";
+ import { Segmented } from "@/components/ui/Segmented/Segmented";
++import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
+ import { usePosts } from "@/store/PostsContext";
+ import styles from "./analytics.module.css";
+ 
+@@ -238,177 +239,167 @@ export function AnalyticsClient() {
+     }, [posts]);
+ 
+   return (
+-    <div className={styles.screen}>
+-      <div className={styles.panel}>
+-        {/* Page header — inside the surface */}
+-        <header className={styles.pageHead}>
+-          <h1 className={styles.pageTitle}>Analytics</h1>
+-          <Segmented
+-            options={PERIOD_OPTIONS}
+-            value={period}
+-            onChange={(v) => setPeriod(v)}
+-            ariaLabel="Analytics period"
+-            size="sm"
+-          />
+-        </header>
++    <PageSurface
++      flushBody
++      title="Analytics"
++      actions={
++        <Segmented
++          options={PERIOD_OPTIONS}
++          value={period}
++          onChange={(v) => setPeriod(v)}
++          ariaLabel="Analytics period"
++          size="sm"
++        />
++      }
++    >
++      {/* Hero — total reach feature block */}
++      <Section ariaLabel={`Total reach ${hero.value}`}>
++        <div className={styles.heroCard}>
++          <div className={styles.heroGrid}>
++            <div className={styles.heroLeft}>
++              <p className={styles.heroKicker}>Total reach</p>
++              <span className={styles.heroValue}>{hero.value}</span>
++              <span
++                className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
++              >
++                {hero.positive ? (
++                  <ArrowUp size={12} strokeWidth={2.5} />
++                ) : (
++                  <ArrowDown size={12} strokeWidth={2.5} />
++                )}
++                {hero.delta} vs last week
++              </span>
++              <p className={styles.heroSub}>
++                Across {platforms.length} platforms · {posts.length} posts
++              </p>
++            </div>
++            <div className={styles.heroChart}>
++              <Sparkline points={sparkPoints} />
++            </div>
++          </div>
++        </div>
++      </Section>
+ 
+-        {/* Hero — total reach feature block */}
+-        <section
+-          className={styles.sec}
+-          aria-label={`Total reach ${hero.value}`}
+-        >
+-          <div className={styles.heroCard}>
+-            <div className={styles.heroGrid}>
+-              <div className={styles.heroLeft}>
+-                <p className={styles.heroKicker}>Total reach</p>
+-                <span className={styles.heroValue}>{hero.value}</span>
++      {/* KPI row */}
++      <Section ariaLabel="Key metrics">
++        <div className={styles.kpiGrid}>
++          {KPI_META.map(({ key, label, Icon, accent, accentBg, delta, up }) => (
++            <div
++              key={key}
++              className={styles.kpiCell}
++              style={
++                {
++                  "--accent": accent,
++                  "--accent-bg": accentBg,
++                } as React.CSSProperties
++              }
++            >
++              <div className={styles.kpiTop}>
++                <span className={styles.kpiIcon}>
++                  <Icon size={14} strokeWidth={2} />
++                </span>
+                 <span
+-                  className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
++                  className={`${styles.kpiTrend} ${up ? styles.kpiTrendUp : styles.kpiTrendDown}`}
+                 >
+-                  {hero.positive ? (
+-                    <ArrowUp size={12} strokeWidth={2.5} />
++                  {up ? (
++                    <ArrowUp size={11} strokeWidth={2.5} />
+                   ) : (
+-                    <ArrowDown size={12} strokeWidth={2.5} />
++                    <ArrowDown size={11} strokeWidth={2.5} />
+                   )}
+-                  {hero.delta} vs last week
++                  {delta}
+                 </span>
+-                <p className={styles.heroSub}>
+-                  Across {platforms.length} platforms · {posts.length} posts
+-                </p>
+-              </div>
+-              <div className={styles.heroChart}>
+-                <Sparkline points={sparkPoints} />
+               </div>
++              <span className={styles.kpiValue}>{kpi[key]}</span>
++              <span className={styles.kpiLabel}>{label}</span>
+             </div>
+-          </div>
+-        </section>
++          ))}
++        </div>
++      </Section>
+ 
+-        {/* KPI row */}
+-        <section className={styles.sec} aria-label="Key metrics">
+-          <div className={styles.kpiGrid}>
+-            {KPI_META.map(
+-              ({ key, label, Icon, accent, accentBg, delta, up }) => (
+-                <div
+-                  key={key}
+-                  className={styles.kpiCell}
+-                  style={
+-                    {
+-                      "--accent": accent,
+-                      "--accent-bg": accentBg,
+-                    } as React.CSSProperties
+-                  }
+-                >
+-                  <div className={styles.kpiTop}>
+-                    <span className={styles.kpiIcon}>
+-                      <Icon size={14} strokeWidth={2} />
+-                    </span>
+-                    <span
+-                      className={`${styles.kpiTrend} ${up ? styles.kpiTrendUp : styles.kpiTrendDown}`}
+-                    >
+-                      {up ? (
+-                        <ArrowUp size={11} strokeWidth={2.5} />
+-                      ) : (
+-                        <ArrowDown size={11} strokeWidth={2.5} />
+-                      )}
+-                      {delta}
+-                    </span>
+-                  </div>
+-                  <span className={styles.kpiValue}>{kpi[key]}</span>
+-                  <span className={styles.kpiLabel}>{label}</span>
+-                </div>
+-              ),
+-            )}
++      {/* Top Posts */}
++      {topPosts.length > 0 && (
++        <Section label="Top posts" ariaLabel="Top posts">
++          <div className={styles.topList}>
++            {topPosts.map((p, i) => (
++              <div key={p.id} className={styles.topRow}>
++                <span className={styles.topRank}>{i + 1}</span>
++                <span className={styles.topPlatform}>
++                  {PLATFORM_ABBR[p.platform] ?? p.platform}
++                </span>
++                <span className={styles.topTitle}>{p.title}</span>
++                <span className={styles.topReach}>{formatReach(p.reach)}</span>
++              </div>
++            ))}
+           </div>
+-        </section>
++        </Section>
++      )}
+ 
+-        {/* Top Posts */}
+-        {topPosts.length > 0 && (
+-          <section className={styles.sec} aria-label="Top posts">
+-            <p className={styles.sectionLabel}>Top posts</p>
+-            <div className={styles.topList}>
+-              {topPosts.map((p, i) => (
+-                <div key={p.id} className={styles.topRow}>
+-                  <span className={styles.topRank}>{i + 1}</span>
+-                  <span className={styles.topPlatform}>
+-                    {PLATFORM_ABBR[p.platform] ?? p.platform}
+-                  </span>
+-                  <span className={styles.topTitle}>{p.title}</span>
+-                  <span className={styles.topReach}>
+-                    {formatReach(p.reach)}
+-                  </span>
+-                </div>
+-              ))}
+-            </div>
+-          </section>
+-        )}
+-
+-        {/* Breakdowns — pillars + platforms side by side */}
+-        {(pillars.length > 0 || platforms.length > 0) && (
+-          <section className={styles.sec} aria-label="Breakdowns">
+-            <div className={styles.breakdownCols}>
+-              {pillars.length > 0 && (
+-                <div aria-label="Content pillar breakdown">
+-                  <p className={styles.sectionLabel}>Content pillars</p>
+-                  <div className={styles.breakdownList}>
+-                    {pillars.map(({ name, color, count }) => (
+-                      <div key={name} className={styles.breakdownRow}>
+-                        <span className={styles.breakdownName}>
+-                          <span
+-                            className={styles.breakdownDot}
+-                            style={{ background: color }}
+-                          />
+-                          {name}
+-                        </span>
+-                        <div className={styles.breakdownBarTrack}>
+-                          <div
+-                            className={styles.breakdownBar}
+-                            style={{
+-                              width: `${(count / maxPillarCount) * 100}%`,
+-                              background: color,
+-                            }}
+-                          />
+-                        </div>
+-                        <span className={styles.breakdownCount}>{count}</span>
++      {/* Breakdowns — pillars + platforms side by side */}
++      {(pillars.length > 0 || platforms.length > 0) && (
++        <Section ariaLabel="Breakdowns">
++          <div className={styles.breakdownCols}>
++            {pillars.length > 0 && (
++              <div aria-label="Content pillar breakdown">
++                <p className={styles.sectionLabel}>Content pillars</p>
++                <div className={styles.breakdownList}>
++                  {pillars.map(({ name, color, count }) => (
++                    <div key={name} className={styles.breakdownRow}>
++                      <span className={styles.breakdownName}>
++                        <span
++                          className={styles.breakdownDot}
++                          style={{ background: color }}
++                        />
++                        {name}
++                      </span>
++                      <div className={styles.breakdownBarTrack}>
++                        <div
++                          className={styles.breakdownBar}
++                          style={{
++                            width: `${(count / maxPillarCount) * 100}%`,
++                            background: color,
++                          }}
++                        />
+                       </div>
+-                    ))}
+-                  </div>
++                      <span className={styles.breakdownCount}>{count}</span>
++                    </div>
++                  ))}
+                 </div>
+-              )}
++              </div>
++            )}
+ 
+-              {platforms.length > 0 && (
+-                <div aria-label="Platform breakdown">
+-                  <p className={styles.sectionLabel}>Platforms</p>
+-                  <div className={styles.breakdownList}>
+-                    {platforms.map(({ key, label, count }) => (
+-                      <div key={key} className={styles.breakdownRow}>
+-                        <span className={styles.breakdownName}>{label}</span>
+-                        <div className={styles.breakdownBarTrack}>
+-                          <div
+-                            className={styles.breakdownBar}
+-                            style={{
+-                              width: `${(count / maxPlatformCount) * 100}%`,
+-                              background: "var(--primary)",
+-                            }}
+-                          />
+-                        </div>
+-                        <span className={styles.breakdownCount}>{count}</span>
++            {platforms.length > 0 && (
++              <div aria-label="Platform breakdown">
++                <p className={styles.sectionLabel}>Platforms</p>
++                <div className={styles.breakdownList}>
++                  {platforms.map(({ key, label, count }) => (
++                    <div key={key} className={styles.breakdownRow}>
++                      <span className={styles.breakdownName}>{label}</span>
++                      <div className={styles.breakdownBarTrack}>
++                        <div
++                          className={styles.breakdownBar}
++                          style={{
++                            width: `${(count / maxPlatformCount) * 100}%`,
++                            background: "var(--primary)",
++                          }}
++                        />
+                       </div>
+-                    ))}
+-                  </div>
++                      <span className={styles.breakdownCount}>{count}</span>
++                    </div>
++                  ))}
+                 </div>
+-              )}
+-            </div>
+-          </section>
+-        )}
++              </div>
++            )}
++          </div>
++        </Section>
++      )}
+ 
+-        {posts.length === 0 && (
+-          <section className={styles.sec}>
+-            <p className={styles.emptyNote}>
+-              Add your first post idea to start tracking your pipeline.
+-            </p>
+-          </section>
+-        )}
+-      </div>
+-    </div>
++      {posts.length === 0 && (
++        <Section>
++          <p className={styles.emptyNote}>
++            Add your first post idea to start tracking your pipeline.
++          </p>
++        </Section>
++      )}
++    </PageSurface>
+   );
+ }
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index c8779ed..5bd684a 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -1,50 +1,4 @@
+-.screen {
+-  display: flex;
+-  flex-direction: column;
+-  min-height: 100%;
+-  background: var(--bg-base);
+-  padding: var(--s-10) var(--s-11) var(--s-14);
+-}
+-
+-/* ── Page surface: one panel holding the whole screen ─────────── */
+-.panel {
+-  width: 100%;
+-  max-width: 1120px;
+-  margin: 0 auto;
+-  background: var(--surface-1);
+-  border: 1px solid var(--divider);
+-  border-radius: 18px;
+-  box-shadow: var(--shadow-card);
+-  overflow: hidden;
+-}
+-
+-.pageHead {
+-  display: flex;
+-  align-items: flex-end;
+-  justify-content: space-between;
+-  gap: var(--s-6);
+-  padding: var(--s-11) var(--s-13) var(--s-9);
+-  border-bottom: 1px solid var(--divider);
+-}
+-
+-.pageTitle {
+-  font-size: 24px;
+-  font-weight: 700;
+-  letter-spacing: -0.02em;
+-  color: var(--ink-1);
+-  margin: 0;
+-}
+-
+-/* Every section shares one gutter + hairline rhythm */
+-.sec {
+-  padding: var(--s-10) var(--s-13);
+-  border-bottom: 1px solid var(--hair, rgba(10, 13, 18, 0.07));
+-}
+-
+-.sec:last-child {
+-  border-bottom: none;
+-}
+-
++/* ── Local sub-label (breakdown columns inside a section) ─────── */
+ .sectionLabel {
+   font: var(--t-label);
+   letter-spacing: var(--ls-label);
+@@ -53,6 +7,12 @@
+   margin: 0 0 var(--s-7);
+ }
+ 
++/* Every section shares one gutter + hairline rhythm */
++
++.sec:last-child {
++  border-bottom: none;
++}
++
+ /* ── Hero — total reach feature block ─────────────────────────── */
+ .heroCard {
+   position: relative;
+diff --git a/src/app/(app)/today/TodayDesktop.tsx b/src/app/(app)/today/TodayDesktop.tsx
+index a5f3cea..e2c21ee 100644
+--- a/src/app/(app)/today/TodayDesktop.tsx
++++ b/src/app/(app)/today/TodayDesktop.tsx
+@@ -2,15 +2,24 @@
+ 
+ import { useRouter } from "next/navigation";
+ import { Flame } from "lucide-react";
+-import { AppHeader } from "@/components/AppHeader/AppHeader";
+ import { PostRow } from "@/components/post/PostRow";
+ import { OverdueCallout } from "@/components/post/OverdueCallout";
+ import { WeekHero } from "@/components/today/WeekHero";
++import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { PILLARS, type MockPost } from "@/mocks/fixtures";
+ import { useTodayData } from "./useTodayData";
+ import shared from "./today.module.css";
+ import styles from "./todayDesktop.module.css";
+ 
++const TODAY_KICKER = "SAT · MAY 16 · WK 20";
++
++function getGreeting(): string {
++  const h = new Date().getHours();
++  if (h < 12) return "Good morning";
++  if (h < 17) return "Good afternoon";
++  return "Good evening";
++}
++
+ /** Count posts per pillar for the "This week's mix" card. */
+ function pillarMix(posts: MockPost[]) {
+   const counts = new Map<string, number>();
+@@ -33,9 +42,11 @@ export function TodayDesktop() {
+   const weekTotal = posts.length;
+ 
+   return (
+-    <div className={styles.page}>
+-      <AppHeader showGreeting greetingSub={greetingSub} />
+-
++    <PageSurface
++      eyebrow={TODAY_KICKER}
++      title={`${getGreeting()}.`}
++      subtitle={greetingSub}
++    >
+       <div className={styles.grid}>
+         {/* ── Left rail: summary ─────────────────────────────── */}
+         <aside className={styles.rail}>
+@@ -166,6 +177,6 @@ export function TodayDesktop() {
+           )}
+         </main>
+       </div>
+-    </div>
++    </PageSurface>
+   );
+ }
+diff --git a/src/app/(app)/today/todayDesktop.module.css b/src/app/(app)/today/todayDesktop.module.css
+index 14a81aa..07d9152 100644
+--- a/src/app/(app)/today/todayDesktop.module.css
++++ b/src/app/(app)/today/todayDesktop.module.css
+@@ -1,13 +1,8 @@
+-.page {
+-  padding: var(--s-10) var(--s-12) var(--s-12);
+-}
+-
+ .grid {
+   display: grid;
+-  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
++  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+   gap: var(--s-8);
+   align-items: start;
+-  margin-top: var(--s-6);
+ }
+ 
+ /* Left rail stacks its summary cards. */
+@@ -66,10 +61,9 @@
+ 
+ /* ── Generic summary card ─────────────────────────────────────── */
+ .card {
+-  background: var(--surface-1);
+-  border: 1px solid var(--divider);
++  background: var(--well);
++  border: 1px solid var(--hair);
+   border-radius: var(--r-lg);
+-  box-shadow: var(--shadow-card);
+   padding: var(--s-8);
+ }
+ 
+diff --git a/src/components/PageSurface/PageSurface.module.css b/src/components/PageSurface/PageSurface.module.css
+new file mode 100644
+index 0000000..6a3e3ec
+--- /dev/null
++++ b/src/components/PageSurface/PageSurface.module.css
+@@ -0,0 +1,89 @@
++/* ── Shared page surface ───────────────────────────────────────
++   One lifted panel enclosing a whole screen, on the grey canvas.
++   Used by every desktop screen for a consistent surface + width. */
++
++.screen {
++  display: flex;
++  flex-direction: column;
++  min-height: 100%;
++  background: var(--bg-base);
++  padding: var(--s-10) var(--s-11) var(--s-14);
++}
++
++.panel {
++  width: 100%;
++  max-width: 1180px;
++  margin: 0 auto;
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
++  border-radius: 18px;
++  box-shadow: var(--shadow-card);
++  overflow: hidden;
++}
++
++/* ── Page header (inside the panel) ────────────────────────────── */
++.pageHead {
++  display: flex;
++  align-items: flex-end;
++  justify-content: space-between;
++  gap: var(--s-6);
++  padding: var(--s-10) var(--s-13) var(--s-9);
++  border-bottom: 1px solid var(--divider);
++}
++
++.pageHeadText {
++  min-width: 0;
++}
++
++.pageHeadActions {
++  display: flex;
++  align-items: center;
++  gap: var(--s-5);
++  flex-shrink: 0;
++}
++
++.eyebrow {
++  font: var(--t-mono);
++  font-size: 11px;
++  letter-spacing: 0.08em;
++  text-transform: uppercase;
++  color: var(--ink-3);
++  margin: 0 0 var(--s-3);
++}
++
++.pageTitle {
++  font-size: 24px;
++  font-weight: 700;
++  letter-spacing: -0.02em;
++  color: var(--ink-1);
++  margin: 0;
++}
++
++.subtitle {
++  font: var(--t-body-sm);
++  color: var(--ink-2);
++  margin: var(--s-3) 0 0;
++}
++
++/* ── Body ──────────────────────────────────────────────────────── */
++.body {
++  padding: var(--s-10) var(--s-13) var(--s-12);
++}
++
++/* ── Section (stacked screens) ─────────────────────────────────── */
++.section {
++  padding: var(--s-10) var(--s-13);
++  border-bottom: 1px solid var(--hair);
++}
++
++.section:last-child {
++  border-bottom: none;
++}
++
++.sectionLabel {
++  font: var(--t-label);
++  letter-spacing: var(--ls-label);
++  text-transform: uppercase;
++  color: var(--ink-3);
++  margin: 0 0 var(--s-7);
++}
+diff --git a/src/components/PageSurface/PageSurface.tsx b/src/components/PageSurface/PageSurface.tsx
+new file mode 100644
+index 0000000..53e8916
+--- /dev/null
++++ b/src/components/PageSurface/PageSurface.tsx
+@@ -0,0 +1,67 @@
++"use client";
++
++import type { ReactNode } from "react";
++import styles from "./PageSurface.module.css";
++
++interface PageSurfaceProps {
++  /** Eyebrow / kicker above the title (e.g. "WK 20 · MAY 11 — MAY 17"). */
++  eyebrow?: ReactNode;
++  /** Page title (e.g. "Analytics"). */
++  title: ReactNode;
++  /** Optional subtitle under the title. */
++  subtitle?: ReactNode;
++  /** Trailing header content, right-aligned (toggles, icon buttons). */
++  actions?: ReactNode;
++  /** When true, the body gets no default gutter/padding (screen controls it). */
++  flushBody?: boolean;
++  children: ReactNode;
++}
++
++/**
++ * The shared page surface: one lifted panel that encloses an entire screen's
++ * content, sitting on the grey canvas. Header renders inside the panel with a
++ * divider beneath it. Screens fill the body with either stacked <Section>
++ * blocks or their own layout (e.g. Today's two-column grid).
++ */
++export function PageSurface({
++  eyebrow,
++  title,
++  subtitle,
++  actions,
++  flushBody = false,
++  children,
++}: PageSurfaceProps) {
++  return (
++    <div className={styles.screen}>
++      <div className={styles.panel}>
++        <header className={styles.pageHead}>
++          <div className={styles.pageHeadText}>
++            {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
++            <h1 className={styles.pageTitle}>{title}</h1>
++            {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
++          </div>
++          {actions && <div className={styles.pageHeadActions}>{actions}</div>}
++        </header>
++        {flushBody ? children : <div className={styles.body}>{children}</div>}
++      </div>
++    </div>
++  );
++}
++
++/** A horizontal-hairline-separated section inside a PageSurface (stacked screens). */
++export function Section({
++  label,
++  ariaLabel,
++  children,
++}: {
++  label?: ReactNode;
++  ariaLabel?: string;
++  children: ReactNode;
++}) {
++  return (
++    <section className={styles.section} aria-label={ariaLabel}>
++      {label && <p className={styles.sectionLabel}>{label}</p>}
++      {children}
++    </section>
++  );
++}

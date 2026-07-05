@@ -1,56 +1,16 @@
-.screen {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  background: var(--bg-base);
-  padding: var(--s-10) var(--s-11) var(--s-14);
-}
-
-/* ── Page surface: one panel holding the whole screen ─────────── */
-.panel {
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  background: var(--surface-1);
-  border: 1px solid var(--divider);
-  border-radius: 18px;
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-}
-
-.pageHead {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--s-6);
-  padding: var(--s-11) var(--s-13) var(--s-9);
-  border-bottom: 1px solid var(--divider);
-}
-
-.pageTitle {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ink-1);
-  margin: 0;
-}
-
-/* Every section shares one gutter + hairline rhythm */
-.sec {
-  padding: var(--s-10) var(--s-13);
-  border-bottom: 1px solid var(--hair, rgba(10, 13, 18, 0.07));
-}
-
-.sec:last-child {
-  border-bottom: none;
-}
-
+/* ── Local sub-label (breakdown columns inside a section) ─────── */
 .sectionLabel {
   font: var(--t-label);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--ink-3);
   margin: 0 0 var(--s-7);
+}
+
+/* Every section shares one gutter + hairline rhythm */
+
+.sec:last-child {
+  border-bottom: none;
 }
 
 /* ── Hero — total reach feature block ─────────────────────────── */

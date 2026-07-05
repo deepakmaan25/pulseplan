@@ -1,13 +1,8 @@
-.page {
-  padding: var(--s-10) var(--s-12) var(--s-12);
-}
-
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
   gap: var(--s-8);
   align-items: start;
-  margin-top: var(--s-6);
 }
 
 /* Left rail stacks its summary cards. */
@@ -66,10 +61,9 @@
 
 /* ── Generic summary card ─────────────────────────────────────── */
 .card {
-  background: var(--surface-1);
-  border: 1px solid var(--divider);
+  background: var(--well);
+  border: 1px solid var(--hair);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-card);
   padding: var(--s-8);
 }
 

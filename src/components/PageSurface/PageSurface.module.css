@@ -1,0 +1,89 @@
+/* ── Shared page surface ───────────────────────────────────────
+   One lifted panel enclosing a whole screen, on the grey canvas.
+   Used by every desktop screen for a consistent surface + width. */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: var(--bg-base);
+  padding: var(--s-10) var(--s-11) var(--s-14);
+}
+
+.panel {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* ── Page header (inside the panel) ────────────────────────────── */
+.pageHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-6);
+  padding: var(--s-10) var(--s-13) var(--s-9);
+  border-bottom: 1px solid var(--divider);
+}
+
+.pageHeadText {
+  min-width: 0;
+}
+
+.pageHeadActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+  flex-shrink: 0;
+}
+
+.eyebrow {
+  font: var(--t-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--s-3);
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.subtitle {
+  font: var(--t-body-sm);
+  color: var(--ink-2);
+  margin: var(--s-3) 0 0;
+}
+
+/* ── Body ──────────────────────────────────────────────────────── */
+.body {
+  padding: var(--s-10) var(--s-13) var(--s-12);
+}
+
+/* ── Section (stacked screens) ─────────────────────────────────── */
+.section {
+  padding: var(--s-10) var(--s-13);
+  border-bottom: 1px solid var(--hair);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--s-7);
+}
