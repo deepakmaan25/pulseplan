@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { Flame } from "lucide-react";
 import { PostRow } from "@/components/post/PostRow";
-import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { WeekHero } from "@/components/today/WeekHero";
 import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { PILLARS, type MockPost } from "@/mocks/fixtures";
@@ -33,12 +32,38 @@ function pillarMix(posts: MockPost[]) {
   }).sort((a, b) => b.count - a.count);
 }
 
+const PLATFORM_LABELS: Record<string, string> = {
+  ig: "Instagram",
+  li: "LinkedIn",
+  x: "X / Twitter",
+  yt: "YouTube",
+  th: "Threads",
+};
+
+/** Count posts per platform for the "Platform focus" card. */
+function platformFocus(posts: MockPost[]) {
+  const counts = new Map<string, number>();
+  for (const p of posts) {
+    counts.set(p.platform, (counts.get(p.platform) ?? 0) + 1);
+  }
+  const max = Math.max(...counts.values(), 1);
+  return [...counts.entries()]
+    .map(([key, count]) => ({
+      key,
+      label: PLATFORM_LABELS[key] ?? key,
+      count,
+      frac: count / max,
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
 export function TodayDesktop() {
   const router = useRouter();
-  const { posts, overdue, todayPosts, upNext, greetingSub } = useTodayData();
+  const { posts, todayPosts, upNext, greetingSub } = useTodayData();
 
   const openPost = (id: string) => router.push(`/post/${id}`);
   const mix = pillarMix(posts);
+  const platforms = platformFocus(posts);
   const weekTotal = posts.length;
 
   return (
@@ -51,27 +76,6 @@ export function TodayDesktop() {
         {/* ── Left rail: summary ─────────────────────────────── */}
         <aside className={styles.rail}>
           <WeekHero posts={posts} />
-
-          {overdue.length > 0 && (
-            <section aria-label="Overdue posts">
-              <p
-                className={`${shared.sectionLabel} ${shared.sectionLabelDanger}`}
-              >
-                {overdue.length === 1
-                  ? "1 post overdue"
-                  : `${overdue.length} posts overdue`}
-              </p>
-              <div className={shared.calloutList}>
-                {overdue.map((post) => (
-                  <OverdueCallout
-                    key={post.id}
-                    title={post.title}
-                    onTap={() => openPost(post.id)}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
 
           {/* This week's mix */}
           <section className={styles.card} aria-label="This week's pillar mix">
@@ -99,6 +103,33 @@ export function TodayDesktop() {
                       style={{
                         width: `${Math.round(frac * 100)}%`,
                         background: pillar.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Platform focus */}
+          <section className={styles.card} aria-label="Platform focus">
+            <div className={styles.cardHead}>
+              <span className={styles.cardKicker}>Platform focus</span>
+              <span className={styles.cardMeta}>this week</span>
+            </div>
+            <div className={styles.mixList}>
+              {platforms.map(({ key, label, count, frac }) => (
+                <div key={key} className={styles.mixRow}>
+                  <div className={styles.mixTop}>
+                    <span className={styles.mixName}>{label}</span>
+                    <span className={styles.mixCount}>{count}</span>
+                  </div>
+                  <div className={styles.mixTrack}>
+                    <div
+                      className={styles.mixFill}
+                      style={{
+                        width: `${Math.round(frac * 100)}%`,
+                        background: "var(--primary)",
                       }}
                     />
                   </div>

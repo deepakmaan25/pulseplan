@@ -6,7 +6,6 @@ import { SlidersHorizontal } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader/AppHeader";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { BoardCard } from "@/components/post/BoardCard";
-import { OverdueCallout } from "@/components/post/OverdueCallout";
 import { PostRow } from "@/components/post/PostRow";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { usePosts } from "@/store/PostsContext";
@@ -90,7 +89,6 @@ export function PlanClient() {
   }, []);
 
   // Overdue posts
-  const overduePosts = posts.filter((p) => p.status === "overdue");
 
   // Posts per day (all statuses except overdue)
   const postsForDay = (date: string) =>
@@ -173,24 +171,6 @@ export function PlanClient() {
       </div>
 
       <div className={styles.content}>
-        {/* Overdue callouts — first */}
-        {overduePosts.length > 0 && (
-          <section aria-label="Overdue posts">
-            <p className={`${styles.dayLabel} ${styles.dayLabelDanger}`}>
-              Overdue
-            </p>
-            <div className={styles.callouts}>
-              {overduePosts.map((post) => (
-                <OverdueCallout
-                  key={post.id}
-                  title={post.title}
-                  onTap={() => openPost(post.id)}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Unscheduled tray — second */}
         {unscheduled.length > 0 && (
           <section aria-label="Unscheduled posts">

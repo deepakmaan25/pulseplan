@@ -1,0 +1,201 @@
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index bca6627..efc757d 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -6,7 +6,6 @@ import { SlidersHorizontal } from "lucide-react";
+ import { AppHeader } from "@/components/AppHeader/AppHeader";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
+ import { BoardCard } from "@/components/post/BoardCard";
+-import { OverdueCallout } from "@/components/post/OverdueCallout";
+ import { PostRow } from "@/components/post/PostRow";
+ import { Segmented } from "@/components/ui/Segmented/Segmented";
+ import { usePosts } from "@/store/PostsContext";
+@@ -90,7 +89,6 @@ export function PlanClient() {
+   }, []);
+ 
+   // Overdue posts
+-  const overduePosts = posts.filter((p) => p.status === "overdue");
+ 
+   // Posts per day (all statuses except overdue)
+   const postsForDay = (date: string) =>
+@@ -173,24 +171,6 @@ export function PlanClient() {
+       </div>
+ 
+       <div className={styles.content}>
+-        {/* Overdue callouts — first */}
+-        {overduePosts.length > 0 && (
+-          <section aria-label="Overdue posts">
+-            <p className={`${styles.dayLabel} ${styles.dayLabelDanger}`}>
+-              Overdue
+-            </p>
+-            <div className={styles.callouts}>
+-              {overduePosts.map((post) => (
+-                <OverdueCallout
+-                  key={post.id}
+-                  title={post.title}
+-                  onTap={() => openPost(post.id)}
+-                />
+-              ))}
+-            </div>
+-          </section>
+-        )}
+-
+         {/* Unscheduled tray — second */}
+         {unscheduled.length > 0 && (
+           <section aria-label="Unscheduled posts">
+diff --git a/src/app/(app)/today/TodayDesktop.tsx b/src/app/(app)/today/TodayDesktop.tsx
+index e2c21ee..4c536d5 100644
+--- a/src/app/(app)/today/TodayDesktop.tsx
++++ b/src/app/(app)/today/TodayDesktop.tsx
+@@ -3,7 +3,6 @@
+ import { useRouter } from "next/navigation";
+ import { Flame } from "lucide-react";
+ import { PostRow } from "@/components/post/PostRow";
+-import { OverdueCallout } from "@/components/post/OverdueCallout";
+ import { WeekHero } from "@/components/today/WeekHero";
+ import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { PILLARS, type MockPost } from "@/mocks/fixtures";
+@@ -33,12 +32,38 @@ function pillarMix(posts: MockPost[]) {
+   }).sort((a, b) => b.count - a.count);
+ }
+ 
++const PLATFORM_LABELS: Record<string, string> = {
++  ig: "Instagram",
++  li: "LinkedIn",
++  x: "X / Twitter",
++  yt: "YouTube",
++  th: "Threads",
++};
++
++/** Count posts per platform for the "Platform focus" card. */
++function platformFocus(posts: MockPost[]) {
++  const counts = new Map<string, number>();
++  for (const p of posts) {
++    counts.set(p.platform, (counts.get(p.platform) ?? 0) + 1);
++  }
++  const max = Math.max(...counts.values(), 1);
++  return [...counts.entries()]
++    .map(([key, count]) => ({
++      key,
++      label: PLATFORM_LABELS[key] ?? key,
++      count,
++      frac: count / max,
++    }))
++    .sort((a, b) => b.count - a.count);
++}
++
+ export function TodayDesktop() {
+   const router = useRouter();
+-  const { posts, overdue, todayPosts, upNext, greetingSub } = useTodayData();
++  const { posts, todayPosts, upNext, greetingSub } = useTodayData();
+ 
+   const openPost = (id: string) => router.push(`/post/${id}`);
+   const mix = pillarMix(posts);
++  const platforms = platformFocus(posts);
+   const weekTotal = posts.length;
+ 
+   return (
+@@ -52,27 +77,6 @@ export function TodayDesktop() {
+         <aside className={styles.rail}>
+           <WeekHero posts={posts} />
+ 
+-          {overdue.length > 0 && (
+-            <section aria-label="Overdue posts">
+-              <p
+-                className={`${shared.sectionLabel} ${shared.sectionLabelDanger}`}
+-              >
+-                {overdue.length === 1
+-                  ? "1 post overdue"
+-                  : `${overdue.length} posts overdue`}
+-              </p>
+-              <div className={shared.calloutList}>
+-                {overdue.map((post) => (
+-                  <OverdueCallout
+-                    key={post.id}
+-                    title={post.title}
+-                    onTap={() => openPost(post.id)}
+-                  />
+-                ))}
+-              </div>
+-            </section>
+-          )}
+-
+           {/* This week's mix */}
+           <section className={styles.card} aria-label="This week's pillar mix">
+             <div className={styles.cardHead}>
+@@ -107,6 +111,33 @@ export function TodayDesktop() {
+             </div>
+           </section>
+ 
++          {/* Platform focus */}
++          <section className={styles.card} aria-label="Platform focus">
++            <div className={styles.cardHead}>
++              <span className={styles.cardKicker}>Platform focus</span>
++              <span className={styles.cardMeta}>this week</span>
++            </div>
++            <div className={styles.mixList}>
++              {platforms.map(({ key, label, count, frac }) => (
++                <div key={key} className={styles.mixRow}>
++                  <div className={styles.mixTop}>
++                    <span className={styles.mixName}>{label}</span>
++                    <span className={styles.mixCount}>{count}</span>
++                  </div>
++                  <div className={styles.mixTrack}>
++                    <div
++                      className={styles.mixFill}
++                      style={{
++                        width: `${Math.round(frac * 100)}%`,
++                        background: "var(--primary)",
++                      }}
++                    />
++                  </div>
++                </div>
++              ))}
++            </div>
++          </section>
++
+           {/* Streak */}
+           <section className={styles.streak} aria-label="Publishing streak">
+             <div className={styles.streakText}>
+diff --git a/src/app/(app)/today/todayDesktop.module.css b/src/app/(app)/today/todayDesktop.module.css
+index 07d9152..89a2cb4 100644
+--- a/src/app/(app)/today/todayDesktop.module.css
++++ b/src/app/(app)/today/todayDesktop.module.css
+@@ -1,7 +1,7 @@
+ .grid {
+   display: grid;
+   grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+-  gap: var(--s-8);
++  gap: var(--s-12);
+   align-items: start;
+ }
+ 
+@@ -9,13 +9,13 @@
+ .rail {
+   display: flex;
+   flex-direction: column;
+-  gap: var(--s-8);
++  gap: var(--s-11);
+ }
+ 
+ .main {
+   display: flex;
+   flex-direction: column;
+-  gap: var(--s-6);
++  gap: var(--s-11);
+ }
+ 
+ .mainHead {
+diff --git a/src/components/PageSurface/PageSurface.module.css b/src/components/PageSurface/PageSurface.module.css
+index 6a3e3ec..18063fa 100644
+--- a/src/components/PageSurface/PageSurface.module.css
++++ b/src/components/PageSurface/PageSurface.module.css
+@@ -12,7 +12,7 @@
+ 
+ .panel {
+   width: 100%;
+-  max-width: 1180px;
++  max-width: 1320px;
+   margin: 0 auto;
+   background: var(--surface-1);
+   border: 1px solid var(--divider);

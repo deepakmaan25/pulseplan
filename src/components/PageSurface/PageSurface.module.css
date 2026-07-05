@@ -12,7 +12,7 @@
 
 .panel {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1320px;
   margin: 0 auto;
   background: var(--surface-1);
   border: 1px solid var(--divider);
