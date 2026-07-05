@@ -23,6 +23,8 @@
   --surface-2: #ffffff;
   --surface-3: #ffffff;
   --surface-4: #ffffff;
+  --well: #f7f8fa;
+  --hair: rgba(10, 13, 18, 0.07);
   --scrim: rgba(10, 13, 18, 0.48);
 
   /* Ink (text) — contrast hardened.
@@ -207,6 +209,8 @@
   --surface-2: #1c2026;
   --surface-3: #242931;
   --surface-4: #2d333c;
+  --well: #1a1e23;
+  --hair: rgba(255, 255, 255, 0.06);
   --scrim: rgba(0, 0, 0, 0.68);
 
   /* Ink — dark contrast hardened. ink-3 5.4:1 on bg-base. */

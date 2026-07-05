@@ -1,7 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AppHeader } from "@/components/AppHeader/AppHeader";
+import {
+  ArrowUp,
+  ArrowDown,
+  Heart,
+  UserPlus,
+  Bookmark,
+  Play,
+} from "lucide-react";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./analytics.module.css";
@@ -61,6 +68,47 @@ const KPI_DATA: Record<
 
 const MOCK_REACH = [12400, 9800, 7200, 5100, 3900];
 
+// Presentation metadata for KPI cells. Trend deltas are stubbed (static)
+// until week-over-week data exists in the model.
+const KPI_META = [
+  {
+    key: "engagement" as const,
+    label: "Engagement",
+    Icon: Heart,
+    accent: "#0d9f6e",
+    accentBg: "#e3f5ed",
+    delta: "1.2%",
+    up: true,
+  },
+  {
+    key: "followers" as const,
+    label: "Followers",
+    Icon: UserPlus,
+    accent: "#2e5bff",
+    accentBg: "#e6ecff",
+    delta: "84",
+    up: true,
+  },
+  {
+    key: "saved" as const,
+    label: "Saved",
+    Icon: Bookmark,
+    accent: "#7c5cff",
+    accentBg: "#efeaff",
+    delta: "210",
+    up: true,
+  },
+  {
+    key: "avgWatch" as const,
+    label: "Avg watch",
+    Icon: Play,
+    accent: "#e0912f",
+    accentBg: "#fbefdc",
+    delta: "3%",
+    up: false,
+  },
+];
+
 const PLATFORM_ABBR: Record<string, string> = {
   ig: "IG",
   li: "LI",
@@ -83,9 +131,9 @@ function formatReach(n: number): string {
 }
 
 function Sparkline({ points }: { points: number[] }) {
-  const W = 160;
-  const H = 40;
-  const PAD = 4;
+  const W = 520;
+  const H = 88;
+  const PAD = 8;
   const min = Math.min(...points);
   const max = Math.max(...points);
   const range = max - min || 1;
@@ -96,11 +144,11 @@ function Sparkline({ points }: { points: number[] }) {
     .map((x, i) => `${x.toFixed(1)},${ys[i]!.toFixed(1)}`)
     .join(" ");
   const areaPoints = `0,${H} ${linePoints} ${W},${H}`;
+  const lastX = xs[n - 1]!;
+  const lastY = ys[n - 1]!;
 
   return (
     <svg
-      width={W}
-      height={H}
       viewBox={`0 0 ${W} ${H}`}
       aria-hidden="true"
       className={styles.sparkline}
@@ -108,18 +156,26 @@ function Sparkline({ points }: { points: number[] }) {
     >
       <defs>
         <linearGradient id="spkFillAnalytics" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="0%" stopColor="#4fdda3" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#4fdda3" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon points={areaPoints} fill="url(#spkFillAnalytics)" />
       <polyline
         points={linePoints}
         fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
+        stroke="#4fdda3"
+        strokeWidth="2.5"
         strokeLinejoin="round"
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+      <circle
+        cx={lastX}
+        cy={lastY}
+        r="4.5"
+        fill="#fff"
+        className={styles.sparkDot}
       />
     </svg>
   );
@@ -183,11 +239,10 @@ export function AnalyticsClient() {
 
   return (
     <div className={styles.screen}>
-      <AppHeader
-        variant="prominent"
-        title="Analytics"
-        style={{ paddingTop: "var(--s-4)" }}
-        trailingExtra={
+      <div className={styles.panel}>
+        {/* Page header — inside the surface */}
+        <header className={styles.pageHead}>
+          <h1 className={styles.pageTitle}>Analytics</h1>
           <Segmented
             options={PERIOD_OPTIONS}
             value={period}
@@ -195,50 +250,80 @@ export function AnalyticsClient() {
             ariaLabel="Analytics period"
             size="sm"
           />
-        }
-      />
+        </header>
 
-      <div className={styles.content}>
-        {/* Hero card — dark inverted */}
-        <div
-          className={styles.heroCard}
+        {/* Hero — total reach feature block */}
+        <section
+          className={styles.sec}
           aria-label={`Total reach ${hero.value}`}
         >
-          <p className={styles.heroKicker}>Total reach</p>
-          <div className={styles.heroRow}>
-            <span className={styles.heroValue}>{hero.value}</span>
-            <span
-              className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
-            >
-              {hero.delta}
-            </span>
+          <div className={styles.heroCard}>
+            <div className={styles.heroGrid}>
+              <div className={styles.heroLeft}>
+                <p className={styles.heroKicker}>Total reach</p>
+                <span className={styles.heroValue}>{hero.value}</span>
+                <span
+                  className={`${styles.heroDelta} ${hero.positive ? styles.heroDeltaPos : styles.heroDeltaNeg}`}
+                >
+                  {hero.positive ? (
+                    <ArrowUp size={12} strokeWidth={2.5} />
+                  ) : (
+                    <ArrowDown size={12} strokeWidth={2.5} />
+                  )}
+                  {hero.delta} vs last week
+                </span>
+                <p className={styles.heroSub}>
+                  Across {platforms.length} platforms · {posts.length} posts
+                </p>
+              </div>
+              <div className={styles.heroChart}>
+                <Sparkline points={sparkPoints} />
+              </div>
+            </div>
           </div>
-          <Sparkline points={sparkPoints} />
-        </div>
+        </section>
 
-        {/* 2×2 KPI grid */}
-        <div className={styles.kpiGrid} aria-label="Key metrics">
-          <div className={styles.kpiCell}>
-            <span className={styles.kpiValue}>{kpi.engagement}</span>
-            <span className={styles.kpiLabel}>Engagement</span>
+        {/* KPI row */}
+        <section className={styles.sec} aria-label="Key metrics">
+          <div className={styles.kpiGrid}>
+            {KPI_META.map(
+              ({ key, label, Icon, accent, accentBg, delta, up }) => (
+                <div
+                  key={key}
+                  className={styles.kpiCell}
+                  style={
+                    {
+                      "--accent": accent,
+                      "--accent-bg": accentBg,
+                    } as React.CSSProperties
+                  }
+                >
+                  <div className={styles.kpiTop}>
+                    <span className={styles.kpiIcon}>
+                      <Icon size={14} strokeWidth={2} />
+                    </span>
+                    <span
+                      className={`${styles.kpiTrend} ${up ? styles.kpiTrendUp : styles.kpiTrendDown}`}
+                    >
+                      {up ? (
+                        <ArrowUp size={11} strokeWidth={2.5} />
+                      ) : (
+                        <ArrowDown size={11} strokeWidth={2.5} />
+                      )}
+                      {delta}
+                    </span>
+                  </div>
+                  <span className={styles.kpiValue}>{kpi[key]}</span>
+                  <span className={styles.kpiLabel}>{label}</span>
+                </div>
+              ),
+            )}
           </div>
-          <div className={styles.kpiCell}>
-            <span className={styles.kpiValue}>{kpi.followers}</span>
-            <span className={styles.kpiLabel}>Followers</span>
-          </div>
-          <div className={styles.kpiCell}>
-            <span className={styles.kpiValue}>{kpi.saved}</span>
-            <span className={styles.kpiLabel}>Saved</span>
-          </div>
-          <div className={styles.kpiCell}>
-            <span className={styles.kpiValue}>{kpi.avgWatch}</span>
-            <span className={styles.kpiLabel}>Avg watch</span>
-          </div>
-        </div>
+        </section>
 
         {/* Top Posts */}
         {topPosts.length > 0 && (
-          <section aria-label="Top posts">
+          <section className={styles.sec} aria-label="Top posts">
             <p className={styles.sectionLabel}>Top posts</p>
             <div className={styles.topList}>
               {topPosts.map((p, i) => (
@@ -257,62 +342,71 @@ export function AnalyticsClient() {
           </section>
         )}
 
-        {/* Content pillars */}
-        {pillars.length > 0 && (
-          <section aria-label="Content pillar breakdown">
-            <p className={styles.sectionLabel}>Content pillars</p>
-            <div className={styles.breakdownList}>
-              {pillars.map(({ name, color, count }) => (
-                <div key={name} className={styles.breakdownRow}>
-                  <span
-                    className={styles.breakdownDot}
-                    style={{ background: color }}
-                  />
-                  <span className={styles.breakdownName}>{name}</span>
-                  <div className={styles.breakdownBarTrack}>
-                    <div
-                      className={styles.breakdownBar}
-                      style={{
-                        width: `${(count / maxPillarCount) * 100}%`,
-                        background: color,
-                      }}
-                    />
+        {/* Breakdowns — pillars + platforms side by side */}
+        {(pillars.length > 0 || platforms.length > 0) && (
+          <section className={styles.sec} aria-label="Breakdowns">
+            <div className={styles.breakdownCols}>
+              {pillars.length > 0 && (
+                <div aria-label="Content pillar breakdown">
+                  <p className={styles.sectionLabel}>Content pillars</p>
+                  <div className={styles.breakdownList}>
+                    {pillars.map(({ name, color, count }) => (
+                      <div key={name} className={styles.breakdownRow}>
+                        <span className={styles.breakdownName}>
+                          <span
+                            className={styles.breakdownDot}
+                            style={{ background: color }}
+                          />
+                          {name}
+                        </span>
+                        <div className={styles.breakdownBarTrack}>
+                          <div
+                            className={styles.breakdownBar}
+                            style={{
+                              width: `${(count / maxPillarCount) * 100}%`,
+                              background: color,
+                            }}
+                          />
+                        </div>
+                        <span className={styles.breakdownCount}>{count}</span>
+                      </div>
+                    ))}
                   </div>
-                  <span className={styles.breakdownCount}>{count}</span>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              )}
 
-        {/* Platforms */}
-        {platforms.length > 0 && (
-          <section aria-label="Platform breakdown">
-            <p className={styles.sectionLabel}>Platforms</p>
-            <div className={styles.breakdownList}>
-              {platforms.map(({ key, label, count }) => (
-                <div key={key} className={styles.breakdownRow}>
-                  <span className={styles.breakdownName}>{label}</span>
-                  <div className={styles.breakdownBarTrack}>
-                    <div
-                      className={styles.breakdownBar}
-                      style={{
-                        width: `${(count / maxPlatformCount) * 100}%`,
-                        background: "var(--primary)",
-                      }}
-                    />
+              {platforms.length > 0 && (
+                <div aria-label="Platform breakdown">
+                  <p className={styles.sectionLabel}>Platforms</p>
+                  <div className={styles.breakdownList}>
+                    {platforms.map(({ key, label, count }) => (
+                      <div key={key} className={styles.breakdownRow}>
+                        <span className={styles.breakdownName}>{label}</span>
+                        <div className={styles.breakdownBarTrack}>
+                          <div
+                            className={styles.breakdownBar}
+                            style={{
+                              width: `${(count / maxPlatformCount) * 100}%`,
+                              background: "var(--primary)",
+                            }}
+                          />
+                        </div>
+                        <span className={styles.breakdownCount}>{count}</span>
+                      </div>
+                    ))}
                   </div>
-                  <span className={styles.breakdownCount}>{count}</span>
                 </div>
-              ))}
+              )}
             </div>
           </section>
         )}
 
         {posts.length === 0 && (
-          <p className={styles.emptyNote}>
-            Add your first post idea to start tracking your pipeline.
-          </p>
+          <section className={styles.sec}>
+            <p className={styles.emptyNote}>
+              Add your first post idea to start tracking your pipeline.
+            </p>
+          </section>
         )}
       </div>
     </div>
