@@ -188,17 +188,46 @@
   margin: var(--s-2) 0;
 }
 
+/* ─── Week group: days grouped in one lifted panel ───────────── */
+.weekGroup {
+  margin: 0 var(--s-9) 0;
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  padding-bottom: var(--s-4);
+}
+
+.weekGroupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-7) var(--s-9) var(--s-5);
+  border-bottom: 1px solid var(--divider);
+}
+
+.weekGroupTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: var(--ls-title);
+}
+
+.weekGroupCount {
+  font: var(--t-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
 /* ─── Day header ─────────────────────────────────────────────── */
 .dayHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--s-6);
-  padding: var(--s-7) var(--s-9) var(--s-4);
-  background: var(--bg-base);
-  position: sticky;
-  top: 76px;
-  z-index: 2;
+  padding: var(--s-6) var(--s-9) var(--s-3);
+  background: transparent;
 }
 
 .dayHeadL {
@@ -235,6 +264,7 @@
 .list {
   display: flex;
   flex-direction: column;
+  padding: 0 var(--s-9) var(--s-3);
 }
 
 /* ─── Empty day dashed CTA ───────────────────────────────────── */
@@ -242,7 +272,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 var(--s-9) var(--s-4);
+  margin: 0 var(--s-9) var(--s-6);
   height: 44px;
   border: 1px dashed var(--divider-strong);
   border-radius: var(--r-md);

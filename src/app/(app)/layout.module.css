@@ -173,7 +173,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--s-6);
-  padding: var(--s-6) var(--s-12);
+  padding: var(--s-3) var(--s-12);
   background: color-mix(in srgb, var(--bg-base) 88%, transparent);
   backdrop-filter: saturate(1.4) blur(8px);
   border-bottom: 1px solid var(--divider);

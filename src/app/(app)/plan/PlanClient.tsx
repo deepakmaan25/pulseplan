@@ -226,63 +226,69 @@ export function PlanClient() {
 
         <div className={styles.hairline} />
 
-        {/* Day rows */}
-        {days.map((day) => {
-          const dayPosts = postsForDay(day.date);
-          return (
-            <section
-              key={day.date}
-              id={`plan-day-${day.date}`}
-              aria-label={day.label}
-            >
-              <div className={styles.dayHeader}>
-                <div className={styles.dayHeadL}>
-                  <span className={styles.dayName}>
-                    {day.isToday ? "Today" : weekdayFull(day.date)}
-                  </span>
-                  <span className={styles.dayDate}>
-                    MAY {day.dayNum}
-                    {day.isToday ? " · now" : ""}
+        {/* Day rows — grouped in one lifted panel */}
+        <div className={styles.weekGroup}>
+          <div className={styles.weekGroupHead}>
+            <span className={styles.weekGroupTitle}>This week</span>
+            <span className={styles.weekGroupCount}>{weekPlanned} planned</span>
+          </div>
+          {days.map((day) => {
+            const dayPosts = postsForDay(day.date);
+            return (
+              <section
+                key={day.date}
+                id={`plan-day-${day.date}`}
+                aria-label={day.label}
+              >
+                <div className={styles.dayHeader}>
+                  <div className={styles.dayHeadL}>
+                    <span className={styles.dayName}>
+                      {day.isToday ? "Today" : weekdayFull(day.date)}
+                    </span>
+                    <span className={styles.dayDate}>
+                      MAY {day.dayNum}
+                      {day.isToday ? " · now" : ""}
+                    </span>
+                  </div>
+                  <span className={styles.dayCount}>
+                    {dayPosts.length === 0
+                      ? "empty"
+                      : `${dayPosts.length} planned`}
                   </span>
                 </div>
-                <span className={styles.dayCount}>
-                  {dayPosts.length === 0
-                    ? "empty"
-                    : `${dayPosts.length} planned`}
-                </span>
-              </div>
-              {dayPosts.length > 0 ? (
-                <div className={styles.list}>
-                  {dayPosts.map((post) => (
-                    <PostRow
-                      key={post.id}
-                      title={post.title}
-                      time={post.time}
-                      reminderHint={
-                        post.status === "sched" ? "30m before" : undefined
-                      }
-                      status={post.status}
-                      pillar={post.pillar}
-                      platform={post.platform}
-                      postType={post.postType}
-                      priority={post.priority}
-                      onClick={() => openPost(post.id)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className={styles.emptyDayCta}
-                  onClick={() => openPost("new")}
-                  aria-label={`Schedule for ${day.label}`}
-                >
-                  + Schedule for {day.weekdayShort}
-                </button>
-              )}
-            </section>
-          );
-        })}
+                {dayPosts.length > 0 ? (
+                  <div className={styles.list}>
+                    {dayPosts.map((post) => (
+                      <PostRow
+                        key={post.id}
+                        title={post.title}
+                        time={post.time}
+                        reminderHint={
+                          post.status === "sched" ? "30m before" : undefined
+                        }
+                        status={post.status}
+                        pillar={post.pillar}
+                        platform={post.platform}
+                        postType={post.postType}
+                        priority={post.priority}
+                        onClick={() => openPost(post.id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.emptyDayCta}
+                    onClick={() => openPost("new")}
+                    aria-label={`Schedule for ${day.label}`}
+                  >
+                    + Schedule for {day.weekdayShort}
+                  </button>
+                )}
+              </section>
+            );
+          })}
+        </div>
 
         <p className={styles.footerNote}>
           End of week · {weekPlanned} items planned
