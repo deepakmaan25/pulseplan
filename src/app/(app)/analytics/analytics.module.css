@@ -236,13 +236,13 @@
 }
 
 .topPlatform {
-  font: var(--t-mono);
-  font-size: 10px;
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--ink-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--ink-2);
   background: var(--bg-sunken);
-  padding: 2px var(--s-4);
   border-radius: var(--r-sm);
   flex-shrink: 0;
 }

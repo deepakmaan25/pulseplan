@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
+import { PlatformIcon } from "@/components/ui/PlatformIcon";
+import type { Platform } from "@/components/ui/chips/PlatformChip";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./analytics.module.css";
 
@@ -109,14 +111,6 @@ const KPI_META = [
     up: false,
   },
 ];
-
-const PLATFORM_ABBR: Record<string, string> = {
-  ig: "IG",
-  li: "LI",
-  x: "X",
-  yt: "YT",
-  th: "TH",
-};
 
 const PLATFORM_LABELS: Record<string, string> = {
   ig: "Instagram",
@@ -324,7 +318,7 @@ export function AnalyticsClient() {
               <div key={p.id} className={styles.topRow}>
                 <span className={styles.topRank}>{i + 1}</span>
                 <span className={styles.topPlatform}>
-                  {PLATFORM_ABBR[p.platform] ?? p.platform}
+                  <PlatformIcon platform={p.platform as Platform} size={14} />
                 </span>
                 <span className={styles.topTitle}>{p.title}</span>
                 <span className={styles.topReach}>{formatReach(p.reach)}</span>

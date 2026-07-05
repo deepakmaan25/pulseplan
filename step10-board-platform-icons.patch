@@ -1,0 +1,582 @@
+diff --git a/src/app/(app)/analytics/AnalyticsClient.tsx b/src/app/(app)/analytics/AnalyticsClient.tsx
+index 1d97608..0241dbe 100644
+--- a/src/app/(app)/analytics/AnalyticsClient.tsx
++++ b/src/app/(app)/analytics/AnalyticsClient.tsx
+@@ -11,6 +11,8 @@ import {
+ } from "lucide-react";
+ import { Segmented } from "@/components/ui/Segmented/Segmented";
+ import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
++import { PlatformIcon } from "@/components/ui/PlatformIcon";
++import type { Platform } from "@/components/ui/chips/PlatformChip";
+ import { usePosts } from "@/store/PostsContext";
+ import styles from "./analytics.module.css";
+ 
+@@ -110,14 +112,6 @@ const KPI_META = [
+   },
+ ];
+ 
+-const PLATFORM_ABBR: Record<string, string> = {
+-  ig: "IG",
+-  li: "LI",
+-  x: "X",
+-  yt: "YT",
+-  th: "TH",
+-};
+-
+ const PLATFORM_LABELS: Record<string, string> = {
+   ig: "Instagram",
+   li: "LinkedIn",
+@@ -324,7 +318,7 @@ export function AnalyticsClient() {
+               <div key={p.id} className={styles.topRow}>
+                 <span className={styles.topRank}>{i + 1}</span>
+                 <span className={styles.topPlatform}>
+-                  {PLATFORM_ABBR[p.platform] ?? p.platform}
++                  <PlatformIcon platform={p.platform as Platform} size={14} />
+                 </span>
+                 <span className={styles.topTitle}>{p.title}</span>
+                 <span className={styles.topReach}>{formatReach(p.reach)}</span>
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index 5bd684a..d53e9b1 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -236,13 +236,13 @@
+ }
+ 
+ .topPlatform {
+-  font: var(--t-mono);
+-  font-size: 10px;
+-  letter-spacing: var(--ls-label);
+-  text-transform: uppercase;
+-  color: var(--ink-3);
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 24px;
++  height: 24px;
++  color: var(--ink-2);
+   background: var(--bg-sunken);
+-  padding: 2px var(--s-4);
+   border-radius: var(--r-sm);
+   flex-shrink: 0;
+ }
+diff --git a/src/app/(app)/board/BoardDesktop.tsx b/src/app/(app)/board/BoardDesktop.tsx
+new file mode 100644
+index 0000000..ff1b460
+--- /dev/null
++++ b/src/app/(app)/board/BoardDesktop.tsx
+@@ -0,0 +1,79 @@
++"use client";
++
++import { useRouter } from "next/navigation";
++import { usePosts } from "@/store/PostsContext";
++import { PageSurface } from "@/components/PageSurface/PageSurface";
++import { BoardCard } from "@/components/post/BoardCard";
++import type { PostStatus } from "@/components/ui/chips/StatusChip";
++import styles from "./boardDesktop.module.css";
++
++function formatDayStamp(dateStr?: string): string | undefined {
++  if (!dateStr) return undefined;
++  const d = new Date(dateStr + "T00:00:00");
++  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
++}
++
++// Overdue is a derived callout, not a kanban stage — excluded from columns.
++const STAGES: { value: PostStatus; label: string; color: string }[] = [
++  { value: "idea", label: "Idea", color: "var(--st-idea-fg)" },
++  { value: "draft", label: "Drafting", color: "var(--st-draft-fg)" },
++  { value: "review", label: "Review", color: "var(--st-review-fg)" },
++  { value: "sched", label: "Scheduled", color: "var(--st-sched-fg)" },
++  { value: "pub", label: "Published", color: "var(--st-pub-fg)" },
++];
++
++export function BoardDesktop() {
++  const router = useRouter();
++  const { posts } = usePosts();
++
++  const total = posts.filter((p) => p.status !== "overdue").length;
++
++  return (
++    <PageSurface
++      title="Board"
++      subtitle={`${total} posts across ${STAGES.length} stages`}
++    >
++      <div className={styles.board}>
++        {STAGES.map(({ value, label, color }) => {
++          const cards = posts.filter((p) => p.status === value);
++          return (
++            <section
++              key={value}
++              className={styles.column}
++              aria-label={`${label} — ${cards.length} posts`}
++            >
++              <div className={styles.columnHead}>
++                <span
++                  className={styles.columnDot}
++                  style={{ background: color }}
++                  aria-hidden="true"
++                />
++                <span className={styles.columnTitle}>{label}</span>
++                <span className={styles.columnCount}>{cards.length}</span>
++              </div>
++              <div className={styles.columnBody}>
++                {cards.length > 0 ? (
++                  cards.map((post) => (
++                    <BoardCard
++                      key={post.id}
++                      title={post.title}
++                      pillar={post.pillar}
++                      platform={post.platform}
++                      status={post.status}
++                      postType={post.postType}
++                      priority={post.priority}
++                      dayStamp={formatDayStamp(post.scheduledDate)}
++                      onClick={() => router.push(`/post/${post.id}`)}
++                    />
++                  ))
++                ) : (
++                  <p className={styles.emptyColumn}>Nothing here yet</p>
++                )}
++              </div>
++            </section>
++          );
++        })}
++      </div>
++    </PageSurface>
++  );
++}
+diff --git a/src/app/(app)/board/BoardMobile.tsx b/src/app/(app)/board/BoardMobile.tsx
+new file mode 100644
+index 0000000..a4a3121
+--- /dev/null
++++ b/src/app/(app)/board/BoardMobile.tsx
+@@ -0,0 +1,106 @@
++"use client";
++
++import { useState } from "react";
++import { useRouter } from "next/navigation";
++import { Archive } from "lucide-react";
++import { AppHeader } from "@/components/AppHeader/AppHeader";
++import { ToneIcon } from "@/components/ui/ToneIcon/ToneIcon";
++import { BoardCard } from "@/components/post/BoardCard";
++import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
++import { usePosts } from "@/store/PostsContext";
++import type { PostStatus } from "@/components/ui/chips/StatusChip";
++import styles from "./board.module.css";
++
++function formatDayStamp(dateStr?: string): string | undefined {
++  if (!dateStr) return undefined;
++  const d = new Date(dateStr + "T00:00:00");
++  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
++}
++
++// Overdue is a derived callout state, not a kanban stage — excluded from rail
++const STAGES: { value: PostStatus; label: string }[] = [
++  { value: "idea", label: "Idea" },
++  { value: "draft", label: "Drafting" },
++  { value: "review", label: "Review" },
++  { value: "sched", label: "Scheduled" },
++  { value: "pub", label: "Published" },
++];
++
++export function BoardMobile() {
++  const [active, setActive] = useState<PostStatus>("draft");
++  const router = useRouter();
++  const { posts } = usePosts();
++
++  const filtered = posts.filter((p) => p.status === active);
++  const activeLabel = STAGES.find((s) => s.value === active)?.label ?? active;
++
++  return (
++    <div>
++      <AppHeader title="Board" style={{ paddingTop: "var(--s-4)" }} />
++
++      {/* Stage rail with counts */}
++      <div className={styles.railWrapper}>
++        <div className={styles.rail} role="tablist" aria-label="Content stages">
++          {STAGES.map(({ value, label }) => {
++            const count = posts.filter((p) => p.status === value).length;
++            const isActive = active === value;
++            return (
++              <button
++                key={value}
++                type="button"
++                role="tab"
++                aria-selected={isActive}
++                onClick={() => setActive(value)}
++                className={`${styles.railCell} ${isActive ? styles.railCellActive : ""}`}
++              >
++                <span className={styles.railLabel}>{label}</span>
++                <span
++                  className={`${styles.railCount} ${isActive ? styles.railCountActive : ""}`}
++                >
++                  {count}
++                </span>
++              </button>
++            );
++          })}
++        </div>
++      </div>
++
++      {/* Active column header */}
++      <div className={styles.columnHeader}>
++        <span className={styles.columnDot} aria-hidden="true" />
++        <span className={styles.columnTitle}>{activeLabel}</span>
++        <span className={styles.columnCount}>{filtered.length}</span>
++      </div>
++
++      {filtered.length > 0 ? (
++        <div className={styles.grid}>
++          {filtered.map((post) => (
++            <BoardCard
++              key={post.id}
++              title={post.title}
++              pillar={post.pillar}
++              platform={post.platform}
++              status={post.status}
++              postType={post.postType}
++              priority={post.priority}
++              dayStamp={formatDayStamp(post.scheduledDate)}
++              onClick={() => router.push(`/post/${post.id}`)}
++            />
++          ))}
++        </div>
++      ) : (
++        <EmptyState
++          icon={
++            <ToneIcon icon={<Archive size={18} />} tone="neutral" size={36} />
++          }
++          title={`No ${activeLabel.toLowerCase()} yet`}
++          description={
++            active === "idea"
++              ? "Tap + to capture your first post idea."
++              : `Move a post to ${activeLabel.toLowerCase()} to see it here.`
++          }
++        />
++      )}
++    </div>
++  );
++}
+diff --git a/src/app/(app)/board/BoardScreen.tsx b/src/app/(app)/board/BoardScreen.tsx
+index 048456f..7579621 100644
+--- a/src/app/(app)/board/BoardScreen.tsx
++++ b/src/app/(app)/board/BoardScreen.tsx
+@@ -1,106 +1,15 @@
+ "use client";
+ 
+-import { useState } from "react";
+-import { useRouter } from "next/navigation";
+-import { Archive } from "lucide-react";
+-import { AppHeader } from "@/components/AppHeader/AppHeader";
+-import { ToneIcon } from "@/components/ui/ToneIcon/ToneIcon";
+-import { BoardCard } from "@/components/post/BoardCard";
+-import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+-import { usePosts } from "@/store/PostsContext";
+-import type { PostStatus } from "@/components/ui/chips/StatusChip";
+-import styles from "./board.module.css";
+-
+-function formatDayStamp(dateStr?: string): string | undefined {
+-  if (!dateStr) return undefined;
+-  const d = new Date(dateStr + "T00:00:00");
+-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+-}
+-
+-// Overdue is a derived callout state, not a kanban stage — excluded from rail
+-const STAGES: { value: PostStatus; label: string }[] = [
+-  { value: "idea", label: "Idea" },
+-  { value: "draft", label: "Drafting" },
+-  { value: "review", label: "Review" },
+-  { value: "sched", label: "Scheduled" },
+-  { value: "pub", label: "Published" },
+-];
+-
++import { useLayoutMode } from "@/components/providers";
++import { BoardMobile } from "./BoardMobile";
++import { BoardDesktop } from "./BoardDesktop";
++
++/**
++ * Layout resolver. Desktop shows a real multi-column kanban; mobile keeps the
++ * single-column stage switcher (Board also lives under the Plan|Board toggle on
++ * mobile). Both read the same posts store.
++ */
+ export function BoardScreen() {
+-  const [active, setActive] = useState<PostStatus>("draft");
+-  const router = useRouter();
+-  const { posts } = usePosts();
+-
+-  const filtered = posts.filter((p) => p.status === active);
+-  const activeLabel = STAGES.find((s) => s.value === active)?.label ?? active;
+-
+-  return (
+-    <div>
+-      <AppHeader title="Board" style={{ paddingTop: "var(--s-4)" }} />
+-
+-      {/* Stage rail with counts */}
+-      <div className={styles.railWrapper}>
+-        <div className={styles.rail} role="tablist" aria-label="Content stages">
+-          {STAGES.map(({ value, label }) => {
+-            const count = posts.filter((p) => p.status === value).length;
+-            const isActive = active === value;
+-            return (
+-              <button
+-                key={value}
+-                type="button"
+-                role="tab"
+-                aria-selected={isActive}
+-                onClick={() => setActive(value)}
+-                className={`${styles.railCell} ${isActive ? styles.railCellActive : ""}`}
+-              >
+-                <span className={styles.railLabel}>{label}</span>
+-                <span
+-                  className={`${styles.railCount} ${isActive ? styles.railCountActive : ""}`}
+-                >
+-                  {count}
+-                </span>
+-              </button>
+-            );
+-          })}
+-        </div>
+-      </div>
+-
+-      {/* Active column header */}
+-      <div className={styles.columnHeader}>
+-        <span className={styles.columnDot} aria-hidden="true" />
+-        <span className={styles.columnTitle}>{activeLabel}</span>
+-        <span className={styles.columnCount}>{filtered.length}</span>
+-      </div>
+-
+-      {filtered.length > 0 ? (
+-        <div className={styles.grid}>
+-          {filtered.map((post) => (
+-            <BoardCard
+-              key={post.id}
+-              title={post.title}
+-              pillar={post.pillar}
+-              platform={post.platform}
+-              status={post.status}
+-              postType={post.postType}
+-              priority={post.priority}
+-              dayStamp={formatDayStamp(post.scheduledDate)}
+-              onClick={() => router.push(`/post/${post.id}`)}
+-            />
+-          ))}
+-        </div>
+-      ) : (
+-        <EmptyState
+-          icon={
+-            <ToneIcon icon={<Archive size={18} />} tone="neutral" size={36} />
+-          }
+-          title={`No ${activeLabel.toLowerCase()} yet`}
+-          description={
+-            active === "idea"
+-              ? "Tap + to capture your first post idea."
+-              : `Move a post to ${activeLabel.toLowerCase()} to see it here.`
+-          }
+-        />
+-      )}
+-    </div>
+-  );
++  const mode = useLayoutMode();
++  return mode === "desktop" ? <BoardDesktop /> : <BoardMobile />;
+ }
+diff --git a/src/app/(app)/board/boardDesktop.module.css b/src/app/(app)/board/boardDesktop.module.css
+new file mode 100644
+index 0000000..9097b1b
+--- /dev/null
++++ b/src/app/(app)/board/boardDesktop.module.css
+@@ -0,0 +1,69 @@
++/* Desktop kanban: 5 stage columns side by side, inside the page surface. */
++
++.board {
++  display: grid;
++  grid-template-columns: repeat(5, minmax(0, 1fr));
++  gap: var(--s-8);
++  align-items: start;
++}
++
++.column {
++  background: var(--well);
++  border: 1px solid var(--hair);
++  border-radius: var(--r-lg);
++  display: flex;
++  flex-direction: column;
++  min-height: 180px;
++}
++
++.columnHead {
++  display: flex;
++  align-items: center;
++  gap: var(--s-4);
++  padding: var(--s-7) var(--s-7) var(--s-6);
++  border-bottom: 1px solid var(--hair);
++}
++
++.columnDot {
++  width: 8px;
++  height: 8px;
++  border-radius: 50%;
++  flex-shrink: 0;
++}
++
++.columnTitle {
++  font-size: 13px;
++  font-weight: 700;
++  letter-spacing: -0.01em;
++  color: var(--ink-1);
++}
++
++.columnCount {
++  margin-left: auto;
++  font: var(--t-mono);
++  font-size: 11px;
++  color: var(--ink-3);
++  background: var(--surface-1);
++  border: 1px solid var(--hair);
++  border-radius: var(--r-full);
++  min-width: 20px;
++  height: 20px;
++  display: grid;
++  place-items: center;
++  padding: 0 var(--s-3);
++}
++
++.columnBody {
++  padding: var(--s-5);
++  display: flex;
++  flex-direction: column;
++  gap: var(--s-5);
++}
++
++.emptyColumn {
++  padding: var(--s-9) var(--s-5);
++  text-align: center;
++  font: var(--t-body-sm);
++  color: var(--ink-3);
++  margin: 0;
++}
+diff --git a/src/components/ui/PlatformIcon.tsx b/src/components/ui/PlatformIcon.tsx
+new file mode 100644
+index 0000000..fd7d416
+--- /dev/null
++++ b/src/components/ui/PlatformIcon.tsx
+@@ -0,0 +1,50 @@
++import type { Platform } from "./chips/PlatformChip";
++import { Linkedin, Instagram, Youtube } from "lucide-react";
++
++/**
++ * Real platform logos. LinkedIn / Instagram / YouTube come from lucide;
++ * X and Threads are inline SVGs (lucide has no current X mark or Threads icon).
++ * Rendered as currentColor so the parent can tint with the brand token.
++ */
++export function PlatformIcon({
++  platform,
++  size = 14,
++}: {
++  platform: Platform;
++  size?: number;
++}) {
++  switch (platform) {
++    case "li":
++      return <Linkedin size={size} strokeWidth={2} aria-hidden="true" />;
++    case "ig":
++      return <Instagram size={size} strokeWidth={2} aria-hidden="true" />;
++    case "yt":
++      return <Youtube size={size} strokeWidth={2} aria-hidden="true" />;
++    case "x":
++      return (
++        <svg
++          width={size}
++          height={size}
++          viewBox="0 0 24 24"
++          fill="currentColor"
++          aria-hidden="true"
++        >
++          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
++        </svg>
++      );
++    case "th":
++      return (
++        <svg
++          width={size}
++          height={size}
++          viewBox="0 0 24 24"
++          fill="currentColor"
++          aria-hidden="true"
++        >
++          <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 013.12.156c-.106-.807-.35-1.51-.729-2.096-.518-.8-1.32-1.21-2.38-1.216h-.032c-.735 0-1.732.212-2.373 1.2l-1.75-1.18C10.32 6.116 11.76 5.5 13.328 5.5h.06c2.622.023 4.174 1.632 4.328 4.437.088.037.176.077.263.118 1.256.63 2.176 1.583 2.66 2.76.677 1.634.74 4.3-1.426 6.42-1.65 1.617-3.647 2.34-6.464 2.365z" />
++        </svg>
++      );
++    default:
++      return null;
++  }
++}
+diff --git a/src/components/ui/chips/PlatformChip.tsx b/src/components/ui/chips/PlatformChip.tsx
+index bd137de..34e0878 100644
+--- a/src/components/ui/chips/PlatformChip.tsx
++++ b/src/components/ui/chips/PlatformChip.tsx
+@@ -1,4 +1,5 @@
+ import type { HTMLAttributes } from "react";
++import { PlatformIcon } from "../PlatformIcon";
+ import styles from "./chips.module.css";
+ 
+ export type Platform = "ig" | "li" | "x" | "yt" | "th";
+@@ -11,14 +12,6 @@ const LABELS: Record<Platform, string> = {
+   th: "Threads",
+ };
+ 
+-const GLYPH: Record<Platform, string> = {
+-  ig: "ig",
+-  li: "in",
+-  x: "x",
+-  yt: "yt",
+-  th: "th",
+-};
+-
+ export interface PlatformChipProps extends HTMLAttributes<HTMLSpanElement> {
+   platform: Platform;
+   size?: "sm" | "md";
+@@ -44,11 +37,14 @@ export function PlatformChip({
+       <span
+         className={styles.platformGlyph}
+         style={{
+-          background: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
++          background: mono
++            ? "var(--bg-sunken)"
++            : `var(--plat-${platform}-soft)`,
++          color: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
+         }}
+         aria-hidden="true"
+       >
+-        {GLYPH[platform]}
++        <PlatformIcon platform={platform} size={size === "sm" ? 12 : 14} />
+       </span>
+       {showLabel ? <span>{LABELS[platform]}</span> : null}
+     </span>
+diff --git a/src/components/ui/chips/chips.module.css b/src/components/ui/chips/chips.module.css
+index e753705..e52b38d 100644
+--- a/src/components/ui/chips/chips.module.css
++++ b/src/components/ui/chips/chips.module.css
+@@ -98,15 +98,15 @@
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  width: 14px;
+-  height: 14px;
+-  border-radius: var(--r-full);
+-  font: var(--t-mono);
+-  font-size: 9px;
+-  font-weight: 600;
+-  color: var(--ink-inverse);
+-  text-transform: lowercase;
+-  letter-spacing: 0;
++  width: 20px;
++  height: 20px;
++  border-radius: var(--r-sm);
++  flex-shrink: 0;
++}
++
++.chip[data-size="sm"] .platformGlyph {
++  width: 18px;
++  height: 18px;
+ }
+ 
+ /* PriorityChip — outlined letterform */

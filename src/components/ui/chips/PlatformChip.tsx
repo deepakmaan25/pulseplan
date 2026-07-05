@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from "react";
+import { PlatformIcon } from "../PlatformIcon";
 import styles from "./chips.module.css";
 
 export type Platform = "ig" | "li" | "x" | "yt" | "th";
@@ -9,14 +10,6 @@ const LABELS: Record<Platform, string> = {
   x: "X",
   yt: "YouTube",
   th: "Threads",
-};
-
-const GLYPH: Record<Platform, string> = {
-  ig: "ig",
-  li: "in",
-  x: "x",
-  yt: "yt",
-  th: "th",
 };
 
 export interface PlatformChipProps extends HTMLAttributes<HTMLSpanElement> {
@@ -44,11 +37,14 @@ export function PlatformChip({
       <span
         className={styles.platformGlyph}
         style={{
-          background: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
+          background: mono
+            ? "var(--bg-sunken)"
+            : `var(--plat-${platform}-soft)`,
+          color: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
         }}
         aria-hidden="true"
       >
-        {GLYPH[platform]}
+        <PlatformIcon platform={platform} size={size === "sm" ? 12 : 14} />
       </span>
       {showLabel ? <span>{LABELS[platform]}</span> : null}
     </span>

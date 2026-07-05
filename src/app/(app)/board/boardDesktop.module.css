@@ -1,0 +1,69 @@
+/* Desktop kanban: 5 stage columns side by side, inside the page surface. */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-8);
+  align-items: start;
+}
+
+.column {
+  background: var(--well);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+.columnHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-7) var(--s-7) var(--s-6);
+  border-bottom: 1px solid var(--hair);
+}
+
+.columnDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.columnTitle {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-1);
+}
+
+.columnCount {
+  margin-left: auto;
+  font: var(--t-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  background: var(--surface-1);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-full);
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--s-3);
+}
+
+.columnBody {
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.emptyColumn {
+  padding: var(--s-9) var(--s-5);
+  text-align: center;
+  font: var(--t-body-sm);
+  color: var(--ink-3);
+  margin: 0;
+}
