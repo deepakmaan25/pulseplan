@@ -1,0 +1,561 @@
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index efc757d..9d2b813 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -3,7 +3,7 @@
+ import { useCallback, useState } from "react";
+ import { useRouter } from "next/navigation";
+ import { SlidersHorizontal } from "lucide-react";
+-import { AppHeader } from "@/components/AppHeader/AppHeader";
++import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
+ import { BoardCard } from "@/components/post/BoardCard";
+ import { PostRow } from "@/components/post/PostRow";
+@@ -114,33 +114,30 @@ export function PlanClient() {
+   }
+ 
+   return (
+-    <div>
+-      <AppHeader
+-        variant="prominent"
+-        kicker={weekRangeKicker(days)}
+-        title="Plan"
+-        subtitle={
+-          weekPlanned > 0 ? `${weekPlanned} planned this week` : undefined
+-        }
+-        trailingExtra={
+-          <>
+-            <IconButton
+-              icon={<SlidersHorizontal size={20} />}
+-              label="Filter"
+-              size={40}
+-            />
+-            <Segmented
+-              options={VIEW_OPTIONS}
+-              value={viewMode}
+-              onChange={setViewMode}
+-              ariaLabel="View period"
+-              size="sm"
+-            />
+-          </>
+-        }
+-        style={{ paddingTop: "var(--s-4)" }}
+-      />
+-
++    <PageSurface
++      flushBody
++      eyebrow={weekRangeKicker(days)}
++      title="Plan"
++      subtitle={
++        weekPlanned > 0 ? `${weekPlanned} planned this week` : undefined
++      }
++      actions={
++        <>
++          <IconButton
++            icon={<SlidersHorizontal size={20} />}
++            label="Filter"
++            size={40}
++          />
++          <Segmented
++            options={VIEW_OPTIONS}
++            value={viewMode}
++            onChange={setViewMode}
++            ariaLabel="View period"
++            size="sm"
++          />
++        </>
++      }
++    >
+       {/* Sticky week strip */}
+       <div className={styles.weekStrip} aria-label="Week navigation">
+         {days.map((day) => {
+@@ -274,6 +271,6 @@ export function PlanClient() {
+           End of week · {weekPlanned} items planned
+         </p>
+       </div>
+-    </div>
++    </PageSurface>
+   );
+ }
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index 517ceb4..d9a3166 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -1,13 +1,10 @@
+ /* ─── Week strip ─────────────────────────────────────────────── */
+ .weekStrip {
+-  position: sticky;
+-  top: 0;
+-  z-index: 20;
+   background: var(--surface-1);
+   border-bottom: 1px solid var(--divider);
+   display: grid;
+   grid-template-columns: repeat(7, 1fr);
+-  padding: var(--s-3) var(--s-5);
++  padding: var(--s-5) var(--s-13);
+   gap: 0;
+ }
+ 
+@@ -83,7 +80,7 @@
+ 
+ /* ─── Content area ───────────────────────────────────────────── */
+ .content {
+-  padding: var(--s-4) 0 var(--s-16);
++  padding: var(--s-10) 0 var(--s-13);
+   display: flex;
+   flex-direction: column;
+   gap: 0;
+@@ -91,7 +88,7 @@
+ 
+ /* ─── Unscheduled tray ───────────────────────────────────────── */
+ .trayHead {
+-  padding: var(--s-7) var(--s-9) var(--s-4);
++  padding: var(--s-7) var(--s-13) var(--s-4);
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+@@ -152,7 +149,7 @@
+ .tray {
+   display: flex;
+   gap: var(--s-4);
+-  padding: 0 var(--s-9) var(--s-6);
++  padding: 0 var(--s-13) var(--s-6);
+   overflow-x: auto;
+   scrollbar-width: none;
+   -webkit-overflow-scrolling: touch;
+@@ -174,7 +171,7 @@
+   display: flex;
+   flex-direction: column;
+   gap: var(--s-3);
+-  padding: 0 var(--s-9) var(--s-6);
++  padding: 0 var(--s-13) var(--s-6);
+ }
+ 
+ .dayLabelDanger {
+@@ -190,7 +187,7 @@
+ 
+ /* ─── Week group: days grouped in one lifted panel ───────────── */
+ .weekGroup {
+-  margin: 0 var(--s-9) 0;
++  margin: 0 var(--s-13) 0;
+   background: var(--surface-1);
+   border: 1px solid var(--divider);
+   border-radius: var(--r-lg);
+diff --git a/src/app/(app)/settings/SettingsClient.tsx b/src/app/(app)/settings/SettingsClient.tsx
+index d621d2e..03c379f 100644
+--- a/src/app/(app)/settings/SettingsClient.tsx
++++ b/src/app/(app)/settings/SettingsClient.tsx
+@@ -2,7 +2,8 @@
+ 
+ import { useEffect, useState } from "react";
+ import { useRouter } from "next/navigation";
+-import { AppHeader } from "@/components/AppHeader/AppHeader";
++import { PageSurface } from "@/components/PageSurface/PageSurface";
++import { useLayoutMode } from "@/components/providers";
+ import { Sheet } from "@/components/ui/Sheet/Sheet";
+ import { Button } from "@/components/ui/Button/Button";
+ import { PlatformChip } from "@/components/ui/chips/PlatformChip";
+@@ -225,167 +226,205 @@ export function SettingsClient({ email }: { email?: string }) {
+   const disconnectPlatformLabel =
+     ALL_PLATFORMS.find((p) => p.value === disconnectPlatform)?.label ?? "";
+ 
+-  return (
+-    <div>
+-      <AppHeader title="Settings" style={{ paddingTop: "var(--s-4)" }} />
+-
+-      <div className={styles.content}>
+-        {/* Profile */}
+-        <section aria-labelledby="profile-heading">
+-          <p id="profile-heading" className={styles.groupLabel}>
+-            Profile
++  const mode = useLayoutMode();
++  const isDesktop = mode === "desktop";
++
++  const profileSection = (
++    <section aria-labelledby="profile-heading">
++      <p id="profile-heading" className={styles.groupLabel}>
++        Profile
++      </p>
++      <div className={`${styles.card} ${styles.profileCard}`}>
++        <div className={styles.avatar} aria-hidden="true">
++          {(name || email || "?")[0]?.toUpperCase() ?? "?"}
++        </div>
++        <div style={{ flex: 1, minWidth: 0 }}>
++          <p className={styles.profileName}>
++            {name ? capitalizeFirst(name) : email || "Your Profile"}
+           </p>
+-          <div className={`${styles.card} ${styles.profileCard}`}>
+-            <div className={styles.avatar} aria-hidden="true">
+-              {(name || email || "?")[0]?.toUpperCase() ?? "?"}
+-            </div>
+-            <div style={{ flex: 1, minWidth: 0 }}>
+-              <p className={styles.profileName}>
+-                {name ? capitalizeFirst(name) : email || "Your Profile"}
+-              </p>
+-              {name && email && <p className={styles.profileHandle}>{email}</p>}
+-            </div>
++          {name && email && <p className={styles.profileHandle}>{email}</p>}
++        </div>
++        <button
++          type="button"
++          className={styles.editBtn}
++          onClick={openEditProfile}
++          aria-label="Edit profile"
++        >
++          Edit
++        </button>
++      </div>
++    </section>
++  );
++
++  const goalSection = (
++    <section aria-labelledby="goal-heading">
++      <p id="goal-heading" className={styles.groupLabel}>
++        Content goal
++      </p>
++      <div className={styles.card}>
++        <div className={styles.row}>
++          <span className={styles.rowLabel}>Publishing cadence</span>
++          <button
++            type="button"
++            className={styles.editRowBtn}
++            onClick={openCadencePicker}
++          >
++            {cadence ? CADENCE_DISPLAY[cadence] : "Not set"}
++          </button>
++        </div>
++      </div>
++    </section>
++  );
++
++  const platformsSection = (
++    <section aria-labelledby="platforms-heading">
++      <p id="platforms-heading" className={styles.groupLabel}>
++        Connected platforms
++      </p>
++      <div className={styles.card}>
++        {connectedPlatforms.map(({ value }) => (
++          <div key={value} className={styles.platformRow}>
++            <PlatformChip platform={value} showLabel size="md" />
+             <button
+               type="button"
+-              className={styles.editBtn}
+-              onClick={openEditProfile}
+-              aria-label="Edit profile"
++              className={`${styles.connBadge} ${styles.connBadgeOn}`}
++              onClick={() => openDisconnect(value)}
+             >
+-              Edit
++              Connected
+             </button>
+           </div>
+-        </section>
+-
+-        {/* Content goal */}
+-        <section aria-labelledby="goal-heading">
+-          <p id="goal-heading" className={styles.groupLabel}>
+-            Content goal
+-          </p>
+-          <div className={styles.card}>
+-            <div className={styles.row}>
+-              <span className={styles.rowLabel}>Publishing cadence</span>
+-              <button
+-                type="button"
+-                className={styles.editRowBtn}
+-                onClick={openCadencePicker}
+-              >
+-                {cadence ? CADENCE_DISPLAY[cadence] : "Not set"}
+-              </button>
+-            </div>
++        ))}
++        {otherPlatforms.map(({ value }) => (
++          <div key={value} className={styles.platformRow}>
++            <PlatformChip platform={value} showLabel size="md" />
++            <button
++              type="button"
++              className={styles.connBadge}
++              onClick={() => openConnect(value)}
++            >
++              Connect
++            </button>
+           </div>
+-        </section>
++        ))}
++      </div>
++    </section>
++  );
+ 
+-        {/* Connected platforms */}
+-        <section aria-labelledby="platforms-heading">
+-          <p id="platforms-heading" className={styles.groupLabel}>
+-            Connected platforms
+-          </p>
+-          <div className={styles.card}>
+-            {connectedPlatforms.map(({ value }) => (
+-              <div key={value} className={styles.platformRow}>
+-                <PlatformChip platform={value} showLabel size="md" />
+-                <button
+-                  type="button"
+-                  className={`${styles.connBadge} ${styles.connBadgeOn}`}
+-                  onClick={() => openDisconnect(value)}
+-                >
+-                  Connected
+-                </button>
+-              </div>
+-            ))}
+-            {otherPlatforms.map(({ value }) => (
+-              <div key={value} className={styles.platformRow}>
+-                <PlatformChip platform={value} showLabel size="md" />
+-                <button
+-                  type="button"
+-                  className={styles.connBadge}
+-                  onClick={() => openConnect(value)}
+-                >
+-                  Connect
+-                </button>
+-              </div>
+-            ))}
+-          </div>
+-        </section>
++  const appearanceSection = (
++    <section aria-labelledby="appearance-heading">
++      <p id="appearance-heading" className={styles.groupLabel}>
++        Appearance
++      </p>
++      <div className={styles.card}>
++        <div className={styles.row}>
++          <span className={styles.rowLabel}>Theme</span>
++          <ThemeSection />
++        </div>
++      </div>
++    </section>
++  );
+ 
+-        {/* Appearance */}
+-        <section aria-labelledby="appearance-heading">
+-          <p id="appearance-heading" className={styles.groupLabel}>
+-            Appearance
+-          </p>
+-          <div className={styles.card}>
+-            <div className={styles.row}>
+-              <span className={styles.rowLabel}>Theme</span>
+-              <ThemeSection />
+-            </div>
++  const notifSection = (
++    <section aria-labelledby="notif-heading">
++      <p id="notif-heading" className={styles.groupLabel}>
++        Notifications
++      </p>
++      <div className={styles.card}>
++        <div className={styles.row}>
++          <div className={styles.rowStack}>
++            <span className={styles.rowLabel}>Overdue alerts</span>
++            <span className={styles.rowCaption}>
++              Remind me when posts miss their date
++            </span>
+           </div>
+-        </section>
++          <button
++            type="button"
++            role="switch"
++            aria-checked={overdueAlert}
++            onClick={toggleOverdue}
++            className={`${styles.toggle} ${overdueAlert ? styles.toggleOn : ""}`}
++          >
++            <span className={styles.toggleThumb} />
++            <span className="sr-only">
++              {overdueAlert ? "Disable" : "Enable"} overdue alerts
++            </span>
++          </button>
++        </div>
++      </div>
++    </section>
++  );
+ 
+-        {/* Notifications */}
+-        <section aria-labelledby="notif-heading">
+-          <p id="notif-heading" className={styles.groupLabel}>
+-            Notifications
+-          </p>
+-          <div className={styles.card}>
+-            <div className={styles.row}>
+-              <div className={styles.rowStack}>
+-                <span className={styles.rowLabel}>Overdue alerts</span>
+-                <span className={styles.rowCaption}>
+-                  Remind me when posts miss their date
+-                </span>
+-              </div>
+-              <button
+-                type="button"
+-                role="switch"
+-                aria-checked={overdueAlert}
+-                onClick={toggleOverdue}
+-                className={`${styles.toggle} ${overdueAlert ? styles.toggleOn : ""}`}
+-              >
+-                <span className={styles.toggleThumb} />
+-                <span className="sr-only">
+-                  {overdueAlert ? "Disable" : "Enable"} overdue alerts
+-                </span>
+-              </button>
+-            </div>
+-          </div>
+-        </section>
++  const aboutSection = (
++    <section aria-labelledby="about-heading">
++      <p id="about-heading" className={styles.groupLabel}>
++        About
++      </p>
++      <div className={styles.card}>
++        <div className={styles.row}>
++          <span className={styles.rowLabel}>Version</span>
++          <span className={styles.rowValue}>0.2.0-M1c</span>
++        </div>
++        <div className={`${styles.row} ${styles.rowBorder}`}>
++          <span className={styles.rowLabel}>Build</span>
++          <span className={styles.rowValue}>Flight 5</span>
++        </div>
++      </div>
++    </section>
++  );
+ 
+-        {/* About */}
+-        <section aria-labelledby="about-heading">
+-          <p id="about-heading" className={styles.groupLabel}>
+-            About
+-          </p>
+-          <div className={styles.card}>
+-            <div className={styles.row}>
+-              <span className={styles.rowLabel}>Version</span>
+-              <span className={styles.rowValue}>0.2.0-M1c</span>
++  const accountSection = (
++    <section aria-labelledby="account-heading">
++      <p id="account-heading" className={styles.groupLabel}>
++        Account
++      </p>
++      <div className={styles.card}>
++        <div className={styles.row}>
++          <button
++            type="button"
++            onClick={handleSignOut}
++            disabled={signingOut}
++            className={`${styles.signOutBtn} pp2-press`}
++          >
++            {signingOut ? "Signing out…" : "Sign out"}
++          </button>
++        </div>
++      </div>
++    </section>
++  );
++
++  return (
++    <>
++      <PageSurface
++        flushBody
++        title="Profile"
++        subtitle="Your account, platforms, and preferences"
++      >
++        {isDesktop ? (
++          <div className={styles.desktopCols}>
++            <div className={styles.desktopCol}>
++              {profileSection}
++              {goalSection}
++              {notifSection}
+             </div>
+-            <div className={`${styles.row} ${styles.rowBorder}`}>
+-              <span className={styles.rowLabel}>Build</span>
+-              <span className={styles.rowValue}>Flight 5</span>
++            <div className={styles.desktopCol}>
++              {platformsSection}
++              {appearanceSection}
++              {aboutSection}
++              {accountSection}
+             </div>
+           </div>
+-        </section>
+-
+-        {/* Account */}
+-        <section aria-labelledby="account-heading">
+-          <p id="account-heading" className={styles.groupLabel}>
+-            Account
+-          </p>
+-          <div className={styles.card}>
+-            <div className={styles.row}>
+-              <button
+-                type="button"
+-                onClick={handleSignOut}
+-                disabled={signingOut}
+-                className={`${styles.signOutBtn} pp2-press`}
+-              >
+-                {signingOut ? "Signing out…" : "Sign out"}
+-              </button>
+-            </div>
++        ) : (
++          <div className={styles.content}>
++            {profileSection}
++            {goalSection}
++            {platformsSection}
++            {appearanceSection}
++            {notifSection}
++            {aboutSection}
++            {accountSection}
+           </div>
+-        </section>
+-      </div>
++        )}
++      </PageSurface>
+ 
+       {/* ── Edit profile sheet ─────────────────────────────────── */}
+       <Sheet
+@@ -540,6 +579,6 @@ export function SettingsClient({ email }: { email?: string }) {
+           this platform. You can reconnect at any time.
+         </p>
+       </Sheet>
+-    </div>
++    </>
+   );
+ }
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index ad9f65f..0c20e10 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -1,10 +1,26 @@
+ .content {
+-  padding: var(--s-8) var(--s-9) var(--s-16);
++  padding: var(--s-10) var(--s-13) var(--s-13);
+   display: flex;
+   flex-direction: column;
+   gap: var(--s-10);
+ }
+ 
++/* Desktop two-column settings */
++.desktopCols {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: var(--s-12);
++  align-items: start;
++  padding: var(--s-11) var(--s-13) var(--s-13);
++}
++
++.desktopCol {
++  display: flex;
++  flex-direction: column;
++  gap: var(--s-10);
++  min-width: 0;
++}
++
+ .groupLabel {
+   font: var(--t-label);
+   letter-spacing: var(--ls-label);
+@@ -14,10 +30,10 @@
+ }
+ 
+ .card {
+-  background: var(--surface-1);
++  background: var(--well);
++  border: 1px solid var(--hair);
+   border-radius: var(--r-lg);
+   padding: var(--s-6) var(--s-9);
+-  box-shadow: var(--shadow-card);
+   display: flex;
+   flex-direction: column;
+   gap: 0;

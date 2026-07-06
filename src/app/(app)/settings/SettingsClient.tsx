@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppHeader } from "@/components/AppHeader/AppHeader";
+import { PageSurface } from "@/components/PageSurface/PageSurface";
+import { useLayoutMode } from "@/components/providers";
 import { Sheet } from "@/components/ui/Sheet/Sheet";
 import { Button } from "@/components/ui/Button/Button";
 import { PlatformChip } from "@/components/ui/chips/PlatformChip";
@@ -225,167 +226,205 @@ export function SettingsClient({ email }: { email?: string }) {
   const disconnectPlatformLabel =
     ALL_PLATFORMS.find((p) => p.value === disconnectPlatform)?.label ?? "";
 
-  return (
-    <div>
-      <AppHeader title="Settings" style={{ paddingTop: "var(--s-4)" }} />
+  const mode = useLayoutMode();
+  const isDesktop = mode === "desktop";
 
-      <div className={styles.content}>
-        {/* Profile */}
-        <section aria-labelledby="profile-heading">
-          <p id="profile-heading" className={styles.groupLabel}>
-            Profile
+  const profileSection = (
+    <section aria-labelledby="profile-heading">
+      <p id="profile-heading" className={styles.groupLabel}>
+        Profile
+      </p>
+      <div className={`${styles.card} ${styles.profileCard}`}>
+        <div className={styles.avatar} aria-hidden="true">
+          {(name || email || "?")[0]?.toUpperCase() ?? "?"}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p className={styles.profileName}>
+            {name ? capitalizeFirst(name) : email || "Your Profile"}
           </p>
-          <div className={`${styles.card} ${styles.profileCard}`}>
-            <div className={styles.avatar} aria-hidden="true">
-              {(name || email || "?")[0]?.toUpperCase() ?? "?"}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p className={styles.profileName}>
-                {name ? capitalizeFirst(name) : email || "Your Profile"}
-              </p>
-              {name && email && <p className={styles.profileHandle}>{email}</p>}
-            </div>
+          {name && email && <p className={styles.profileHandle}>{email}</p>}
+        </div>
+        <button
+          type="button"
+          className={styles.editBtn}
+          onClick={openEditProfile}
+          aria-label="Edit profile"
+        >
+          Edit
+        </button>
+      </div>
+    </section>
+  );
+
+  const goalSection = (
+    <section aria-labelledby="goal-heading">
+      <p id="goal-heading" className={styles.groupLabel}>
+        Content goal
+      </p>
+      <div className={styles.card}>
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Publishing cadence</span>
+          <button
+            type="button"
+            className={styles.editRowBtn}
+            onClick={openCadencePicker}
+          >
+            {cadence ? CADENCE_DISPLAY[cadence] : "Not set"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+
+  const platformsSection = (
+    <section aria-labelledby="platforms-heading">
+      <p id="platforms-heading" className={styles.groupLabel}>
+        Connected platforms
+      </p>
+      <div className={styles.card}>
+        {connectedPlatforms.map(({ value }) => (
+          <div key={value} className={styles.platformRow}>
+            <PlatformChip platform={value} showLabel size="md" />
             <button
               type="button"
-              className={styles.editBtn}
-              onClick={openEditProfile}
-              aria-label="Edit profile"
+              className={`${styles.connBadge} ${styles.connBadgeOn}`}
+              onClick={() => openDisconnect(value)}
             >
-              Edit
+              Connected
             </button>
           </div>
-        </section>
-
-        {/* Content goal */}
-        <section aria-labelledby="goal-heading">
-          <p id="goal-heading" className={styles.groupLabel}>
-            Content goal
-          </p>
-          <div className={styles.card}>
-            <div className={styles.row}>
-              <span className={styles.rowLabel}>Publishing cadence</span>
-              <button
-                type="button"
-                className={styles.editRowBtn}
-                onClick={openCadencePicker}
-              >
-                {cadence ? CADENCE_DISPLAY[cadence] : "Not set"}
-              </button>
-            </div>
+        ))}
+        {otherPlatforms.map(({ value }) => (
+          <div key={value} className={styles.platformRow}>
+            <PlatformChip platform={value} showLabel size="md" />
+            <button
+              type="button"
+              className={styles.connBadge}
+              onClick={() => openConnect(value)}
+            >
+              Connect
+            </button>
           </div>
-        </section>
-
-        {/* Connected platforms */}
-        <section aria-labelledby="platforms-heading">
-          <p id="platforms-heading" className={styles.groupLabel}>
-            Connected platforms
-          </p>
-          <div className={styles.card}>
-            {connectedPlatforms.map(({ value }) => (
-              <div key={value} className={styles.platformRow}>
-                <PlatformChip platform={value} showLabel size="md" />
-                <button
-                  type="button"
-                  className={`${styles.connBadge} ${styles.connBadgeOn}`}
-                  onClick={() => openDisconnect(value)}
-                >
-                  Connected
-                </button>
-              </div>
-            ))}
-            {otherPlatforms.map(({ value }) => (
-              <div key={value} className={styles.platformRow}>
-                <PlatformChip platform={value} showLabel size="md" />
-                <button
-                  type="button"
-                  className={styles.connBadge}
-                  onClick={() => openConnect(value)}
-                >
-                  Connect
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Appearance */}
-        <section aria-labelledby="appearance-heading">
-          <p id="appearance-heading" className={styles.groupLabel}>
-            Appearance
-          </p>
-          <div className={styles.card}>
-            <div className={styles.row}>
-              <span className={styles.rowLabel}>Theme</span>
-              <ThemeSection />
-            </div>
-          </div>
-        </section>
-
-        {/* Notifications */}
-        <section aria-labelledby="notif-heading">
-          <p id="notif-heading" className={styles.groupLabel}>
-            Notifications
-          </p>
-          <div className={styles.card}>
-            <div className={styles.row}>
-              <div className={styles.rowStack}>
-                <span className={styles.rowLabel}>Overdue alerts</span>
-                <span className={styles.rowCaption}>
-                  Remind me when posts miss their date
-                </span>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={overdueAlert}
-                onClick={toggleOverdue}
-                className={`${styles.toggle} ${overdueAlert ? styles.toggleOn : ""}`}
-              >
-                <span className={styles.toggleThumb} />
-                <span className="sr-only">
-                  {overdueAlert ? "Disable" : "Enable"} overdue alerts
-                </span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* About */}
-        <section aria-labelledby="about-heading">
-          <p id="about-heading" className={styles.groupLabel}>
-            About
-          </p>
-          <div className={styles.card}>
-            <div className={styles.row}>
-              <span className={styles.rowLabel}>Version</span>
-              <span className={styles.rowValue}>0.2.0-M1c</span>
-            </div>
-            <div className={`${styles.row} ${styles.rowBorder}`}>
-              <span className={styles.rowLabel}>Build</span>
-              <span className={styles.rowValue}>Flight 5</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Account */}
-        <section aria-labelledby="account-heading">
-          <p id="account-heading" className={styles.groupLabel}>
-            Account
-          </p>
-          <div className={styles.card}>
-            <div className={styles.row}>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={signingOut}
-                className={`${styles.signOutBtn} pp2-press`}
-              >
-                {signingOut ? "Signing out…" : "Sign out"}
-              </button>
-            </div>
-          </div>
-        </section>
+        ))}
       </div>
+    </section>
+  );
+
+  const appearanceSection = (
+    <section aria-labelledby="appearance-heading">
+      <p id="appearance-heading" className={styles.groupLabel}>
+        Appearance
+      </p>
+      <div className={styles.card}>
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Theme</span>
+          <ThemeSection />
+        </div>
+      </div>
+    </section>
+  );
+
+  const notifSection = (
+    <section aria-labelledby="notif-heading">
+      <p id="notif-heading" className={styles.groupLabel}>
+        Notifications
+      </p>
+      <div className={styles.card}>
+        <div className={styles.row}>
+          <div className={styles.rowStack}>
+            <span className={styles.rowLabel}>Overdue alerts</span>
+            <span className={styles.rowCaption}>
+              Remind me when posts miss their date
+            </span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={overdueAlert}
+            onClick={toggleOverdue}
+            className={`${styles.toggle} ${overdueAlert ? styles.toggleOn : ""}`}
+          >
+            <span className={styles.toggleThumb} />
+            <span className="sr-only">
+              {overdueAlert ? "Disable" : "Enable"} overdue alerts
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+
+  const aboutSection = (
+    <section aria-labelledby="about-heading">
+      <p id="about-heading" className={styles.groupLabel}>
+        About
+      </p>
+      <div className={styles.card}>
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Version</span>
+          <span className={styles.rowValue}>0.2.0-M1c</span>
+        </div>
+        <div className={`${styles.row} ${styles.rowBorder}`}>
+          <span className={styles.rowLabel}>Build</span>
+          <span className={styles.rowValue}>Flight 5</span>
+        </div>
+      </div>
+    </section>
+  );
+
+  const accountSection = (
+    <section aria-labelledby="account-heading">
+      <p id="account-heading" className={styles.groupLabel}>
+        Account
+      </p>
+      <div className={styles.card}>
+        <div className={styles.row}>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={signingOut}
+            className={`${styles.signOutBtn} pp2-press`}
+          >
+            {signingOut ? "Signing out…" : "Sign out"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+
+  return (
+    <>
+      <PageSurface
+        flushBody
+        title="Profile"
+        subtitle="Your account, platforms, and preferences"
+      >
+        {isDesktop ? (
+          <div className={styles.desktopCols}>
+            <div className={styles.desktopCol}>
+              {profileSection}
+              {goalSection}
+              {notifSection}
+            </div>
+            <div className={styles.desktopCol}>
+              {platformsSection}
+              {appearanceSection}
+              {aboutSection}
+              {accountSection}
+            </div>
+          </div>
+        ) : (
+          <div className={styles.content}>
+            {profileSection}
+            {goalSection}
+            {platformsSection}
+            {appearanceSection}
+            {notifSection}
+            {aboutSection}
+            {accountSection}
+          </div>
+        )}
+      </PageSurface>
 
       {/* ── Edit profile sheet ─────────────────────────────────── */}
       <Sheet
@@ -540,6 +579,6 @@ export function SettingsClient({ email }: { email?: string }) {
           this platform. You can reconnect at any time.
         </p>
       </Sheet>
-    </div>
+    </>
   );
 }

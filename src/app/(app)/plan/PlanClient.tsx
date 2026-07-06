@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader/AppHeader";
+import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { BoardCard } from "@/components/post/BoardCard";
 import { PostRow } from "@/components/post/PostRow";
@@ -114,33 +114,30 @@ export function PlanClient() {
   }
 
   return (
-    <div>
-      <AppHeader
-        variant="prominent"
-        kicker={weekRangeKicker(days)}
-        title="Plan"
-        subtitle={
-          weekPlanned > 0 ? `${weekPlanned} planned this week` : undefined
-        }
-        trailingExtra={
-          <>
-            <IconButton
-              icon={<SlidersHorizontal size={20} />}
-              label="Filter"
-              size={40}
-            />
-            <Segmented
-              options={VIEW_OPTIONS}
-              value={viewMode}
-              onChange={setViewMode}
-              ariaLabel="View period"
-              size="sm"
-            />
-          </>
-        }
-        style={{ paddingTop: "var(--s-4)" }}
-      />
-
+    <PageSurface
+      flushBody
+      eyebrow={weekRangeKicker(days)}
+      title="Plan"
+      subtitle={
+        weekPlanned > 0 ? `${weekPlanned} planned this week` : undefined
+      }
+      actions={
+        <>
+          <IconButton
+            icon={<SlidersHorizontal size={20} />}
+            label="Filter"
+            size={40}
+          />
+          <Segmented
+            options={VIEW_OPTIONS}
+            value={viewMode}
+            onChange={setViewMode}
+            ariaLabel="View period"
+            size="sm"
+          />
+        </>
+      }
+    >
       {/* Sticky week strip */}
       <div className={styles.weekStrip} aria-label="Week navigation">
         {days.map((day) => {
@@ -274,6 +271,6 @@ export function PlanClient() {
           End of week · {weekPlanned} items planned
         </p>
       </div>
-    </div>
+    </PageSurface>
   );
 }

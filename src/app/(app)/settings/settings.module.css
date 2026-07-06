@@ -1,8 +1,24 @@
 .content {
-  padding: var(--s-8) var(--s-9) var(--s-16);
+  padding: var(--s-10) var(--s-13) var(--s-13);
   display: flex;
   flex-direction: column;
   gap: var(--s-10);
+}
+
+/* Desktop two-column settings */
+.desktopCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-12);
+  align-items: start;
+  padding: var(--s-11) var(--s-13) var(--s-13);
+}
+
+.desktopCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+  min-width: 0;
 }
 
 .groupLabel {
@@ -14,10 +30,10 @@
 }
 
 .card {
-  background: var(--surface-1);
+  background: var(--well);
+  border: 1px solid var(--hair);
   border-radius: var(--r-lg);
   padding: var(--s-6) var(--s-9);
-  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: 0;
