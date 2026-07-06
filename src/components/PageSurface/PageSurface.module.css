@@ -92,3 +92,31 @@
   color: var(--ink-3);
   margin: 0 0 var(--s-7);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Mobile (below --bp-lg 1024px): tighten gutters so content
+   isn't crushed on a phone. Desktop rules above are untouched.
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .screen {
+    padding: var(--s-6) var(--s-5) var(--s-12);
+  }
+
+  .panel,
+  .panelWide {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+
+  .pageHead {
+    padding: var(--s-8) var(--s-7) var(--s-6);
+  }
+
+  .body {
+    padding: var(--s-8) var(--s-7) var(--s-10);
+  }
+
+  .section {
+    padding: var(--s-8) var(--s-7);
+  }
+}

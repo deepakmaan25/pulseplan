@@ -1,0 +1,123 @@
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index 1c46e7d..aafa602 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -323,3 +323,20 @@
+   padding: var(--s-8) 0;
+   margin: 0;
+ }
++
++/* ─────────────────────────────────────────────────────────────
++   Mobile (below desktop boundary --bp-lg 1024px)
++   Reflow desktop grids so nothing overflows the phone width.
++   Desktop rules above are untouched.
++   ───────────────────────────────────────────────────────────── */
++@media (max-width: 1023px) {
++  .kpiGrid {
++    grid-template-columns: 1fr 1fr;
++    gap: var(--s-5);
++  }
++
++  .breakdownCols {
++    grid-template-columns: 1fr;
++    gap: var(--s-11);
++  }
++}
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index 9bf9956..5ad64e6 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -352,3 +352,57 @@
+     transition: none;
+   }
+ }
++
++/* ─────────────────────────────────────────────────────────────
++   Mobile (below --bp-lg 1024px): stack rows two-line so nothing
++   clips on a phone — title on top, meta (time·logo·type·chips)
++   below. Desktop single-line rows above are untouched.
++   ───────────────────────────────────────────────────────────── */
++@media (max-width: 1023px) {
++  .weekGroup {
++    margin: 0;
++  }
++
++  .planRow {
++    flex-wrap: wrap;
++    align-items: center;
++    gap: var(--s-3) var(--s-4);
++    padding: var(--s-6) var(--s-5);
++  }
++
++  /* Title first, full width */
++  .rowTitle {
++    order: 1;
++    flex-basis: 100%;
++    white-space: normal;
++    overflow: visible;
++    text-overflow: clip;
++    line-height: 1.35;
++    margin-bottom: var(--s-1);
++  }
++
++  /* Meta line below, in reading order */
++  .rowTime {
++    order: 2;
++    width: auto;
++  }
++  .rowPlat {
++    order: 3;
++  }
++  .rowType {
++    order: 4;
++  }
++  .rowChips {
++    order: 5;
++    margin-left: auto;
++    flex-wrap: wrap;
++  }
++
++  .dayHeader {
++    padding: var(--s-4) var(--s-5);
++  }
++
++  .emptyDayCta {
++    margin-left: var(--s-5);
++  }
++}
+diff --git a/src/components/PageSurface/PageSurface.module.css b/src/components/PageSurface/PageSurface.module.css
+index 52a0158..24f6dca 100644
+--- a/src/components/PageSurface/PageSurface.module.css
++++ b/src/components/PageSurface/PageSurface.module.css
+@@ -92,3 +92,31 @@
+   color: var(--ink-3);
+   margin: 0 0 var(--s-7);
+ }
++
++/* ─────────────────────────────────────────────────────────────
++   Mobile (below --bp-lg 1024px): tighten gutters so content
++   isn't crushed on a phone. Desktop rules above are untouched.
++   ───────────────────────────────────────────────────────────── */
++@media (max-width: 1023px) {
++  .screen {
++    padding: var(--s-6) var(--s-5) var(--s-12);
++  }
++
++  .panel,
++  .panelWide {
++    max-width: 100%;
++    border-radius: 16px;
++  }
++
++  .pageHead {
++    padding: var(--s-8) var(--s-7) var(--s-6);
++  }
++
++  .body {
++    padding: var(--s-8) var(--s-7) var(--s-10);
++  }
++
++  .section {
++    padding: var(--s-8) var(--s-7);
++  }
++}
