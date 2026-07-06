@@ -83,3 +83,39 @@
 .footer > * {
   flex: 1 1 auto;
 }
+
+/* ─── Desktop: centered modal instead of bottom sheet ─────────────
+   At the desktop layout boundary (--bp-lg, 1024px) the sheet becomes a
+   centered dialog. Mobile keeps the bottom-sheet behavior above.
+   CSS-only — the component JS (focus, escape, scrim) is unchanged. */
+@media (min-width: 1024px) {
+  .sheet {
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    top: 50%;
+    width: min(480px, calc(100vw - var(--s-13)));
+    border-radius: 18px;
+    border: 1px solid var(--divider);
+    max-height: min(80dvh, 720px);
+    transform: translate(-50%, -46%);
+    opacity: 0;
+    transition:
+      transform var(--dur-standard) var(--easing-emphasized),
+      opacity var(--dur-standard) var(--easing-standard);
+    padding-bottom: 0;
+  }
+  .sheet[data-open="true"] {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+
+  /* No drag handle on a centered modal */
+  .handle {
+    display: none;
+  }
+
+  .header {
+    padding: var(--s-8) var(--s-9) var(--s-7);
+  }
+}
