@@ -14,6 +14,8 @@ interface PageSurfaceProps {
   actions?: ReactNode;
   /** When true, the body gets no default gutter/padding (screen controls it). */
   flushBody?: boolean;
+  /** When true, uses a wider panel (e.g. Board's 5-column kanban). */
+  wide?: boolean;
   children: ReactNode;
 }
 
@@ -29,11 +31,12 @@ export function PageSurface({
   subtitle,
   actions,
   flushBody = false,
+  wide = false,
   children,
 }: PageSurfaceProps) {
   return (
     <div className={styles.screen}>
-      <div className={styles.panel}>
+      <div className={`${styles.panel} ${wide ? styles.panelWide : ""}`}>
         <header className={styles.pageHead}>
           <div className={styles.pageHeadText}>
             {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}

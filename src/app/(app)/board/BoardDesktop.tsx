@@ -30,6 +30,7 @@ export function BoardDesktop() {
 
   return (
     <PageSurface
+      wide
       title="Board"
       subtitle={`${total} posts across ${STAGES.length} stages`}
     >

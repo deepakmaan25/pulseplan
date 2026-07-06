@@ -1,17 +1,13 @@
 /* Desktop kanban: 5 stage columns side by side, inside the page surface. */
 
 .board {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--s-8);
   align-items: start;
-  overflow-x: auto;
-  padding-bottom: var(--s-5);
-  scrollbar-width: thin;
 }
 
 .column {
-  width: 300px;
-  flex-shrink: 0;
   background: var(--well);
   border: 1px solid var(--hair);
   border-radius: var(--r-lg);

@@ -21,6 +21,11 @@
   overflow: hidden;
 }
 
+/* Wider panel for column-heavy layouts (Board kanban). */
+.panelWide {
+  max-width: 1560px;
+}
+
 /* ── Page header (inside the panel) ────────────────────────────── */
 .pageHead {
   display: flex;

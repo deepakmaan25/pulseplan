@@ -1,0 +1,144 @@
+diff --git a/src/app/(app)/board/BoardDesktop.tsx b/src/app/(app)/board/BoardDesktop.tsx
+index ff1b460..d470ac8 100644
+--- a/src/app/(app)/board/BoardDesktop.tsx
++++ b/src/app/(app)/board/BoardDesktop.tsx
+@@ -30,6 +30,7 @@ export function BoardDesktop() {
+ 
+   return (
+     <PageSurface
++      wide
+       title="Board"
+       subtitle={`${total} posts across ${STAGES.length} stages`}
+     >
+diff --git a/src/app/(app)/board/boardDesktop.module.css b/src/app/(app)/board/boardDesktop.module.css
+index 8d87125..9097b1b 100644
+--- a/src/app/(app)/board/boardDesktop.module.css
++++ b/src/app/(app)/board/boardDesktop.module.css
+@@ -1,17 +1,13 @@
+ /* Desktop kanban: 5 stage columns side by side, inside the page surface. */
+ 
+ .board {
+-  display: flex;
++  display: grid;
++  grid-template-columns: repeat(5, minmax(0, 1fr));
+   gap: var(--s-8);
+   align-items: start;
+-  overflow-x: auto;
+-  padding-bottom: var(--s-5);
+-  scrollbar-width: thin;
+ }
+ 
+ .column {
+-  width: 300px;
+-  flex-shrink: 0;
+   background: var(--well);
+   border: 1px solid var(--hair);
+   border-radius: var(--r-lg);
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index b2f6b93..9bf9956 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -193,20 +193,24 @@
+ 
+ /* ─── Day ────────────────────────────────────────────────────── */
+ .day {
+-  padding: var(--s-9) 0;
+-  border-bottom: 1px solid var(--hair);
++  padding: 0;
++  margin-bottom: var(--s-9);
+ }
+ 
+ .day:last-child {
+-  border-bottom: none;
++  margin-bottom: 0;
+ }
+ 
+ .dayHeader {
+   display: flex;
+-  align-items: baseline;
++  align-items: center;
+   justify-content: space-between;
+   gap: var(--s-6);
++  padding: var(--s-5) var(--s-7);
+   margin-bottom: var(--s-4);
++  background: var(--well);
++  border: 1px solid var(--hair);
++  border-radius: var(--r-md);
+ }
+ 
+ .dayHeadL {
+@@ -246,12 +250,13 @@
+   display: flex;
+   align-items: center;
+   gap: var(--s-7);
+-  padding: var(--s-5) 0;
++  padding: var(--s-5) var(--s-7);
+   border-bottom: 1px solid var(--hair);
+   background: transparent;
+   border-left: none;
+   border-right: none;
+   border-top: none;
++  border-radius: var(--r-sm);
+   width: 100%;
+   text-align: left;
+   cursor: pointer;
+@@ -270,7 +275,7 @@
+   font: var(--t-mono);
+   font-size: 12px;
+   color: var(--ink-3);
+-  width: 64px;
++  width: 72px;
+   flex-shrink: 0;
+   font-variant-numeric: tabular-nums;
+ }
+@@ -311,6 +316,7 @@
+   align-items: center;
+   justify-content: center;
+   height: 38px;
++  margin-left: var(--s-7);
+   padding: 0 var(--s-7);
+   border: 1px dashed var(--divider-strong);
+   border-radius: var(--r-md);
+diff --git a/src/components/PageSurface/PageSurface.module.css b/src/components/PageSurface/PageSurface.module.css
+index 18063fa..52a0158 100644
+--- a/src/components/PageSurface/PageSurface.module.css
++++ b/src/components/PageSurface/PageSurface.module.css
+@@ -21,6 +21,11 @@
+   overflow: hidden;
+ }
+ 
++/* Wider panel for column-heavy layouts (Board kanban). */
++.panelWide {
++  max-width: 1560px;
++}
++
+ /* ── Page header (inside the panel) ────────────────────────────── */
+ .pageHead {
+   display: flex;
+diff --git a/src/components/PageSurface/PageSurface.tsx b/src/components/PageSurface/PageSurface.tsx
+index 53e8916..39db2ac 100644
+--- a/src/components/PageSurface/PageSurface.tsx
++++ b/src/components/PageSurface/PageSurface.tsx
+@@ -14,6 +14,8 @@ interface PageSurfaceProps {
+   actions?: ReactNode;
+   /** When true, the body gets no default gutter/padding (screen controls it). */
+   flushBody?: boolean;
++  /** When true, uses a wider panel (e.g. Board's 5-column kanban). */
++  wide?: boolean;
+   children: ReactNode;
+ }
+ 
+@@ -29,11 +31,12 @@ export function PageSurface({
+   subtitle,
+   actions,
+   flushBody = false,
++  wide = false,
+   children,
+ }: PageSurfaceProps) {
+   return (
+     <div className={styles.screen}>
+-      <div className={styles.panel}>
++      <div className={`${styles.panel} ${wide ? styles.panelWide : ""}`}>
+         <header className={styles.pageHead}>
+           <div className={styles.pageHeadText}>
+             {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
