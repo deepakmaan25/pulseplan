@@ -1,0 +1,681 @@
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index d53e9b1..1c46e7d 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -239,11 +239,8 @@
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  width: 24px;
+-  height: 24px;
++  width: 20px;
+   color: var(--ink-2);
+-  background: var(--bg-sunken);
+-  border-radius: var(--r-sm);
+   flex-shrink: 0;
+ }
+ 
+diff --git a/src/app/(app)/board/boardDesktop.module.css b/src/app/(app)/board/boardDesktop.module.css
+index 9097b1b..8d87125 100644
+--- a/src/app/(app)/board/boardDesktop.module.css
++++ b/src/app/(app)/board/boardDesktop.module.css
+@@ -1,13 +1,17 @@
+ /* Desktop kanban: 5 stage columns side by side, inside the page surface. */
+ 
+ .board {
+-  display: grid;
+-  grid-template-columns: repeat(5, minmax(0, 1fr));
++  display: flex;
+   gap: var(--s-8);
+   align-items: start;
++  overflow-x: auto;
++  padding-bottom: var(--s-5);
++  scrollbar-width: thin;
+ }
+ 
+ .column {
++  width: 300px;
++  flex-shrink: 0;
+   background: var(--well);
+   border: 1px solid var(--hair);
+   border-radius: var(--r-lg);
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index 9d2b813..0349f4c 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -6,7 +6,9 @@ import { SlidersHorizontal } from "lucide-react";
+ import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
+ import { BoardCard } from "@/components/post/BoardCard";
+-import { PostRow } from "@/components/post/PostRow";
++import { PlatformChip } from "@/components/ui/chips/PlatformChip";
++import { PillarChip } from "@/components/ui/chips/PillarChip";
++import { StatusChip } from "@/components/ui/chips/StatusChip";
+ import { Segmented } from "@/components/ui/Segmented/Segmented";
+ import { usePosts } from "@/store/PostsContext";
+ import styles from "./plan.module.css";
+@@ -142,7 +144,6 @@ export function PlanClient() {
+       <div className={styles.weekStrip} aria-label="Week navigation">
+         {days.map((day) => {
+           const count = postsForDay(day.date).length;
+-          const pipCount = Math.min(count, 3);
+           return (
+             <button
+               key={day.date}
+@@ -154,14 +155,14 @@ export function PlanClient() {
+             >
+               <span className={styles.stripLetter}>{day.dayLetter}</span>
+               <span className={styles.stripNum}>{day.dayNum}</span>
+-              <span className={styles.stripPips} aria-hidden="true">
+-                {Array.from({ length: pipCount }, (_, i) => (
+-                  <span
+-                    key={i}
+-                    className={`${styles.stripPip} ${day.isToday ? styles.stripPipToday : ""}`}
+-                  />
+-                ))}
+-              </span>
++              {count > 0 ? (
++                <span
++                  className={`${styles.stripDot} ${day.isToday ? styles.stripDotToday : ""}`}
++                  aria-hidden="true"
++                />
++              ) : (
++                <span className={styles.stripDotEmpty} aria-hidden="true" />
++              )}
+             </button>
+           );
+         })}
+@@ -203,18 +204,15 @@ export function PlanClient() {
+ 
+         <div className={styles.hairline} />
+ 
+-        {/* Day rows — grouped in one lifted panel */}
++        {/* Day rows — clean hairline list */}
+         <div className={styles.weekGroup}>
+-          <div className={styles.weekGroupHead}>
+-            <span className={styles.weekGroupTitle}>This week</span>
+-            <span className={styles.weekGroupCount}>{weekPlanned} planned</span>
+-          </div>
+           {days.map((day) => {
+             const dayPosts = postsForDay(day.date);
+             return (
+               <section
+                 key={day.date}
+                 id={`plan-day-${day.date}`}
++                className={styles.day}
+                 aria-label={day.label}
+               >
+                 <div className={styles.dayHeader}>
+@@ -234,22 +232,38 @@ export function PlanClient() {
+                   </span>
+                 </div>
+                 {dayPosts.length > 0 ? (
+-                  <div className={styles.list}>
++                  <div className={styles.rows}>
+                     {dayPosts.map((post) => (
+-                      <PostRow
++                      <button
+                         key={post.id}
+-                        title={post.title}
+-                        time={post.time}
+-                        reminderHint={
+-                          post.status === "sched" ? "30m before" : undefined
+-                        }
+-                        status={post.status}
+-                        pillar={post.pillar}
+-                        platform={post.platform}
+-                        postType={post.postType}
+-                        priority={post.priority}
++                        type="button"
++                        className={styles.planRow}
+                         onClick={() => openPost(post.id)}
+-                      />
++                      >
++                        <span className={styles.rowTime}>
++                          {post.time ?? "—"}
++                        </span>
++                        <PlatformChip
++                          platform={post.platform}
++                          showLabel={false}
++                          size="sm"
++                          className={styles.rowPlat}
++                        />
++                        {post.postType ? (
++                          <span className={styles.rowType}>
++                            {post.postType}
++                          </span>
++                        ) : null}
++                        <span className={styles.rowTitle}>{post.title}</span>
++                        <span className={styles.rowChips}>
++                          <PillarChip
++                            name={post.pillar.name}
++                            color={post.pillar.color}
++                            size="sm"
++                          />
++                          <StatusChip status={post.status} size="sm" />
++                        </span>
++                      </button>
+                     ))}
+                   </div>
+                 ) : (
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index d9a3166..b2f6b93 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -4,52 +4,57 @@
+   border-bottom: 1px solid var(--divider);
+   display: grid;
+   grid-template-columns: repeat(7, 1fr);
+-  padding: var(--s-5) var(--s-13);
++  padding: 0;
+   gap: 0;
+ }
+ 
+ .stripCell {
++  position: relative;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+-  gap: 2px;
+-  padding: var(--s-3) var(--s-2);
+-  border-radius: var(--r-md);
++  gap: var(--s-2);
++  padding: var(--s-6) var(--s-2) var(--s-5);
+   cursor: pointer;
+   background: transparent;
+   border: none;
++  border-right: 1px solid var(--hair);
+   transition: background var(--dur-fast) var(--easing-standard);
+ }
+ 
++.stripCell:last-child {
++  border-right: none;
++}
++
+ .stripCell:hover {
+-  background: var(--bg-sunken);
++  background: var(--well);
+ }
+ 
+ .stripCellToday {
+-  background: var(--ink-1);
++  background: var(--primary);
+ }
+ 
+ .stripCellToday:hover {
+-  background: var(--ink-2);
++  background: var(--primary);
++  filter: brightness(0.96);
+ }
+ 
+ .stripLetter {
+   font: var(--t-mono);
+-  font-size: 9px;
++  font-size: 10px;
+   text-transform: uppercase;
+   letter-spacing: var(--ls-label);
+-  color: var(--ink-4);
++  color: var(--ink-3);
+ }
+ 
+ .stripCellToday .stripLetter {
+   color: var(--ink-inverse);
+-  opacity: 0.65;
++  opacity: 0.75;
+ }
+ 
+ .stripNum {
+-  font: var(--t-label);
+-  font-size: 13px;
+-  font-weight: 700;
++  font-size: 15px;
++  font-weight: 600;
+   color: var(--ink-1);
+   line-height: 1;
+ }
+@@ -58,24 +63,20 @@
+   color: var(--ink-inverse);
+ }
+ 
+-.stripPips {
+-  display: flex;
+-  gap: 2px;
+-  min-height: 5px;
+-  align-items: center;
+-}
+-
+-.stripPip {
++.stripDot {
+   width: 4px;
+   height: 4px;
+   border-radius: var(--r-full);
+-  background: var(--ink-4);
+-  flex-shrink: 0;
++  background: var(--primary);
+ }
+ 
+-.stripPipToday {
+-  background: var(--ink-inverse);
+-  opacity: 0.55;
++.stripDotToday {
++  background: rgba(255, 255, 255, 0.8);
++}
++
++.stripDotEmpty {
++  width: 4px;
++  height: 4px;
+ }
+ 
+ /* ─── Content area ───────────────────────────────────────────── */
+@@ -185,46 +186,27 @@
+   margin: var(--s-2) 0;
+ }
+ 
+-/* ─── Week group: days grouped in one lifted panel ───────────── */
++/* ─── Week group: clean hairline list (no card-in-card) ──────── */
+ .weekGroup {
+-  margin: 0 var(--s-13) 0;
+-  background: var(--surface-1);
+-  border: 1px solid var(--divider);
+-  border-radius: var(--r-lg);
+-  box-shadow: var(--shadow-card);
+-  overflow: hidden;
+-  padding-bottom: var(--s-4);
++  margin: 0 var(--s-13);
+ }
+ 
+-.weekGroupHead {
+-  display: flex;
+-  align-items: center;
+-  justify-content: space-between;
+-  padding: var(--s-7) var(--s-9) var(--s-5);
+-  border-bottom: 1px solid var(--divider);
+-}
+-
+-.weekGroupTitle {
+-  font-size: 13.5px;
+-  font-weight: 700;
+-  color: var(--ink-1);
+-  letter-spacing: var(--ls-title);
++/* ─── Day ────────────────────────────────────────────────────── */
++.day {
++  padding: var(--s-9) 0;
++  border-bottom: 1px solid var(--hair);
+ }
+ 
+-.weekGroupCount {
+-  font: var(--t-mono);
+-  font-size: 11px;
+-  color: var(--ink-3);
++.day:last-child {
++  border-bottom: none;
+ }
+ 
+-/* ─── Day header ─────────────────────────────────────────────── */
+ .dayHeader {
+   display: flex;
+-  align-items: center;
++  align-items: baseline;
+   justify-content: space-between;
+   gap: var(--s-6);
+-  padding: var(--s-6) var(--s-9) var(--s-3);
+-  background: transparent;
++  margin-bottom: var(--s-4);
+ }
+ 
+ .dayHeadL {
+@@ -234,7 +216,7 @@
+ }
+ 
+ .dayName {
+-  font-size: 13.5px;
++  font-size: 15px;
+   font-weight: 700;
+   color: var(--ink-1);
+   letter-spacing: var(--ls-title);
+@@ -244,6 +226,8 @@
+   font: var(--t-mono);
+   font-size: 11px;
+   color: var(--ink-3);
++  text-transform: uppercase;
++  letter-spacing: var(--ls-label);
+ }
+ 
+ .dayCount {
+@@ -252,25 +236,82 @@
+   color: var(--ink-3);
+ }
+ 
+-.dayLabel {
+-  font: var(--t-title-sm);
++/* ─── Clean post row ─────────────────────────────────────────── */
++.rows {
++  display: flex;
++  flex-direction: column;
++}
++
++.planRow {
++  display: flex;
++  align-items: center;
++  gap: var(--s-7);
++  padding: var(--s-5) 0;
++  border-bottom: 1px solid var(--hair);
++  background: transparent;
++  border-left: none;
++  border-right: none;
++  border-top: none;
++  width: 100%;
++  text-align: left;
++  cursor: pointer;
++  transition: background var(--dur-fast) var(--easing-standard);
++}
++
++.planRow:last-child {
++  border-bottom: none;
++}
++
++.planRow:hover {
++  background: var(--well);
++}
++
++.rowTime {
++  font: var(--t-mono);
++  font-size: 12px;
++  color: var(--ink-3);
++  width: 64px;
++  flex-shrink: 0;
++  font-variant-numeric: tabular-nums;
++}
++
++.rowPlat {
++  flex-shrink: 0;
++}
++
++.rowType {
++  font-size: 10px;
++  text-transform: uppercase;
++  letter-spacing: var(--ls-label);
++  color: var(--ink-3);
++  flex-shrink: 0;
++}
++
++.rowTitle {
++  font: var(--t-body-sm);
++  font-size: 14px;
+   color: var(--ink-1);
+-  margin: 0;
++  flex: 1;
++  min-width: 0;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
+ }
+ 
+-.list {
++.rowChips {
+   display: flex;
+-  flex-direction: column;
+-  padding: 0 var(--s-9) var(--s-3);
++  align-items: center;
++  gap: var(--s-4);
++  flex-shrink: 0;
+ }
+ 
+ /* ─── Empty day dashed CTA ───────────────────────────────────── */
+ .emptyDayCta {
+-  display: flex;
++  display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  margin: 0 var(--s-9) var(--s-6);
+-  height: 44px;
++  height: 38px;
++  padding: 0 var(--s-7);
+   border: 1px dashed var(--divider-strong);
+   border-radius: var(--r-md);
+   background: transparent;
+diff --git a/src/app/(app)/post/[id]/PostDetailClient.tsx b/src/app/(app)/post/[id]/PostDetailClient.tsx
+index 9bb2f71..14977a6 100644
+--- a/src/app/(app)/post/[id]/PostDetailClient.tsx
++++ b/src/app/(app)/post/[id]/PostDetailClient.tsx
+@@ -9,6 +9,7 @@ import {
+   ChevronRight,
+   Clock,
+   FileText,
++  Lock,
+   Send,
+   Trash2,
+   Undo2,
+@@ -419,10 +420,19 @@ export function PostDetailClient({ postId }: { postId: string }) {
+                 <span className={styles.deskCrumbTop}>
+                   {STATUS_LABELS[post.status]}
+                 </span>
+-                <span className={styles.deskCrumbMain}>Post</span>
++                <span className={styles.deskCrumbMain}>
++                  {editable ? "Editing post" : "Viewing post"}
++                </span>
+               </div>
+               <div className={styles.deskTopActions}>
+-                {primaryAction && (
++                <button
++                  type="button"
++                  className={styles.deskBackBtn}
++                  onClick={() => router.back()}
++                >
++                  Back
++                </button>
++                {primaryAction ? (
+                   <button
+                     type="button"
+                     className={styles.deskPrimaryBtn}
+@@ -430,6 +440,14 @@ export function PostDetailClient({ postId }: { postId: string }) {
+                   >
+                     {primaryAction.label}
+                   </button>
++                ) : (
++                  <button
++                    type="button"
++                    className={styles.deskPrimaryBtn}
++                    onClick={() => router.back()}
++                  >
++                    Done
++                  </button>
+                 )}
+               </div>
+             </div>
+@@ -453,6 +471,16 @@ export function PostDetailClient({ postId }: { postId: string }) {
+                   )}
+                 </button>
+ 
++                {!editable && (
++                  <div className={styles.readOnlyNotice} role="status">
++                    <Lock size={14} aria-hidden="true" />
++                    <span>
++                      This post is {STATUS_LABELS[post.status].toLowerCase()}{" "}
++                      and read-only. Change its status to edit.
++                    </span>
++                  </div>
++                )}
++
+                 {editable ? (
+                   <textarea
+                     ref={titleRef}
+diff --git a/src/app/(app)/post/[id]/detail.module.css b/src/app/(app)/post/[id]/detail.module.css
+index a2ed506..61ec794 100644
+--- a/src/app/(app)/post/[id]/detail.module.css
++++ b/src/app/(app)/post/[id]/detail.module.css
+@@ -736,3 +736,37 @@
+   background: none;
+   border: none;
+ }
++
++/* Back CTA (ghost) in desktop top bar */
++.deskBackBtn {
++  font-size: 13px;
++  font-weight: 500;
++  color: var(--ink-2);
++  background: var(--surface-1);
++  border: 1px solid var(--hair);
++  border-radius: var(--r-md);
++  padding: var(--s-4) var(--s-8);
++}
++
++.deskBackBtn:hover {
++  background: var(--well);
++}
++
++/* Read-only notice for published/non-editable posts */
++.readOnlyNotice {
++  display: flex;
++  align-items: center;
++  gap: var(--s-4);
++  margin-top: var(--s-6);
++  padding: var(--s-5) var(--s-7);
++  background: var(--well);
++  border: 1px solid var(--hair);
++  border-radius: var(--r-md);
++  font-size: 13px;
++  color: var(--ink-2);
++}
++
++.readOnlyNotice svg {
++  color: var(--ink-3);
++  flex-shrink: 0;
++}
+diff --git a/src/components/post/BoardCard.module.css b/src/components/post/BoardCard.module.css
+index 92765e2..cb96914 100644
+--- a/src/components/post/BoardCard.module.css
++++ b/src/components/post/BoardCard.module.css
+@@ -38,7 +38,7 @@
+   color: var(--ink-1);
+   margin: 0;
+   display: -webkit-box;
+-  -webkit-line-clamp: 2;
++  -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+   line-height: 1.4;
+diff --git a/src/components/sheets/QuickCaptureSheet.module.css b/src/components/sheets/QuickCaptureSheet.module.css
+index f94dcec..0865a4d 100644
+--- a/src/components/sheets/QuickCaptureSheet.module.css
++++ b/src/components/sheets/QuickCaptureSheet.module.css
+@@ -1,14 +1,21 @@
+ .body {
+   display: flex;
+   flex-direction: column;
+-  gap: var(--s-7);
+-  padding-top: var(--s-4);
++  gap: var(--s-8);
++  padding-top: var(--s-5);
+ }
+ 
+ .modeSegmented {
++  display: flex;
++  width: 100%;
+   align-self: stretch;
+ }
+ 
++.modeSegmented > button {
++  flex: 1 1 0;
++  justify-content: center;
++}
++
+ .titleInput {
+   width: 100%;
+   border: none;
+@@ -46,7 +53,11 @@
+   display: flex;
+   align-items: center;
+   gap: var(--s-6);
+-  padding: var(--s-5) var(--s-7);
++  padding: var(--s-6) var(--s-7);
++}
++
++.propRow + .propRow {
++  border-top: 1px solid var(--hair);
+ }
+ 
+ .propRowBorder {
+@@ -83,6 +94,7 @@
+   cursor: pointer;
+   display: inline-flex;
+   align-items: center;
++  justify-content: center;
+   gap: var(--s-2);
+   transition:
+     background var(--dur-fast) var(--easing-standard),
+@@ -96,9 +108,15 @@
+ }
+ 
+ .propChipSelected {
+-  background: var(--primary-soft);
+-  color: var(--primary-ink);
+-  border-color: transparent;
++  background: var(--ink-1);
++  color: var(--ink-inverse);
++  border-color: var(--ink-1);
++}
++
++.propChipSelected:hover {
++  background: var(--ink-1);
++  color: var(--ink-inverse);
++  border-color: var(--ink-1);
+ }
+ 
+ .pillarDot {
+@@ -116,5 +134,11 @@
+ }
+ 
+ .pillarChipActive {
+-  background: color-mix(in srgb, var(--pl-color) 12%, transparent);
++  background: var(--pl-color);
++  border-color: var(--pl-color);
++  color: #fff;
++}
++
++.pillarChipActive .pillarDot {
++  background: #fff;
+ }
+diff --git a/src/components/ui/chips/PlatformChip.tsx b/src/components/ui/chips/PlatformChip.tsx
+index 34e0878..3b5de67 100644
+--- a/src/components/ui/chips/PlatformChip.tsx
++++ b/src/components/ui/chips/PlatformChip.tsx
+@@ -37,14 +37,11 @@ export function PlatformChip({
+       <span
+         className={styles.platformGlyph}
+         style={{
+-          background: mono
+-            ? "var(--bg-sunken)"
+-            : `var(--plat-${platform}-soft)`,
+-          color: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
++          color: mono ? "var(--ink-2)" : `var(--plat-${platform})`,
+         }}
+         aria-hidden="true"
+       >
+-        <PlatformIcon platform={platform} size={size === "sm" ? 12 : 14} />
++        <PlatformIcon platform={platform} size={size === "sm" ? 15 : 17} />
+       </span>
+       {showLabel ? <span>{LABELS[platform]}</span> : null}
+     </span>
+diff --git a/src/components/ui/chips/chips.module.css b/src/components/ui/chips/chips.module.css
+index e52b38d..884ba74 100644
+--- a/src/components/ui/chips/chips.module.css
++++ b/src/components/ui/chips/chips.module.css
+@@ -98,17 +98,9 @@
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  width: 20px;
+-  height: 20px;
+-  border-radius: var(--r-sm);
+   flex-shrink: 0;
+ }
+ 
+-.chip[data-size="sm"] .platformGlyph {
+-  width: 18px;
+-  height: 18px;
+-}
+-
+ /* PriorityChip — outlined letterform */
+ .priority {
+   background: transparent;

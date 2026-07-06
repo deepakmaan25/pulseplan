@@ -736,3 +736,37 @@
   background: none;
   border: none;
 }
+
+/* Back CTA (ghost) in desktop top bar */
+.deskBackBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  background: var(--surface-1);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-8);
+}
+
+.deskBackBtn:hover {
+  background: var(--well);
+}
+
+/* Read-only notice for published/non-editable posts */
+.readOnlyNotice {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+  padding: var(--s-5) var(--s-7);
+  background: var(--well);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.readOnlyNotice svg {
+  color: var(--ink-3);
+  flex-shrink: 0;
+}

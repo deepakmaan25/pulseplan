@@ -37,14 +37,11 @@ export function PlatformChip({
       <span
         className={styles.platformGlyph}
         style={{
-          background: mono
-            ? "var(--bg-sunken)"
-            : `var(--plat-${platform}-soft)`,
-          color: mono ? "var(--ink-1)" : `var(--plat-${platform})`,
+          color: mono ? "var(--ink-2)" : `var(--plat-${platform})`,
         }}
         aria-hidden="true"
       >
-        <PlatformIcon platform={platform} size={size === "sm" ? 12 : 14} />
+        <PlatformIcon platform={platform} size={size === "sm" ? 15 : 17} />
       </span>
       {showLabel ? <span>{LABELS[platform]}</span> : null}
     </span>

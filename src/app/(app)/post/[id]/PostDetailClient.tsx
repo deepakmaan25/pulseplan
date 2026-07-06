@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Clock,
   FileText,
+  Lock,
   Send,
   Trash2,
   Undo2,
@@ -419,16 +420,33 @@ export function PostDetailClient({ postId }: { postId: string }) {
                 <span className={styles.deskCrumbTop}>
                   {STATUS_LABELS[post.status]}
                 </span>
-                <span className={styles.deskCrumbMain}>Post</span>
+                <span className={styles.deskCrumbMain}>
+                  {editable ? "Editing post" : "Viewing post"}
+                </span>
               </div>
               <div className={styles.deskTopActions}>
-                {primaryAction && (
+                <button
+                  type="button"
+                  className={styles.deskBackBtn}
+                  onClick={() => router.back()}
+                >
+                  Back
+                </button>
+                {primaryAction ? (
                   <button
                     type="button"
                     className={styles.deskPrimaryBtn}
                     onClick={primaryAction.onClick}
                   >
                     {primaryAction.label}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.deskPrimaryBtn}
+                    onClick={() => router.back()}
+                  >
+                    Done
                   </button>
                 )}
               </div>
@@ -452,6 +470,16 @@ export function PostDetailClient({ postId }: { postId: string }) {
                     />
                   )}
                 </button>
+
+                {!editable && (
+                  <div className={styles.readOnlyNotice} role="status">
+                    <Lock size={14} aria-hidden="true" />
+                    <span>
+                      This post is {STATUS_LABELS[post.status].toLowerCase()}{" "}
+                      and read-only. Change its status to edit.
+                    </span>
+                  </div>
+                )}
 
                 {editable ? (
                   <textarea

@@ -239,11 +239,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
   color: var(--ink-2);
-  background: var(--bg-sunken);
-  border-radius: var(--r-sm);
   flex-shrink: 0;
 }
 

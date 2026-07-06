@@ -4,52 +4,57 @@
   border-bottom: 1px solid var(--divider);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  padding: var(--s-5) var(--s-13);
+  padding: 0;
   gap: 0;
 }
 
 .stripCell {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: var(--s-3) var(--s-2);
-  border-radius: var(--r-md);
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-2) var(--s-5);
   cursor: pointer;
   background: transparent;
   border: none;
+  border-right: 1px solid var(--hair);
   transition: background var(--dur-fast) var(--easing-standard);
 }
 
+.stripCell:last-child {
+  border-right: none;
+}
+
 .stripCell:hover {
-  background: var(--bg-sunken);
+  background: var(--well);
 }
 
 .stripCellToday {
-  background: var(--ink-1);
+  background: var(--primary);
 }
 
 .stripCellToday:hover {
-  background: var(--ink-2);
+  background: var(--primary);
+  filter: brightness(0.96);
 }
 
 .stripLetter {
   font: var(--t-mono);
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: var(--ls-label);
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 .stripCellToday .stripLetter {
   color: var(--ink-inverse);
-  opacity: 0.65;
+  opacity: 0.75;
 }
 
 .stripNum {
-  font: var(--t-label);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--ink-1);
   line-height: 1;
 }
@@ -58,24 +63,20 @@
   color: var(--ink-inverse);
 }
 
-.stripPips {
-  display: flex;
-  gap: 2px;
-  min-height: 5px;
-  align-items: center;
-}
-
-.stripPip {
+.stripDot {
   width: 4px;
   height: 4px;
   border-radius: var(--r-full);
-  background: var(--ink-4);
-  flex-shrink: 0;
+  background: var(--primary);
 }
 
-.stripPipToday {
-  background: var(--ink-inverse);
-  opacity: 0.55;
+.stripDotToday {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.stripDotEmpty {
+  width: 4px;
+  height: 4px;
 }
 
 /* ─── Content area ───────────────────────────────────────────── */
@@ -185,46 +186,27 @@
   margin: var(--s-2) 0;
 }
 
-/* ─── Week group: days grouped in one lifted panel ───────────── */
+/* ─── Week group: clean hairline list (no card-in-card) ──────── */
 .weekGroup {
-  margin: 0 var(--s-13) 0;
-  background: var(--surface-1);
-  border: 1px solid var(--divider);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  padding-bottom: var(--s-4);
+  margin: 0 var(--s-13);
 }
 
-.weekGroupHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--s-7) var(--s-9) var(--s-5);
-  border-bottom: 1px solid var(--divider);
+/* ─── Day ────────────────────────────────────────────────────── */
+.day {
+  padding: var(--s-9) 0;
+  border-bottom: 1px solid var(--hair);
 }
 
-.weekGroupTitle {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--ink-1);
-  letter-spacing: var(--ls-title);
+.day:last-child {
+  border-bottom: none;
 }
 
-.weekGroupCount {
-  font: var(--t-mono);
-  font-size: 11px;
-  color: var(--ink-3);
-}
-
-/* ─── Day header ─────────────────────────────────────────────── */
 .dayHeader {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: var(--s-6);
-  padding: var(--s-6) var(--s-9) var(--s-3);
-  background: transparent;
+  margin-bottom: var(--s-4);
 }
 
 .dayHeadL {
@@ -234,7 +216,7 @@
 }
 
 .dayName {
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--ink-1);
   letter-spacing: var(--ls-title);
@@ -244,6 +226,8 @@
   font: var(--t-mono);
   font-size: 11px;
   color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
 }
 
 .dayCount {
@@ -252,25 +236,82 @@
   color: var(--ink-3);
 }
 
-.dayLabel {
-  font: var(--t-title-sm);
-  color: var(--ink-1);
-  margin: 0;
-}
-
-.list {
+/* ─── Clean post row ─────────────────────────────────────────── */
+.rows {
   display: flex;
   flex-direction: column;
-  padding: 0 var(--s-9) var(--s-3);
+}
+
+.planRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-7);
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--hair);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--easing-standard);
+}
+
+.planRow:last-child {
+  border-bottom: none;
+}
+
+.planRow:hover {
+  background: var(--well);
+}
+
+.rowTime {
+  font: var(--t-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  width: 64px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.rowPlat {
+  flex-shrink: 0;
+}
+
+.rowType {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--ls-label);
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.rowTitle {
+  font: var(--t-body-sm);
+  font-size: 14px;
+  color: var(--ink-1);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowChips {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-shrink: 0;
 }
 
 /* ─── Empty day dashed CTA ───────────────────────────────────── */
 .emptyDayCta {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0 var(--s-9) var(--s-6);
-  height: 44px;
+  height: 38px;
+  padding: 0 var(--s-7);
   border: 1px dashed var(--divider-strong);
   border-radius: var(--r-md);
   background: transparent;

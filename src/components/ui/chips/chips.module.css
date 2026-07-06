@@ -98,15 +98,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--r-sm);
   flex-shrink: 0;
-}
-
-.chip[data-size="sm"] .platformGlyph {
-  width: 18px;
-  height: 18px;
 }
 
 /* PriorityChip — outlined letterform */

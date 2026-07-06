@@ -6,7 +6,9 @@ import { SlidersHorizontal } from "lucide-react";
 import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { BoardCard } from "@/components/post/BoardCard";
-import { PostRow } from "@/components/post/PostRow";
+import { PlatformChip } from "@/components/ui/chips/PlatformChip";
+import { PillarChip } from "@/components/ui/chips/PillarChip";
+import { StatusChip } from "@/components/ui/chips/StatusChip";
 import { Segmented } from "@/components/ui/Segmented/Segmented";
 import { usePosts } from "@/store/PostsContext";
 import styles from "./plan.module.css";
@@ -142,7 +144,6 @@ export function PlanClient() {
       <div className={styles.weekStrip} aria-label="Week navigation">
         {days.map((day) => {
           const count = postsForDay(day.date).length;
-          const pipCount = Math.min(count, 3);
           return (
             <button
               key={day.date}
@@ -154,14 +155,14 @@ export function PlanClient() {
             >
               <span className={styles.stripLetter}>{day.dayLetter}</span>
               <span className={styles.stripNum}>{day.dayNum}</span>
-              <span className={styles.stripPips} aria-hidden="true">
-                {Array.from({ length: pipCount }, (_, i) => (
-                  <span
-                    key={i}
-                    className={`${styles.stripPip} ${day.isToday ? styles.stripPipToday : ""}`}
-                  />
-                ))}
-              </span>
+              {count > 0 ? (
+                <span
+                  className={`${styles.stripDot} ${day.isToday ? styles.stripDotToday : ""}`}
+                  aria-hidden="true"
+                />
+              ) : (
+                <span className={styles.stripDotEmpty} aria-hidden="true" />
+              )}
             </button>
           );
         })}
@@ -203,18 +204,15 @@ export function PlanClient() {
 
         <div className={styles.hairline} />
 
-        {/* Day rows — grouped in one lifted panel */}
+        {/* Day rows — clean hairline list */}
         <div className={styles.weekGroup}>
-          <div className={styles.weekGroupHead}>
-            <span className={styles.weekGroupTitle}>This week</span>
-            <span className={styles.weekGroupCount}>{weekPlanned} planned</span>
-          </div>
           {days.map((day) => {
             const dayPosts = postsForDay(day.date);
             return (
               <section
                 key={day.date}
                 id={`plan-day-${day.date}`}
+                className={styles.day}
                 aria-label={day.label}
               >
                 <div className={styles.dayHeader}>
@@ -234,22 +232,38 @@ export function PlanClient() {
                   </span>
                 </div>
                 {dayPosts.length > 0 ? (
-                  <div className={styles.list}>
+                  <div className={styles.rows}>
                     {dayPosts.map((post) => (
-                      <PostRow
+                      <button
                         key={post.id}
-                        title={post.title}
-                        time={post.time}
-                        reminderHint={
-                          post.status === "sched" ? "30m before" : undefined
-                        }
-                        status={post.status}
-                        pillar={post.pillar}
-                        platform={post.platform}
-                        postType={post.postType}
-                        priority={post.priority}
+                        type="button"
+                        className={styles.planRow}
                         onClick={() => openPost(post.id)}
-                      />
+                      >
+                        <span className={styles.rowTime}>
+                          {post.time ?? "—"}
+                        </span>
+                        <PlatformChip
+                          platform={post.platform}
+                          showLabel={false}
+                          size="sm"
+                          className={styles.rowPlat}
+                        />
+                        {post.postType ? (
+                          <span className={styles.rowType}>
+                            {post.postType}
+                          </span>
+                        ) : null}
+                        <span className={styles.rowTitle}>{post.title}</span>
+                        <span className={styles.rowChips}>
+                          <PillarChip
+                            name={post.pillar.name}
+                            color={post.pillar.color}
+                            size="sm"
+                          />
+                          <StatusChip status={post.status} size="sm" />
+                        </span>
+                      </button>
                     ))}
                   </div>
                 ) : (
