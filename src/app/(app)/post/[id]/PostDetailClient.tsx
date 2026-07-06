@@ -21,6 +21,7 @@ import { PlatformChip } from "@/components/ui/chips/PlatformChip";
 import { PillarChip } from "@/components/ui/chips/PillarChip";
 import { PriorityChip } from "@/components/ui/chips/PriorityChip";
 import { ScheduleSheet } from "@/components/sheets/ScheduleSheet";
+import { useLayoutMode } from "@/components/providers";
 import { usePosts } from "@/store/PostsContext";
 import { useToast } from "@/components/providers/ToastProvider";
 import type { PostStatus } from "@/components/ui/chips/StatusChip";
@@ -210,6 +211,7 @@ export function PostDetailClient({ postId }: { postId: string }) {
   const { getPost, updatePost, deletePost } = usePosts();
   const { toast } = useToast();
   const post = getPost(postId);
+  const mode = useLayoutMode();
 
   const [localTitle, setLocalTitle] = useState(() => post?.title ?? "");
   const [localDraft, setLocalDraft] = useState(() => post?.draft ?? "");
@@ -394,6 +396,282 @@ export function PostDetailClient({ postId }: { postId: string }) {
           tone: "default",
         }),
     });
+  }
+
+  const primaryAction = actions.find((a) => a.variant === "primary");
+
+  if (mode === "desktop") {
+    return (
+      <>
+        <div className={styles.deskScreen}>
+          <div className={styles.deskPanel}>
+            {/* Top bar */}
+            <div className={styles.deskTopbar}>
+              <button
+                type="button"
+                className={styles.deskBack}
+                onClick={() => router.back()}
+                aria-label="Back"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <div className={styles.deskCrumb}>
+                <span className={styles.deskCrumbTop}>
+                  {STATUS_LABELS[post.status]}
+                </span>
+                <span className={styles.deskCrumbMain}>Post</span>
+              </div>
+              <div className={styles.deskTopActions}>
+                {primaryAction && (
+                  <button
+                    type="button"
+                    className={styles.deskPrimaryBtn}
+                    onClick={primaryAction.onClick}
+                  >
+                    {primaryAction.label}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.deskCols}>
+              {/* Main editor */}
+              <div className={styles.deskEditor}>
+                <button
+                  type="button"
+                  onClick={() => editable && setStatusSheetOpen(true)}
+                  className={styles.statusBtn}
+                  aria-label={`Status: ${STATUS_LABELS[post.status]}`}
+                >
+                  <StatusChip status={post.status} />
+                  {editable && (
+                    <ChevronRight
+                      size={14}
+                      className={styles.statusChevron}
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+
+                {editable ? (
+                  <textarea
+                    ref={titleRef}
+                    className={styles.titleInput}
+                    value={localTitle}
+                    onChange={(e) => setLocalTitle(e.target.value)}
+                    onBlur={() => updatePost(postId, { title: localTitle })}
+                    rows={1}
+                    aria-label="Title"
+                  />
+                ) : (
+                  <h1 className={styles.title}>{post.title}</h1>
+                )}
+
+                {post.description ? (
+                  <div className={styles.descriptionBlock}>
+                    <p className={styles.descriptionText}>{post.description}</p>
+                  </div>
+                ) : null}
+
+                <div className={styles.hookSection}>
+                  <p className={styles.sectionLabel}>Hook variants</p>
+                  <div className={styles.hookGrid}>
+                    {(["A", "B", "C"] as const).map((letter, i) => (
+                      <HookCard
+                        key={letter}
+                        letter={letter}
+                        text={hooks[i] ?? ""}
+                        selected={activeHook === i}
+                        editable={editable}
+                        onSelect={() => setActiveHook(i as 0 | 1 | 2)}
+                        onChange={(text) => {
+                          const next: [string, string, string] = [...hooks];
+                          next[i] = text;
+                          setHooks(next);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.section}>
+                  <p className={styles.sectionLabel}>Draft</p>
+                  <div
+                    className={`${styles.textBlock} ${styles.textBlockDraft}`}
+                  >
+                    {editable ? (
+                      <textarea
+                        className={styles.textArea}
+                        placeholder="Start writing your draft here…"
+                        value={localDraft}
+                        onChange={(e) => setLocalDraft(e.target.value)}
+                        onBlur={() => updatePost(postId, { draft: localDraft })}
+                        rows={8}
+                        aria-label="Draft"
+                      />
+                    ) : (
+                      <span
+                        className={
+                          localDraft ? undefined : styles.textBlockPlaceholder
+                        }
+                      >
+                        {localDraft || "No draft written."}
+                      </span>
+                    )}
+                  </div>
+                  {editable && charLimit !== null && (
+                    <p
+                      className={`${styles.charCount} ${localDraft.length > charLimit ? styles.charCountOver : ""}`}
+                    >
+                      {localDraft.length} / {charLimit.toLocaleString()}
+                    </p>
+                  )}
+                </div>
+
+                <div className={styles.section}>
+                  <p className={styles.sectionLabel}>Notes</p>
+                  <div className={styles.textBlock}>
+                    {editable ? (
+                      <textarea
+                        className={styles.textArea}
+                        placeholder="Add notes, links, or references…"
+                        value={localNotes}
+                        onChange={(e) => setLocalNotes(e.target.value)}
+                        onBlur={() => updatePost(postId, { notes: localNotes })}
+                        rows={3}
+                        aria-label="Notes"
+                      />
+                    ) : (
+                      <span
+                        className={
+                          localNotes ? undefined : styles.textBlockPlaceholder
+                        }
+                      >
+                        {localNotes || "No notes added."}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Context rail */}
+              <aside className={styles.deskRail}>
+                <div className={styles.deskRailGroup}>
+                  <p className={styles.deskRailLabel}>Details</p>
+                  <div className={styles.deskMetaRow}>
+                    <span className={styles.deskMetaKey}>Platform</span>
+                    <span className={styles.deskMetaVal}>
+                      <PlatformChip platform={post.platform} size="sm" />
+                    </span>
+                  </div>
+                  <div className={styles.deskMetaRow}>
+                    <span className={styles.deskMetaKey}>Pillar</span>
+                    <span className={styles.deskMetaVal}>
+                      <PillarChip
+                        name={post.pillar.name}
+                        color={post.pillar.color}
+                        size="sm"
+                      />
+                    </span>
+                  </div>
+                  {post.priority ? (
+                    <div className={styles.deskMetaRow}>
+                      <span className={styles.deskMetaKey}>Priority</span>
+                      <span className={styles.deskMetaVal}>
+                        <PriorityChip priority={post.priority} />
+                      </span>
+                    </div>
+                  ) : null}
+                  {post.postType ? (
+                    <div className={styles.deskMetaRow}>
+                      <span className={styles.deskMetaKey}>Type</span>
+                      <span className={styles.deskMetaVal}>
+                        <span className={styles.postTypeBadge}>
+                          {post.postType}
+                        </span>
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className={styles.deskRailGroup}>
+                  <p className={styles.deskRailLabel}>Schedule</p>
+                  <div className={styles.deskMetaRow}>
+                    <span className={styles.deskMetaKey}>Date</span>
+                    <span className={styles.deskMetaVal}>
+                      {post.scheduledDate
+                        ? formatScheduled(post.scheduledDate, post.time)
+                        : "Not scheduled"}
+                    </span>
+                  </div>
+                  {editable && (
+                    <button
+                      type="button"
+                      className={styles.deskRailBtn}
+                      onClick={() => setScheduleOpen(true)}
+                    >
+                      {post.scheduledDate ? "Reschedule" : "Schedule this post"}
+                    </button>
+                  )}
+                </div>
+
+                <div className={styles.deskRailGroup}>
+                  <p className={styles.deskRailLabel}>Checklist</p>
+                  <ChecklistTab
+                    platform={post.platform}
+                    checks={checks}
+                    onChange={toggleCheck}
+                  />
+                </div>
+
+                {editable && (
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className={styles.deskDeleteBtn}
+                  >
+                    <Trash2 size={16} />
+                    Delete post
+                  </button>
+                )}
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        {/* Shared sheets */}
+        <Sheet
+          open={statusSheetOpen}
+          onClose={() => setStatusSheetOpen(false)}
+          title="Change Status"
+          kicker="Move to"
+        >
+          <div className={styles.statusOptions}>
+            {ALL_STATUSES.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => handleStatusChange(s)}
+                className={`${styles.statusOption} ${post.status === s ? styles.statusOptionActive : ""}`}
+              >
+                <StatusChip status={s} />
+                {post.status === s && (
+                  <span className={styles.statusOptionCheck}>✓</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </Sheet>
+
+        <ScheduleSheet
+          open={scheduleOpen}
+          onClose={() => setScheduleOpen(false)}
+          onSchedule={handleSchedule}
+          initialDate={post.scheduledDate}
+          initialTime={post.time}
+        />
+      </>
+    );
   }
 
   const TAB_OPTIONS: { value: DetailTab; label: string }[] = [

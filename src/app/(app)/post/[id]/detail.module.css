@@ -563,3 +563,176 @@
   color: var(--ink-4);
   margin: 0;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Desktop editor — two-column (main + context rail)
+   ───────────────────────────────────────────────────────────── */
+.deskScreen {
+  min-height: 100%;
+  background: var(--bg-base);
+  padding: var(--s-10) var(--s-11) var(--s-14);
+}
+
+.deskPanel {
+  max-width: 1320px;
+  margin: 0 auto;
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.deskTopbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-7);
+  padding: var(--s-7) var(--s-12);
+  border-bottom: 1px solid var(--divider);
+}
+
+.deskBack {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--hair);
+  background: var(--well);
+  display: grid;
+  place-items: center;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+
+.deskCrumb {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.deskCrumbTop {
+  font: var(--t-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.deskCrumbMain {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-1);
+}
+
+.deskTopActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+
+.deskPrimaryBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-inverse);
+  background: var(--primary);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-8);
+}
+
+.deskCols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
+}
+
+.deskEditor {
+  padding: var(--s-12) var(--s-13);
+  border-right: 1px solid var(--divider);
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+.deskEditor .titleInput,
+.deskEditor .title {
+  font-size: 28px;
+  line-height: 1.2;
+  margin: var(--s-6) 0 var(--s-4);
+}
+
+/* Context rail */
+.deskRail {
+  padding: var(--s-10) var(--s-10) var(--s-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+}
+
+.deskRailGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.deskRailLabel {
+  font: var(--t-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 var(--s-6);
+}
+
+.deskMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--hair);
+  font-size: 13px;
+}
+
+.deskMetaRow:last-of-type {
+  border-bottom: none;
+}
+
+.deskMetaKey {
+  color: var(--ink-3);
+}
+
+.deskMetaVal {
+  color: var(--ink-1);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: right;
+}
+
+.deskRailBtn {
+  margin-top: var(--s-5);
+  width: 100%;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-2);
+  background: var(--well);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+}
+
+.deskRailBtn:hover {
+  background: var(--bg-sunken);
+}
+
+.deskDeleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--error);
+  padding: var(--s-4) 0;
+  background: none;
+  border: none;
+}
