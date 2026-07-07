@@ -21,6 +21,16 @@
   height: 22px;
 }
 
+/* Status is the primary scannable signal → keep a filled chip, but squared
+   (reads as product UI, not a tag) and no in-chip dot (removes noise). */
+.status {
+  border-radius: var(--r-sm);
+  font-weight: 600;
+}
+.status .dot {
+  display: none;
+}
+
 .dot {
   width: 6px;
   height: 6px;
@@ -78,10 +88,13 @@
   background: var(--st-overdue-fg);
 }
 
-/* PillarChip — color comes from inline style */
+/* PillarChip — demoted to quiet text (secondary metadata). A small color
+   square keeps the pillar identifiable without competing with status. */
 .pillar {
-  background: var(--bg-sunken);
-  color: var(--ink-2);
+  background: transparent;
+  color: var(--ink-3);
+  padding: 0;
+  gap: var(--s-3);
 }
 
 /* PlatformChip */
@@ -101,28 +114,26 @@
   flex-shrink: 0;
 }
 
-/* PriorityChip — outlined letterform */
+/* PriorityChip — muted text, no border (least important metadata). */
 .priority {
   background: transparent;
   font: var(--t-label);
   font-size: 10px;
+  font-weight: 700;
   letter-spacing: var(--ls-label);
-  padding: 0 var(--s-4);
+  padding: 0 var(--s-2);
   height: 20px;
-  border-width: 1px;
-  border-style: solid;
+  border: none;
+  color: var(--ink-3);
 }
 .priority[data-level="P0"] {
   color: var(--pri-P0);
-  border-color: var(--pri-P0);
 }
 .priority[data-level="P1"] {
-  color: var(--pri-P1);
-  border-color: var(--pri-P1);
+  color: var(--ink-3);
 }
 .priority[data-level="P2"] {
-  color: var(--pri-P2);
-  border-color: var(--pri-P2);
+  color: var(--ink-3);
 }
 
 /* FilterChip */

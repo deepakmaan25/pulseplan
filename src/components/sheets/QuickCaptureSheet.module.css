@@ -51,9 +51,10 @@
 
 .propRow {
   display: flex;
-  align-items: center;
-  gap: var(--s-6);
-  padding: var(--s-6) var(--s-7);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-4);
+  padding: var(--s-7);
 }
 
 .propRow + .propRow {
@@ -70,32 +71,29 @@
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--ink-3);
-  flex-shrink: 0;
-  min-width: 52px;
 }
 
 .propChips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s-3);
+  gap: var(--s-4);
 }
 
 .propChip {
   appearance: none;
   background: transparent;
-  border: 1.5px solid var(--outline);
-  border-radius: var(--r-full);
-  padding: var(--s-2) var(--s-5);
-  font: var(--t-mono);
-  font-size: 10px;
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-6);
+  font: var(--t-caption);
+  font-size: 12px;
+  font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--s-2);
+  gap: var(--s-4);
   transition:
     background var(--dur-fast) var(--easing-standard),
     color var(--dur-fast) var(--easing-standard),
@@ -107,38 +105,42 @@
   color: var(--ink-1);
 }
 
+/* Platform / Priority selected — neutral ink (these are pick-one settings) */
 .propChipSelected {
-  background: var(--ink-1);
-  color: var(--ink-inverse);
+  background: var(--well);
+  color: var(--ink-1);
   border-color: var(--ink-1);
+  font-weight: 600;
 }
 
 .propChipSelected:hover {
-  background: var(--ink-1);
-  color: var(--ink-inverse);
+  background: var(--well);
+  color: var(--ink-1);
   border-color: var(--ink-1);
 }
 
 .pillarDot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: var(--r-full);
   flex-shrink: 0;
   background: var(--pl-color);
 }
 
-/* Pillar chips inherit their accent from --pl-color set inline */
+/* Pillar chips carry their category color; unselected shows just the dot. */
 .pillarChip {
-  border-color: var(--pl-color);
-  color: var(--pl-color);
+  border-color: var(--outline);
+  color: var(--ink-2);
 }
 
+/* Pillar selected — fills with its OWN accent (color carries meaning here). */
 .pillarChipActive {
-  background: var(--pl-color);
+  background: color-mix(in srgb, var(--pl-color) 16%, transparent);
   border-color: var(--pl-color);
-  color: #fff;
+  color: var(--pl-color);
+  font-weight: 600;
 }
 
 .pillarChipActive .pillarDot {
-  background: #fff;
+  background: var(--pl-color);
 }

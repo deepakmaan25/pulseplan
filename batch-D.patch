@@ -1,0 +1,188 @@
+diff --git a/src/components/sheets/QuickCaptureSheet.module.css b/src/components/sheets/QuickCaptureSheet.module.css
+index 0865a4d..2cfeaca 100644
+--- a/src/components/sheets/QuickCaptureSheet.module.css
++++ b/src/components/sheets/QuickCaptureSheet.module.css
+@@ -51,9 +51,10 @@
+ 
+ .propRow {
+   display: flex;
+-  align-items: center;
+-  gap: var(--s-6);
+-  padding: var(--s-6) var(--s-7);
++  flex-direction: column;
++  align-items: stretch;
++  gap: var(--s-4);
++  padding: var(--s-7);
+ }
+ 
+ .propRow + .propRow {
+@@ -70,32 +71,29 @@
+   letter-spacing: var(--ls-label);
+   text-transform: uppercase;
+   color: var(--ink-3);
+-  flex-shrink: 0;
+-  min-width: 52px;
+ }
+ 
+ .propChips {
+   display: flex;
+   flex-wrap: wrap;
+-  gap: var(--s-3);
++  gap: var(--s-4);
+ }
+ 
+ .propChip {
+   appearance: none;
+   background: transparent;
+-  border: 1.5px solid var(--outline);
+-  border-radius: var(--r-full);
+-  padding: var(--s-2) var(--s-5);
+-  font: var(--t-mono);
+-  font-size: 10px;
+-  letter-spacing: var(--ls-label);
+-  text-transform: uppercase;
++  border: 1px solid var(--outline);
++  border-radius: var(--r-md);
++  padding: var(--s-4) var(--s-6);
++  font: var(--t-caption);
++  font-size: 12px;
++  font-weight: 500;
+   color: var(--ink-2);
+   cursor: pointer;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  gap: var(--s-2);
++  gap: var(--s-4);
+   transition:
+     background var(--dur-fast) var(--easing-standard),
+     color var(--dur-fast) var(--easing-standard),
+@@ -107,38 +105,42 @@
+   color: var(--ink-1);
+ }
+ 
++/* Platform / Priority selected — neutral ink (these are pick-one settings) */
+ .propChipSelected {
+-  background: var(--ink-1);
+-  color: var(--ink-inverse);
++  background: var(--well);
++  color: var(--ink-1);
+   border-color: var(--ink-1);
++  font-weight: 600;
+ }
+ 
+ .propChipSelected:hover {
+-  background: var(--ink-1);
+-  color: var(--ink-inverse);
++  background: var(--well);
++  color: var(--ink-1);
+   border-color: var(--ink-1);
+ }
+ 
+ .pillarDot {
+-  width: 6px;
+-  height: 6px;
++  width: 7px;
++  height: 7px;
+   border-radius: var(--r-full);
+   flex-shrink: 0;
+   background: var(--pl-color);
+ }
+ 
+-/* Pillar chips inherit their accent from --pl-color set inline */
++/* Pillar chips carry their category color; unselected shows just the dot. */
+ .pillarChip {
+-  border-color: var(--pl-color);
+-  color: var(--pl-color);
++  border-color: var(--outline);
++  color: var(--ink-2);
+ }
+ 
++/* Pillar selected — fills with its OWN accent (color carries meaning here). */
+ .pillarChipActive {
+-  background: var(--pl-color);
++  background: color-mix(in srgb, var(--pl-color) 16%, transparent);
+   border-color: var(--pl-color);
+-  color: #fff;
++  color: var(--pl-color);
++  font-weight: 600;
+ }
+ 
+ .pillarChipActive .pillarDot {
+-  background: #fff;
++  background: var(--pl-color);
+ }
+diff --git a/src/components/ui/chips/chips.module.css b/src/components/ui/chips/chips.module.css
+index 884ba74..a3c0919 100644
+--- a/src/components/ui/chips/chips.module.css
++++ b/src/components/ui/chips/chips.module.css
+@@ -21,6 +21,16 @@
+   height: 22px;
+ }
+ 
++/* Status is the primary scannable signal → keep a filled chip, but squared
++   (reads as product UI, not a tag) and no in-chip dot (removes noise). */
++.status {
++  border-radius: var(--r-sm);
++  font-weight: 600;
++}
++.status .dot {
++  display: none;
++}
++
+ .dot {
+   width: 6px;
+   height: 6px;
+@@ -78,10 +88,13 @@
+   background: var(--st-overdue-fg);
+ }
+ 
+-/* PillarChip — color comes from inline style */
++/* PillarChip — demoted to quiet text (secondary metadata). A small color
++   square keeps the pillar identifiable without competing with status. */
+ .pillar {
+-  background: var(--bg-sunken);
+-  color: var(--ink-2);
++  background: transparent;
++  color: var(--ink-3);
++  padding: 0;
++  gap: var(--s-3);
+ }
+ 
+ /* PlatformChip */
+@@ -101,28 +114,26 @@
+   flex-shrink: 0;
+ }
+ 
+-/* PriorityChip — outlined letterform */
++/* PriorityChip — muted text, no border (least important metadata). */
+ .priority {
+   background: transparent;
+   font: var(--t-label);
+   font-size: 10px;
++  font-weight: 700;
+   letter-spacing: var(--ls-label);
+-  padding: 0 var(--s-4);
++  padding: 0 var(--s-2);
+   height: 20px;
+-  border-width: 1px;
+-  border-style: solid;
++  border: none;
++  color: var(--ink-3);
+ }
+ .priority[data-level="P0"] {
+   color: var(--pri-P0);
+-  border-color: var(--pri-P0);
+ }
+ .priority[data-level="P1"] {
+-  color: var(--pri-P1);
+-  border-color: var(--pri-P1);
++  color: var(--ink-3);
+ }
+ .priority[data-level="P2"] {
+-  color: var(--pri-P2);
+-  border-color: var(--pri-P2);
++  color: var(--ink-3);
+ }
+ 
+ /* FilterChip */
