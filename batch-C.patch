@@ -1,0 +1,95 @@
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index 5ad64e6..8c2880a 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -193,8 +193,16 @@
+ 
+ /* ─── Day ────────────────────────────────────────────────────── */
+ .day {
+-  padding: 0;
++  padding: var(--s-4) var(--s-7) var(--s-6);
+   margin-bottom: var(--s-9);
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
++  border-radius: var(--r-lg);
++  box-shadow: var(--shadow-card);
++}
++
++:global(.pp2.dark) .day {
++  border-color: var(--divider-strong);
+ }
+ 
+ .day:last-child {
+@@ -206,11 +214,9 @@
+   align-items: center;
+   justify-content: space-between;
+   gap: var(--s-6);
+-  padding: var(--s-5) var(--s-7);
+-  margin-bottom: var(--s-4);
+-  background: var(--well);
+-  border: 1px solid var(--hair);
+-  border-radius: var(--r-md);
++  padding: var(--s-4) 0 var(--s-5);
++  margin-bottom: var(--s-3);
++  border-bottom: 1px solid var(--divider);
+ }
+ 
+ .dayHeadL {
+@@ -250,8 +256,8 @@
+   display: flex;
+   align-items: center;
+   gap: var(--s-7);
+-  padding: var(--s-5) var(--s-7);
+-  border-bottom: 1px solid var(--hair);
++  padding: var(--s-5) 0;
++  border-bottom: 1px solid var(--divider);
+   background: transparent;
+   border-left: none;
+   border-right: none;
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index 0c20e10..1b9d636 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -30,10 +30,11 @@
+ }
+ 
+ .card {
+-  background: var(--well);
+-  border: 1px solid var(--hair);
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
+   border-radius: var(--r-lg);
+   padding: var(--s-6) var(--s-9);
++  box-shadow: var(--shadow-card);
+   display: flex;
+   flex-direction: column;
+   gap: 0;
+@@ -63,12 +64,18 @@
+   font: var(--t-title-sm);
+   color: var(--ink-1);
+   margin: 0 0 2px;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
+ }
+ 
+ .profileHandle {
+   font: var(--t-caption);
+   color: var(--ink-3);
+   margin: 0;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
+ }
+ 
+ /* Rows */
+@@ -189,8 +196,7 @@
+ }
+ 
+ :global(.pp2.dark) .card {
+-  box-shadow: none;
+-  border: 1px solid var(--divider-strong);
++  border-color: var(--divider-strong);
+ }
+ 
+ /* Edit profile button in card */
