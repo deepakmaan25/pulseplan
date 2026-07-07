@@ -1,0 +1,92 @@
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index 8c2880a..c6d102e 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -1,11 +1,10 @@
+ /* ─── Week strip ─────────────────────────────────────────────── */
+ .weekStrip {
+-  background: var(--surface-1);
+-  border-bottom: 1px solid var(--divider);
++  background: transparent;
+   display: grid;
+   grid-template-columns: repeat(7, 1fr);
+   padding: 0;
+-  gap: 0;
++  gap: var(--s-3);
+ }
+ 
+ .stripCell {
+@@ -18,14 +17,10 @@
+   cursor: pointer;
+   background: transparent;
+   border: none;
+-  border-right: 1px solid var(--hair);
++  border-radius: var(--r-md);
+   transition: background var(--dur-fast) var(--easing-standard);
+ }
+ 
+-.stripCell:last-child {
+-  border-right: none;
+-}
+-
+ .stripCell:hover {
+   background: var(--well);
+ }
+@@ -193,10 +188,10 @@
+ 
+ /* ─── Day ────────────────────────────────────────────────────── */
+ .day {
+-  padding: var(--s-4) var(--s-7) var(--s-6);
++  padding: var(--s-4) var(--s-7) var(--s-7);
+   margin-bottom: var(--s-9);
+   background: var(--surface-1);
+-  border: 1px solid var(--divider);
++  border: 1px solid transparent;
+   border-radius: var(--r-lg);
+   box-shadow: var(--shadow-card);
+ }
+@@ -250,31 +245,33 @@
+ .rows {
+   display: flex;
+   flex-direction: column;
++  gap: var(--s-3);
+ }
+ 
+ .planRow {
+   display: flex;
+   align-items: center;
+   gap: var(--s-7);
+-  padding: var(--s-5) 0;
+-  border-bottom: 1px solid var(--divider);
+-  background: transparent;
+-  border-left: none;
+-  border-right: none;
+-  border-top: none;
+-  border-radius: var(--r-sm);
++  padding: var(--s-5) var(--s-6);
++  border: none;
++  border-radius: var(--r-md);
++  background: var(--well);
+   width: 100%;
+   text-align: left;
+   cursor: pointer;
+   transition: background var(--dur-fast) var(--easing-standard);
+ }
+ 
+-.planRow:last-child {
+-  border-bottom: none;
++.planRow:hover {
++  background: var(--bg-sunken);
+ }
+ 
+-.planRow:hover {
+-  background: var(--well);
++:global(.pp2.dark) .planRow {
++  background: var(--surface-2);
++}
++
++:global(.pp2.dark) .planRow:hover {
++  background: var(--surface-3);
+ }
+ 
+ .rowTime {
