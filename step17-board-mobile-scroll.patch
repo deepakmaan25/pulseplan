@@ -1,0 +1,25 @@
+diff --git a/src/app/(app)/board/BoardMobile.tsx b/src/app/(app)/board/BoardMobile.tsx
+index a4a3121..c732bec 100644
+--- a/src/app/(app)/board/BoardMobile.tsx
++++ b/src/app/(app)/board/BoardMobile.tsx
+@@ -34,6 +34,11 @@ export function BoardMobile() {
+   const filtered = posts.filter((p) => p.status === active);
+   const activeLabel = STAGES.find((s) => s.value === active)?.label ?? active;
+ 
+
++  // Bring the selected stage chip fully into view (esp. rightmost stages).
++  const activeChipRef = (node: HTMLButtonElement | null) => {
++    node?.scrollIntoView({ inline: "nearest", block: "nearest" });
++  };
++
+   return (
+     <div>
+       <AppHeader title="Board" style={{ paddingTop: "var(--s-4)" }} />
+@@ -47,6 +52,7 @@ export function BoardMobile() {
+             return (
+               <button
+                 key={value}
++                ref={isActive ? activeChipRef : undefined}
+                 type="button"
+                 role="tab"
+                 aria-selected={isActive}
