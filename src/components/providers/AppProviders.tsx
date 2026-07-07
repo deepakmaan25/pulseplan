@@ -3,20 +3,13 @@
 import type { ReactNode } from "react";
 import { ThemeProvider } from "./ThemeProvider";
 import { LayoutProvider } from "./LayoutProvider";
-import type { LayoutPref } from "@/lib/layout/constants";
 import { QueryProvider } from "./QueryProvider";
 import { ToastProvider } from "./ToastProvider";
 
-export function AppProviders({
-  children,
-  initialLayoutPref,
-}: {
-  children: ReactNode;
-  initialLayoutPref?: LayoutPref;
-}) {
+export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
-      <LayoutProvider initialPref={initialLayoutPref}>
+      <LayoutProvider>
         <QueryProvider>
           <ToastProvider>{children}</ToastProvider>
         </QueryProvider>

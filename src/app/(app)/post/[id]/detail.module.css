@@ -770,3 +770,24 @@
   color: var(--ink-3);
   flex-shrink: 0;
 }
+
+/* Mobile header "Done" — soft chip, not a solid primary. Keeps the screen's
+   single solid-primary ration for the status action (Publish/Schedule). */
+.doneChip {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: var(--t-label);
+  font-weight: 600;
+  color: var(--primary-ink);
+  background: var(--primary-soft);
+  padding: var(--s-4) var(--s-7);
+  border-radius: var(--r-md);
+  transition: background var(--dur-fast) var(--easing-standard);
+}
+.doneChip:hover {
+  background: color-mix(in srgb, var(--primary-soft) 88%, var(--primary) 12%);
+}
+.doneChip:active {
+  transform: translateY(0.5px);
+}

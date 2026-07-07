@@ -16,14 +16,15 @@
  * ───────────────────────────────────────────────────────────── */
 .pp2 {
   /* Surfaces — cool neutral with subtle blue undertone.
-     Light mode uses shadow for elevation (surfaces remain white). */
+     Light mode uses shadow for elevation; surfaces are a soft off-white
+     (not pure #fff) for a calmer, more premium read on the grey canvas. */
   --bg-base: #e4e7ec;
   --bg-sunken: #d8dce2;
-  --surface-1: #ffffff;
-  --surface-2: #ffffff;
-  --surface-3: #ffffff;
-  --surface-4: #ffffff;
-  --well: #f7f8fa;
+  --surface-1: #f9fafb;
+  --surface-2: #f9fafb;
+  --surface-3: #f9fafb;
+  --surface-4: #f9fafb;
+  --well: #eef1f4;
   --hair: rgba(10, 13, 18, 0.07);
   --scrim: rgba(10, 13, 18, 0.48);
 

@@ -2,60 +2,22 @@
 
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
-import {
-  LAYOUT_COOKIE,
-  LAYOUT_MEDIA_QUERY,
-  LAYOUT_STORAGE_KEY,
-  isLayoutPref,
-  resolveLayout,
-  type LayoutMode,
-  type LayoutPref,
-} from "@/lib/layout/constants";
+import { LAYOUT_MEDIA_QUERY, type LayoutMode } from "@/lib/layout/constants";
 
 type LayoutContextValue = {
-  /** The user/preview preference: 'auto' (follow viewport) | 'mobile' | 'desktop'. */
-  pref: LayoutPref;
   /** The resolved concrete layout actually rendered. */
   mode: LayoutMode;
-  /** Whether the viewport itself is wide (≥ lg), independent of pref. */
+  /** Whether the viewport itself is wide (≥ lg). Same as `mode === 'desktop'`. */
   viewportIsWide: boolean;
-  /** Set the preview preference (persists to cookie + localStorage). */
-  setPref: (next: LayoutPref) => void;
 };
 
 const LayoutContext = createContext<LayoutContextValue | null>(null);
-
-function readStoredPref(): LayoutPref | null {
-  try {
-    const v = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
-    return isLayoutPref(v) ? v : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredPref(value: LayoutPref): void {
-  // localStorage for instant client reads…
-  try {
-    window.localStorage.setItem(LAYOUT_STORAGE_KEY, value);
-  } catch {
-    // privacy modes / sandboxed iframes — session state still works.
-  }
-  // …and a cookie so the SERVER can render the right first paint (no flash).
-  try {
-    // 1-year, lax, root path. Not sensitive — purely presentational.
-    document.cookie = `${LAYOUT_COOKIE}=${value};path=/;max-age=31536000;samesite=lax`;
-  } catch {
-    // ignore
-  }
-}
 
 function getViewportIsWide(): boolean {
   try {
@@ -66,28 +28,25 @@ function getViewportIsWide(): boolean {
 }
 
 /**
- * @param initialPref  Pref the SERVER read from the cookie, so the very first
- *                     client render matches SSR markup (avoids hydration flash).
+ * Layout is now purely a function of the real viewport width — the app is
+ * genuinely responsive, with no preview override or persisted preference.
+ * (The old desktop-only "preview the mobile layout in a phone frame" toggle
+ * was removed: it only existed as a showcase affordance and caused real
+ * confusion, since a framed preview reads differently from an actual device.)
+ *
+ * @param initialWide  Optional SSR hint for first paint. Defaults to false
+ *                     (mobile-first); the mount effect corrects from matchMedia.
  */
 export function LayoutProvider({
   children,
-  initialPref = "auto",
+  initialWide = false,
 }: {
   children: ReactNode;
-  initialPref?: LayoutPref;
+  initialWide?: boolean;
 }) {
-  const [pref, setPrefState] = useState<LayoutPref>(initialPref);
-  // SSR can't know the viewport. We seed `wide` from the cookie hint: if the
-  // server already resolved 'desktop', assume wide for first paint, then the
-  // mount effect corrects it from the real matchMedia.
-  const [viewportIsWide, setViewportIsWide] = useState<boolean>(
-    initialPref === "desktop",
-  );
+  const [viewportIsWide, setViewportIsWide] = useState<boolean>(initialWide);
 
   useEffect(() => {
-    // Pick up any client-stored pref that's newer than the cookie hint.
-    const stored = readStoredPref();
-    if (stored) setPrefState(stored);
     setViewportIsWide(getViewportIsWide());
 
     let mql: MediaQueryList | null = null;
@@ -108,16 +67,11 @@ export function LayoutProvider({
     return () => mql.removeListener(onChange);
   }, []);
 
-  const mode = resolveLayout(pref, viewportIsWide);
-
-  const setPref = useCallback((next: LayoutPref) => {
-    setPrefState(next);
-    writeStoredPref(next);
-  }, []);
+  const mode: LayoutMode = viewportIsWide ? "desktop" : "mobile";
 
   const value = useMemo<LayoutContextValue>(
-    () => ({ pref, mode, viewportIsWide, setPref }),
-    [pref, mode, viewportIsWide, setPref],
+    () => ({ mode, viewportIsWide }),
+    [mode, viewportIsWide],
   );
 
   return (

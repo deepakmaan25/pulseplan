@@ -725,6 +725,15 @@ export function PostDetailClient({ postId }: { postId: string }) {
               onClick={() => router.back()}
             />
           }
+          trailing={
+            <button
+              type="button"
+              className={styles.doneChip}
+              onClick={() => router.back()}
+            >
+              Done
+            </button>
+          }
         />
 
         {/* Tab strip */}

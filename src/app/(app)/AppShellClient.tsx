@@ -12,9 +12,7 @@ import {
 import { BottomNav, type BottomNavTab } from "@/components/ui";
 import { QuickCaptureSheet } from "@/components/sheets/QuickCaptureSheet";
 import { useLayout } from "@/components/providers";
-import { StatusBar } from "./StatusBar";
 import { DesktopSidebar } from "./DesktopSidebar";
-import { LayoutToggle } from "./LayoutToggle";
 import styles from "./layout.module.css";
 
 /* Mobile bottom-nav tabs. NOTE: Board has no slot here — it lives under the
@@ -58,7 +56,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const activeKey = pathToKey(pathname);
   const [captureOpen, setCaptureOpen] = useState(false);
-  const { mode, viewportIsWide } = useLayout();
+  const { mode } = useLayout();
 
   const isOnboarding = pathname === "/onboarding";
   const hideChrome = isOnboarding || pathname.startsWith("/post/");
@@ -71,15 +69,12 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
     return <div className={styles.mobileShell}>{children}</div>;
   }
 
-  // ── DESKTOP layout (real wide viewport, or 'desktop' preview) ──────────
+  // ── DESKTOP layout (real wide viewport) ────────────────────────────────
   if (mode === "desktop") {
     return (
       <div className={styles.desktopShell}>
         <DesktopSidebar activeKey={activeKey} onQuickCapture={openCapture} />
         <div className={styles.desktopMain}>
-          <div className={styles.desktopTopbar}>
-            <LayoutToggle />
-          </div>
           <main className={styles.desktopContent}>{children}</main>
         </div>
         <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
@@ -88,7 +83,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
   }
 
   // ── MOBILE layout ──────────────────────────────────────────────────────
-  const mobile = (
+  return (
     <div className={styles.mobileShell}>
       <div className={styles.mobileScroll}>{children}</div>
       <BottomNav
@@ -102,37 +97,4 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
       <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
     </div>
   );
-
-  // On a WIDE viewport showing the MOBILE layout = explicit preview. Wrap it in
-  // a real phone frame (the one honest use of the device chrome). On an actual
-  // narrow viewport, render full-bleed — no fake phone.
-  if (viewportIsWide) {
-    return (
-      <div className={styles.previewStage}>
-        <span className={styles.previewLabel}>Mobile preview</span>
-        <div className={styles.device}>
-          <StatusBar />
-          <div className={styles.scrollArea}>
-            {/* re-use the mobile content, but inside the framed device */}
-            <div className={styles.mobileScroll}>{children}</div>
-          </div>
-          <BottomNav
-            tabs={TABS}
-            activeKey={activeKey}
-            fabIcon={<Plus size={24} strokeWidth={2.4} />}
-            fabLabel="Quick Capture"
-            onFabClick={openCapture}
-            className={styles.nav}
-          />
-        </div>
-        {/* Toggle floats so you can switch back to desktop from preview. */}
-        <div className={styles.previewToggleFloat}>
-          <LayoutToggle />
-        </div>
-        <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
-      </div>
-    );
-  }
-
-  return mobile;
 }

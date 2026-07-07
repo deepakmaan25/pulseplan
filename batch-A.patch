@@ -1,0 +1,528 @@
+diff --git a/src/app/(app)/AppShellClient.tsx b/src/app/(app)/AppShellClient.tsx
+index f3420d1..6cd32ed 100644
+--- a/src/app/(app)/AppShellClient.tsx
++++ b/src/app/(app)/AppShellClient.tsx
+@@ -12,9 +12,7 @@ import {
+ import { BottomNav, type BottomNavTab } from "@/components/ui";
+ import { QuickCaptureSheet } from "@/components/sheets/QuickCaptureSheet";
+ import { useLayout } from "@/components/providers";
+-import { StatusBar } from "./StatusBar";
+ import { DesktopSidebar } from "./DesktopSidebar";
+-import { LayoutToggle } from "./LayoutToggle";
+ import styles from "./layout.module.css";
+ 
+ /* Mobile bottom-nav tabs. NOTE: Board has no slot here — it lives under the
+@@ -58,7 +56,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
+   const pathname = usePathname();
+   const activeKey = pathToKey(pathname);
+   const [captureOpen, setCaptureOpen] = useState(false);
+-  const { mode, viewportIsWide } = useLayout();
++  const { mode } = useLayout();
+ 
+   const isOnboarding = pathname === "/onboarding";
+   const hideChrome = isOnboarding || pathname.startsWith("/post/");
+@@ -71,15 +69,12 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
+     return <div className={styles.mobileShell}>{children}</div>;
+   }
+ 
+-  // ── DESKTOP layout (real wide viewport, or 'desktop' preview) ──────────
++  // ── DESKTOP layout (real wide viewport) ────────────────────────────────
+   if (mode === "desktop") {
+     return (
+       <div className={styles.desktopShell}>
+         <DesktopSidebar activeKey={activeKey} onQuickCapture={openCapture} />
+         <div className={styles.desktopMain}>
+-          <div className={styles.desktopTopbar}>
+-            <LayoutToggle />
+-          </div>
+           <main className={styles.desktopContent}>{children}</main>
+         </div>
+         <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
+@@ -88,7 +83,7 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
+   }
+ 
+   // ── MOBILE layout ──────────────────────────────────────────────────────
+-  const mobile = (
++  return (
+     <div className={styles.mobileShell}>
+       <div className={styles.mobileScroll}>{children}</div>
+       <BottomNav
+@@ -102,37 +97,4 @@ export function AppShellClient({ children }: { children: React.ReactNode }) {
+       <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
+     </div>
+   );
+-
+-  // On a WIDE viewport showing the MOBILE layout = explicit preview. Wrap it in
+-  // a real phone frame (the one honest use of the device chrome). On an actual
+-  // narrow viewport, render full-bleed — no fake phone.
+-  if (viewportIsWide) {
+-    return (
+-      <div className={styles.previewStage}>
+-        <span className={styles.previewLabel}>Mobile preview</span>
+-        <div className={styles.device}>
+-          <StatusBar />
+-          <div className={styles.scrollArea}>
+-            {/* re-use the mobile content, but inside the framed device */}
+-            <div className={styles.mobileScroll}>{children}</div>
+-          </div>
+-          <BottomNav
+-            tabs={TABS}
+-            activeKey={activeKey}
+-            fabIcon={<Plus size={24} strokeWidth={2.4} />}
+-            fabLabel="Quick Capture"
+-            onFabClick={openCapture}
+-            className={styles.nav}
+-          />
+-        </div>
+-        {/* Toggle floats so you can switch back to desktop from preview. */}
+-        <div className={styles.previewToggleFloat}>
+-          <LayoutToggle />
+-        </div>
+-        <QuickCaptureSheet open={captureOpen} onClose={closeCapture} />
+-      </div>
+-    );
+-  }
+-
+-  return mobile;
+ }
+diff --git a/src/app/(app)/LayoutToggle.module.css b/src/app/(app)/LayoutToggle.module.css
+deleted file mode 100644
+index fe25312..0000000
+--- a/src/app/(app)/LayoutToggle.module.css
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.wrap {
+-  display: flex;
+-  align-items: center;
+-  gap: var(--s-5);
+-}
+-
+-.kicker {
+-  font: var(--t-label);
+-  letter-spacing: var(--ls-label);
+-  text-transform: uppercase;
+-  color: var(--ink-4);
+-}
+diff --git a/src/app/(app)/LayoutToggle.tsx b/src/app/(app)/LayoutToggle.tsx
+deleted file mode 100644
+index addd48f..0000000
+--- a/src/app/(app)/LayoutToggle.tsx
++++ /dev/null
+@@ -1,44 +0,0 @@
+-"use client";
+-
+-import { Monitor, Smartphone } from "lucide-react";
+-import { Segmented } from "@/components/ui";
+-import { useLayout } from "@/components/providers";
+-import styles from "./LayoutToggle.module.css";
+-
+-type PreviewChoice = "desktop" | "mobile";
+-
+-/**
+- * Desktop-only preview affordance. The app is genuinely auto-responsive;
+- * this lets someone on a wide screen preview the mobile layout in a phone
+- * frame without resizing. Labeled "Preview" so it never reads as the app's
+- * real responsive behavior. Hidden entirely on real mobile viewports.
+- */
+-export function LayoutToggle() {
+-  const { pref, viewportIsWide, setPref } = useLayout();
+-
+-  // Nothing to preview on a real phone — you're already there.
+-  if (!viewportIsWide) return null;
+-
+-  // Map the tri-state pref onto the two preview buttons. 'auto' on a wide
+-  // viewport resolves to desktop, so show 'desktop' selected.
+-  const choice: PreviewChoice = pref === "mobile" ? "mobile" : "desktop";
+-
+-  return (
+-    <div className={styles.wrap}>
+-      <span className={styles.kicker}>Preview</span>
+-      <Segmented<PreviewChoice>
+-        ariaLabel="Preview layout"
+-        size="sm"
+-        value={choice}
+-        onChange={(next) => setPref(next)}
+-        options={[
+-          { value: "desktop", label: "Desktop" },
+-          { value: "mobile", label: "Mobile" },
+-        ]}
+-      />
+-    </div>
+-  );
+-}
+-
+-/** Small inline icon labels for the toggle, exported for reuse if needed. */
+-export const PreviewIcons = { Monitor, Smartphone };
+diff --git a/src/app/(app)/StatusBar.tsx b/src/app/(app)/StatusBar.tsx
+deleted file mode 100644
+index 6f6fde4..0000000
+--- a/src/app/(app)/StatusBar.tsx
++++ /dev/null
+@@ -1,34 +0,0 @@
+-"use client";
+-
+-import { useEffect, useState } from "react";
+-import { Signal, Wifi, Battery } from "lucide-react";
+-import styles from "./layout.module.css";
+-
+-function fmt(d: Date): string {
+-  return d.toLocaleTimeString("en-US", {
+-    hour: "numeric",
+-    minute: "2-digit",
+-    hour12: true,
+-  });
+-}
+-
+-export function StatusBar() {
+-  const [time, setTime] = useState(fmt(new Date()));
+-
+-  useEffect(() => {
+-    const id = setInterval(() => setTime(fmt(new Date())), 15_000);
+-    return () => clearInterval(id);
+-  }, []);
+-
+-  return (
+-    <div className={styles.statusBar} aria-hidden="true">
+-      <span className={styles.statusTime}>{time}</span>
+-      <div className={styles.dynamicIsland} />
+-      <div className={styles.statusIcons}>
+-        <Signal size={13} strokeWidth={2.5} />
+-        <Wifi size={13} strokeWidth={2.5} />
+-        <Battery size={13} strokeWidth={2.5} />
+-      </div>
+-    </div>
+-  );
+-}
+diff --git a/src/app/(app)/post/[id]/PostDetailClient.tsx b/src/app/(app)/post/[id]/PostDetailClient.tsx
+index 14977a6..1070685 100644
+--- a/src/app/(app)/post/[id]/PostDetailClient.tsx
++++ b/src/app/(app)/post/[id]/PostDetailClient.tsx
+@@ -725,6 +725,15 @@ export function PostDetailClient({ postId }: { postId: string }) {
+               onClick={() => router.back()}
+             />
+           }
++          trailing={
++            <button
++              type="button"
++              className={styles.doneChip}
++              onClick={() => router.back()}
++            >
++              Done
++            </button>
++          }
+         />
+ 
+         {/* Tab strip */}
+diff --git a/src/app/(app)/post/[id]/detail.module.css b/src/app/(app)/post/[id]/detail.module.css
+index 61ec794..d5e76d6 100644
+--- a/src/app/(app)/post/[id]/detail.module.css
++++ b/src/app/(app)/post/[id]/detail.module.css
+@@ -770,3 +770,24 @@
+   color: var(--ink-3);
+   flex-shrink: 0;
+ }
++
++/* Mobile header "Done" — soft chip, not a solid primary. Keeps the screen's
++   single solid-primary ration for the status action (Publish/Schedule). */
++.doneChip {
++  appearance: none;
++  border: none;
++  cursor: pointer;
++  font: var(--t-label);
++  font-weight: 600;
++  color: var(--primary-ink);
++  background: var(--primary-soft);
++  padding: var(--s-4) var(--s-7);
++  border-radius: var(--r-md);
++  transition: background var(--dur-fast) var(--easing-standard);
++}
++.doneChip:hover {
++  background: color-mix(in srgb, var(--primary-soft) 88%, var(--primary) 12%);
++}
++.doneChip:active {
++  transform: translateY(0.5px);
++}
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 21f1055..2824aa2 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,13 +1,7 @@
+ import type { Metadata, Viewport } from "next";
+ import { Geist, Geist_Mono } from "next/font/google";
+ import { Analytics } from "@vercel/analytics/next";
+-import { cookies } from "next/headers";
+ import { AppProviders } from "@/components/providers";
+-import {
+-  LAYOUT_COOKIE,
+-  isLayoutPref,
+-  type LayoutPref,
+-} from "@/lib/layout/constants";
+ import { THEME_MEDIA_QUERY, THEME_STORAGE_KEY } from "@/lib/theme/constants";
+ import "@/styles/globals.css";
+ 
+@@ -48,16 +42,11 @@ export const viewport: Viewport = {
+  */
+ const noFlashScript = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var s=null;try{s=localStorage.getItem(k);}catch(e){}var m=false;try{m=window.matchMedia(${JSON.stringify(THEME_MEDIA_QUERY)}).matches;}catch(e){}var d=s==="dark"||((s===null||s==="auto")&&m);if(d){document.documentElement.classList.add("dark");}}catch(e){}})();`;
+ 
+-export default async function RootLayout({
++export default function RootLayout({
+   children,
+ }: {
+   children: React.ReactNode;
+ }) {
+-  const cookieStore = await cookies();
+-  const layoutCookie = cookieStore.get(LAYOUT_COOKIE)?.value;
+-  const initialLayoutPref: LayoutPref = isLayoutPref(layoutCookie)
+-    ? layoutCookie
+-    : "auto";
+   return (
+     <html
+       lang="en"
+@@ -68,9 +57,7 @@ export default async function RootLayout({
+         <script dangerouslySetInnerHTML={{ __html: noFlashScript }} />
+       </head>
+       <body>
+-        <AppProviders initialLayoutPref={initialLayoutPref}>
+-          {children}
+-        </AppProviders>
++        <AppProviders>{children}</AppProviders>
+         <Analytics />
+       </body>
+     </html>
+diff --git a/src/components/providers/AppProviders.tsx b/src/components/providers/AppProviders.tsx
+index 1116fcc..c42dd5f 100644
+--- a/src/components/providers/AppProviders.tsx
++++ b/src/components/providers/AppProviders.tsx
+@@ -3,20 +3,13 @@
+ import type { ReactNode } from "react";
+ import { ThemeProvider } from "./ThemeProvider";
+ import { LayoutProvider } from "./LayoutProvider";
+-import type { LayoutPref } from "@/lib/layout/constants";
+ import { QueryProvider } from "./QueryProvider";
+ import { ToastProvider } from "./ToastProvider";
+ 
+-export function AppProviders({
+-  children,
+-  initialLayoutPref,
+-}: {
+-  children: ReactNode;
+-  initialLayoutPref?: LayoutPref;
+-}) {
++export function AppProviders({ children }: { children: ReactNode }) {
+   return (
+     <ThemeProvider>
+-      <LayoutProvider initialPref={initialLayoutPref}>
++      <LayoutProvider>
+         <QueryProvider>
+           <ToastProvider>{children}</ToastProvider>
+         </QueryProvider>
+diff --git a/src/components/providers/LayoutProvider.tsx b/src/components/providers/LayoutProvider.tsx
+index 141f3ae..7b2c611 100644
+--- a/src/components/providers/LayoutProvider.tsx
++++ b/src/components/providers/LayoutProvider.tsx
+@@ -2,61 +2,23 @@
+ 
+ import {
+   createContext,
+-  useCallback,
+   useContext,
+   useEffect,
+   useMemo,
+   useState,
+   type ReactNode,
+ } from "react";
+-import {
+-  LAYOUT_COOKIE,
+-  LAYOUT_MEDIA_QUERY,
+-  LAYOUT_STORAGE_KEY,
+-  isLayoutPref,
+-  resolveLayout,
+-  type LayoutMode,
+-  type LayoutPref,
+-} from "@/lib/layout/constants";
++import { LAYOUT_MEDIA_QUERY, type LayoutMode } from "@/lib/layout/constants";
+ 
+ type LayoutContextValue = {
+-  /** The user/preview preference: 'auto' (follow viewport) | 'mobile' | 'desktop'. */
+-  pref: LayoutPref;
+   /** The resolved concrete layout actually rendered. */
+   mode: LayoutMode;
+-  /** Whether the viewport itself is wide (≥ lg), independent of pref. */
++  /** Whether the viewport itself is wide (≥ lg). Same as `mode === 'desktop'`. */
+   viewportIsWide: boolean;
+-  /** Set the preview preference (persists to cookie + localStorage). */
+-  setPref: (next: LayoutPref) => void;
+ };
+ 
+ const LayoutContext = createContext<LayoutContextValue | null>(null);
+ 
+-function readStoredPref(): LayoutPref | null {
+-  try {
+-    const v = window.localStorage.getItem(LAYOUT_STORAGE_KEY);
+-    return isLayoutPref(v) ? v : null;
+-  } catch {
+-    return null;
+-  }
+-}
+-
+-function writeStoredPref(value: LayoutPref): void {
+-  // localStorage for instant client reads…
+-  try {
+-    window.localStorage.setItem(LAYOUT_STORAGE_KEY, value);
+-  } catch {
+-    // privacy modes / sandboxed iframes — session state still works.
+-  }
+-  // …and a cookie so the SERVER can render the right first paint (no flash).
+-  try {
+-    // 1-year, lax, root path. Not sensitive — purely presentational.
+-    document.cookie = `${LAYOUT_COOKIE}=${value};path=/;max-age=31536000;samesite=lax`;
+-  } catch {
+-    // ignore
+-  }
+-}
+-
+ function getViewportIsWide(): boolean {
+   try {
+     return window.matchMedia(LAYOUT_MEDIA_QUERY).matches;
+@@ -66,28 +28,25 @@ function getViewportIsWide(): boolean {
+ }
+ 
+ /**
+- * @param initialPref  Pref the SERVER read from the cookie, so the very first
+- *                     client render matches SSR markup (avoids hydration flash).
++ * Layout is now purely a function of the real viewport width — the app is
++ * genuinely responsive, with no preview override or persisted preference.
++ * (The old desktop-only "preview the mobile layout in a phone frame" toggle
++ * was removed: it only existed as a showcase affordance and caused real
++ * confusion, since a framed preview reads differently from an actual device.)
++ *
++ * @param initialWide  Optional SSR hint for first paint. Defaults to false
++ *                     (mobile-first); the mount effect corrects from matchMedia.
+  */
+ export function LayoutProvider({
+   children,
+-  initialPref = "auto",
++  initialWide = false,
+ }: {
+   children: ReactNode;
+-  initialPref?: LayoutPref;
++  initialWide?: boolean;
+ }) {
+-  const [pref, setPrefState] = useState<LayoutPref>(initialPref);
+-  // SSR can't know the viewport. We seed `wide` from the cookie hint: if the
+-  // server already resolved 'desktop', assume wide for first paint, then the
+-  // mount effect corrects it from the real matchMedia.
+-  const [viewportIsWide, setViewportIsWide] = useState<boolean>(
+-    initialPref === "desktop",
+-  );
++  const [viewportIsWide, setViewportIsWide] = useState<boolean>(initialWide);
+ 
+   useEffect(() => {
+-    // Pick up any client-stored pref that's newer than the cookie hint.
+-    const stored = readStoredPref();
+-    if (stored) setPrefState(stored);
+     setViewportIsWide(getViewportIsWide());
+ 
+     let mql: MediaQueryList | null = null;
+@@ -108,16 +67,11 @@ export function LayoutProvider({
+     return () => mql.removeListener(onChange);
+   }, []);
+ 
+-  const mode = resolveLayout(pref, viewportIsWide);
+-
+-  const setPref = useCallback((next: LayoutPref) => {
+-    setPrefState(next);
+-    writeStoredPref(next);
+-  }, []);
++  const mode: LayoutMode = viewportIsWide ? "desktop" : "mobile";
+ 
+   const value = useMemo<LayoutContextValue>(
+-    () => ({ pref, mode, viewportIsWide, setPref }),
+-    [pref, mode, viewportIsWide, setPref],
++    () => ({ mode, viewportIsWide }),
++    [mode, viewportIsWide],
+   );
+ 
+   return (
+diff --git a/src/lib/layout/constants.ts b/src/lib/layout/constants.ts
+index e040ab8..87f383d 100644
+--- a/src/lib/layout/constants.ts
++++ b/src/lib/layout/constants.ts
+@@ -1,48 +1,18 @@
+ /**
+  * Single source for the responsive-layout strategy. Imported by:
+- *   - src/app/layout.tsx                              — no-flash boot script
+  *   - src/components/providers/LayoutProvider.tsx     — the runtime provider
+  *   - src/app/(app)/AppShellClient.tsx                — shell resolution
+  *
+  * Mirrors the breakpoint values declared in src/styles/tokens.css
+  * (--bp-lg). Keep the 1024 boundary in sync across both files.
+  *
+- * Strategy:
+- *   1. The structural mobile↔desktop switch happens at LG (1024px).
+- *   2. `auto` mode = follow the viewport (the real product behavior).
+- *   3. A preview OVERRIDE ('mobile' | 'desktop') can be set from the
+- *      desktop top bar — a showcase affordance, not a user setting. It is
+- *      persisted to a cookie so the choice survives navigation AND so the
+- *      server can render the correct first paint (no flash).
++ * Strategy: the structural mobile↔desktop switch happens at LG (1024px) and
++ * follows the real viewport. There is no preview override or persisted
++ * preference — the app is simply responsive.
+  */
+ 
+ export const LAYOUT_BP_LG = 1024;
+ export const LAYOUT_MEDIA_QUERY = `(min-width: ${LAYOUT_BP_LG}px)`;
+ 
+-/** Cookie the server reads for first-paint; written by the provider. */
+-export const LAYOUT_COOKIE = "pp2-layout";
+-/** localStorage mirror so the preview choice is instant on the client. */
+-export const LAYOUT_STORAGE_KEY = "pp2-layout";
+-
+ export const LAYOUT_MODES = ["mobile", "desktop"] as const;
+ export type LayoutMode = (typeof LAYOUT_MODES)[number];
+-
+-/** 'auto' follows the viewport; the two explicit modes are preview overrides. */
+-export const LAYOUT_PREFS = ["auto", "mobile", "desktop"] as const;
+-export type LayoutPref = (typeof LAYOUT_PREFS)[number];
+-
+-export function isLayoutPref(value: unknown): value is LayoutPref {
+-  return (
+-    typeof value === "string" &&
+-    (LAYOUT_PREFS as readonly string[]).includes(value)
+-  );
+-}
+-
+-/** Resolve a pref + viewport signal into a concrete layout mode. */
+-export function resolveLayout(
+-  pref: LayoutPref,
+-  viewportIsWide: boolean,
+-): LayoutMode {
+-  if (pref === "mobile" || pref === "desktop") return pref;
+-  return viewportIsWide ? "desktop" : "mobile";
+-}
+diff --git a/src/styles/tokens.css b/src/styles/tokens.css
+index 2acd595..ac0de5c 100644
+--- a/src/styles/tokens.css
++++ b/src/styles/tokens.css
+@@ -16,14 +16,15 @@
+  * ───────────────────────────────────────────────────────────── */
+ .pp2 {
+   /* Surfaces — cool neutral with subtle blue undertone.
+-     Light mode uses shadow for elevation (surfaces remain white). */
++     Light mode uses shadow for elevation; surfaces are a soft off-white
++     (not pure #fff) for a calmer, more premium read on the grey canvas. */
+   --bg-base: #e4e7ec;
+   --bg-sunken: #d8dce2;
+-  --surface-1: #ffffff;
+-  --surface-2: #ffffff;
+-  --surface-3: #ffffff;
+-  --surface-4: #ffffff;
+-  --well: #f7f8fa;
++  --surface-1: #f9fafb;
++  --surface-2: #f9fafb;
++  --surface-3: #f9fafb;
++  --surface-4: #f9fafb;
++  --well: #eef1f4;
+   --hair: rgba(10, 13, 18, 0.07);
+   --scrim: rgba(10, 13, 18, 0.48);
+ 
