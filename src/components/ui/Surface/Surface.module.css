@@ -23,10 +23,6 @@
   padding: var(--s-9);
 }
 
-:global(.pp2.dark) .surface {
-  box-shadow: none;
-}
-
 .button {
   appearance: none;
   cursor: pointer;

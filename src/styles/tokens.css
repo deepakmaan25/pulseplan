@@ -223,7 +223,7 @@
   --ink-inverse: #0a0d12;
 
   --divider: rgba(255, 255, 255, 0.07);
-  --divider-strong: rgba(255, 255, 255, 0.12);
+  --divider-strong: rgba(255, 255, 255, 0.16);
   --outline: rgba(255, 255, 255, 0.1);
   --outline-strong: rgba(255, 255, 255, 0.16);
   --outline-focus: rgba(36, 201, 141, 0.55);
@@ -275,10 +275,13 @@
   --plat-yt-soft: #2a1614;
   --plat-th-soft: #1c1e22;
 
-  --e-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+  --e-1:
+    0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   --e-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
   --shadow-card:
-    0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 18px -4px rgba(0, 0, 0, 0.45);
+    0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 22px -6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   --e-3: 0 4px 8px rgba(0, 0, 0, 0.3), 0 12px 24px -6px rgba(0, 0, 0, 0.4);
   --e-4: 0 8px 16px rgba(0, 0, 0, 0.4), 0 24px 48px -12px rgba(0, 0, 0, 0.5);
   --e-sheet: 0 -2px 8px rgba(0, 0, 0, 0.2), 0 -16px 48px rgba(0, 0, 0, 0.4);

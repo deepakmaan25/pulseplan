@@ -115,7 +115,6 @@
 }
 
 :global(.pp2.dark) .metaCard {
-  box-shadow: none;
   border: 1px solid var(--divider-strong);
 }
 
@@ -154,12 +153,12 @@
 }
 
 :global(.pp2.dark) .textBlock {
-  box-shadow: none;
   border: 1px solid var(--divider-strong);
 }
 
 :global(.pp2.dark) .textBlockDraft {
-  border-color: var(--divider);
+  background: var(--surface-1);
+  border-color: var(--divider-strong);
 }
 
 /* Editable textarea inside the textBlock shell */
@@ -427,15 +426,24 @@
 }
 
 :global(.pp2.dark) .hookCard {
-  box-shadow: none;
+  border-color: var(--divider-strong);
 }
 
 /* ─── Checklist tab ──────────────────────────────────────────── */
 .checklist {
-  padding: var(--s-6) var(--s-9) var(--s-16);
+  margin: 0 var(--s-9) var(--s-16);
+  padding: var(--s-7) var(--s-8);
   display: flex;
   flex-direction: column;
   gap: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+}
+
+:global(.pp2.dark) .checklist {
+  border-color: var(--divider-strong);
 }
 
 .checklistProgress {

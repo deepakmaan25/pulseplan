@@ -1,0 +1,146 @@
+diff --git a/src/app/(app)/post/[id]/detail.module.css b/src/app/(app)/post/[id]/detail.module.css
+index d5e76d6..f698abe 100644
+--- a/src/app/(app)/post/[id]/detail.module.css
++++ b/src/app/(app)/post/[id]/detail.module.css
+@@ -115,7 +115,6 @@
+ }
+ 
+ :global(.pp2.dark) .metaCard {
+-  box-shadow: none;
+   border: 1px solid var(--divider-strong);
+ }
+ 
+@@ -154,12 +153,12 @@
+ }
+ 
+ :global(.pp2.dark) .textBlock {
+-  box-shadow: none;
+   border: 1px solid var(--divider-strong);
+ }
+ 
+ :global(.pp2.dark) .textBlockDraft {
+-  border-color: var(--divider);
++  background: var(--surface-1);
++  border-color: var(--divider-strong);
+ }
+ 
+ /* Editable textarea inside the textBlock shell */
+@@ -427,15 +426,24 @@
+ }
+ 
+ :global(.pp2.dark) .hookCard {
+-  box-shadow: none;
++  border-color: var(--divider-strong);
+ }
+ 
+ /* ─── Checklist tab ──────────────────────────────────────────── */
+ .checklist {
+-  padding: var(--s-6) var(--s-9) var(--s-16);
++  margin: 0 var(--s-9) var(--s-16);
++  padding: var(--s-7) var(--s-8);
+   display: flex;
+   flex-direction: column;
+   gap: 0;
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
++  border-radius: var(--r-lg);
++  box-shadow: var(--shadow-card);
++}
++
++:global(.pp2.dark) .checklist {
++  border-color: var(--divider-strong);
+ }
+ 
+ .checklistProgress {
+diff --git a/src/components/post/BoardCard.module.css b/src/components/post/BoardCard.module.css
+index cb96914..9845fd9 100644
+--- a/src/components/post/BoardCard.module.css
++++ b/src/components/post/BoardCard.module.css
+@@ -18,7 +18,6 @@
+ }
+ 
+ :global(.pp2.dark) .card {
+-  box-shadow: none;
+   border-color: var(--divider-strong);
+ }
+ 
+diff --git a/src/components/post/PostRow.module.css b/src/components/post/PostRow.module.css
+index 4d97404..5e86987 100644
+--- a/src/components/post/PostRow.module.css
++++ b/src/components/post/PostRow.module.css
+@@ -18,7 +18,6 @@
+   box-shadow: var(--shadow-card);
+ }
+ :global(.pp2.dark) .row {
+-  box-shadow: none;
+   border-color: var(--divider-strong);
+ }
+ .row:hover {
+diff --git a/src/components/today/WeekHero.module.css b/src/components/today/WeekHero.module.css
+index ef38ff1..39e2304 100644
+--- a/src/components/today/WeekHero.module.css
++++ b/src/components/today/WeekHero.module.css
+@@ -8,7 +8,6 @@
+ }
+ 
+ :global(.pp2.dark) .hero {
+-  box-shadow: none;
+   border-color: var(--divider-strong);
+ }
+ 
+diff --git a/src/components/ui/KPI/KPI.module.css b/src/components/ui/KPI/KPI.module.css
+index 55dd0ca..6d20989 100644
+--- a/src/components/ui/KPI/KPI.module.css
++++ b/src/components/ui/KPI/KPI.module.css
+@@ -10,7 +10,6 @@
+   min-width: 0;
+ }
+ :global(.pp2.dark) .card {
+-  box-shadow: none;
+   border-color: var(--divider-strong);
+ }
+ 
+diff --git a/src/components/ui/Surface/Surface.module.css b/src/components/ui/Surface/Surface.module.css
+index 5abadce..e7e7fa1 100644
+--- a/src/components/ui/Surface/Surface.module.css
++++ b/src/components/ui/Surface/Surface.module.css
+@@ -23,10 +23,6 @@
+   padding: var(--s-9);
+ }
+ 
+-:global(.pp2.dark) .surface {
+-  box-shadow: none;
+-}
+-
+ .button {
+   appearance: none;
+   cursor: pointer;
+diff --git a/src/styles/tokens.css b/src/styles/tokens.css
+index ac0de5c..9a8b960 100644
+--- a/src/styles/tokens.css
++++ b/src/styles/tokens.css
+@@ -223,7 +223,7 @@
+   --ink-inverse: #0a0d12;
+ 
+   --divider: rgba(255, 255, 255, 0.07);
+-  --divider-strong: rgba(255, 255, 255, 0.12);
++  --divider-strong: rgba(255, 255, 255, 0.16);
+   --outline: rgba(255, 255, 255, 0.1);
+   --outline-strong: rgba(255, 255, 255, 0.16);
+   --outline-focus: rgba(36, 201, 141, 0.55);
+@@ -275,10 +275,13 @@
+   --plat-yt-soft: #2a1614;
+   --plat-th-soft: #1c1e22;
+ 
+-  --e-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
++  --e-1:
++    0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2),
++    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+   --e-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+   --shadow-card:
+-    0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 18px -4px rgba(0, 0, 0, 0.45);
++    0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 22px -6px rgba(0, 0, 0, 0.5),
++    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+   --e-3: 0 4px 8px rgba(0, 0, 0, 0.3), 0 12px 24px -6px rgba(0, 0, 0, 0.4);
+   --e-4: 0 8px 16px rgba(0, 0, 0, 0.4), 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+   --e-sheet: 0 -2px 8px rgba(0, 0, 0, 0.2), 0 -16px 48px rgba(0, 0, 0, 0.4);
