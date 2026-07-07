@@ -19,18 +19,19 @@
 .titleInput {
   width: 100%;
   border: none;
-  border-bottom: 1.5px solid transparent;
+  border-bottom: 1.5px solid var(--divider);
   border-radius: 0;
   background: transparent;
   color: var(--ink-1);
   font: var(--t-body);
   font-size: 16px;
   line-height: 1.5;
-  padding: var(--s-2) 0 var(--s-4);
+  padding: var(--s-6) var(--s-7);
   resize: none;
   outline: none;
   box-sizing: border-box;
   overflow: hidden;
+  transition: border-color var(--dur-fast) var(--easing-standard);
 }
 
 .titleInput:focus {

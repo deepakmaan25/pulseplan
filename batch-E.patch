@@ -1,0 +1,101 @@
+diff --git a/src/app/(app)/onboarding/onboarding.module.css b/src/app/(app)/onboarding/onboarding.module.css
+index 557c765..73b57d1 100644
+--- a/src/app/(app)/onboarding/onboarding.module.css
++++ b/src/app/(app)/onboarding/onboarding.module.css
+@@ -96,7 +96,7 @@
+   appearance: none;
+   display: block;
+   width: 100%;
+-  padding: var(--s-4) var(--s-5);
++  padding: var(--s-6) var(--s-7);
+   background: var(--surface-1);
+   border: 1px solid var(--divider);
+   border-radius: var(--r-md);
+@@ -115,7 +115,7 @@
+ 
+ .nameInput:focus {
+   border-color: var(--primary);
+-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
++  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+ }
+ 
+ /* ─── Step screen ────────────────────────────────────────────── */
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index 1b9d636..468498d 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -253,20 +253,23 @@
+ 
+ .fieldInput {
+   width: 100%;
+-  padding: var(--s-5) var(--s-7);
++  padding: var(--s-6) var(--s-7);
+   font: var(--t-body);
+   color: var(--ink-1);
+-  background: var(--bg-sunken);
++  background: var(--surface-1);
+   border: 1px solid var(--divider);
+   border-radius: var(--r-md);
+   outline: none;
+   box-sizing: border-box;
+-  transition: border-color var(--dur-fast) var(--easing-standard);
++  transition:
++    border-color var(--dur-fast) var(--easing-standard),
++    box-shadow var(--dur-fast) var(--easing-standard);
+   -webkit-appearance: none;
+ }
+ 
+ .fieldInput:focus {
+   border-color: var(--primary);
++  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+ }
+ 
+ .fieldInputReadOnly {
+diff --git a/src/app/auth/auth.module.css b/src/app/auth/auth.module.css
+index 5e88b06..f0f28b1 100644
+--- a/src/app/auth/auth.module.css
++++ b/src/app/auth/auth.module.css
+@@ -69,7 +69,7 @@
+   appearance: none;
+   display: block;
+   width: 100%;
+-  padding: var(--s-4) var(--s-5);
++  padding: var(--s-6) var(--s-7);
+   background: var(--surface-1);
+   border: 1px solid var(--divider);
+   border-radius: var(--r-md);
+@@ -87,7 +87,7 @@
+ 
+ .input:focus {
+   border-color: var(--primary);
+-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
++  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+ }
+ 
+ .inputError {
+diff --git a/src/components/sheets/QuickCaptureSheet.module.css b/src/components/sheets/QuickCaptureSheet.module.css
+index 2cfeaca..9dd95b2 100644
+--- a/src/components/sheets/QuickCaptureSheet.module.css
++++ b/src/components/sheets/QuickCaptureSheet.module.css
+@@ -19,18 +19,19 @@
+ .titleInput {
+   width: 100%;
+   border: none;
+-  border-bottom: 1.5px solid transparent;
++  border-bottom: 1.5px solid var(--divider);
+   border-radius: 0;
+   background: transparent;
+   color: var(--ink-1);
+   font: var(--t-body);
+   font-size: 16px;
+   line-height: 1.5;
+-  padding: var(--s-2) 0 var(--s-4);
++  padding: var(--s-6) var(--s-7);
+   resize: none;
+   outline: none;
+   box-sizing: border-box;
+   overflow: hidden;
++  transition: border-color var(--dur-fast) var(--easing-standard);
+ }
+ 
+ .titleInput:focus {

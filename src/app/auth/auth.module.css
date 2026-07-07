@@ -69,7 +69,7 @@
   appearance: none;
   display: block;
   width: 100%;
-  padding: var(--s-4) var(--s-5);
+  padding: var(--s-6) var(--s-7);
   background: var(--surface-1);
   border: 1px solid var(--divider);
   border-radius: var(--r-md);
@@ -87,7 +87,7 @@
 
 .input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .inputError {
