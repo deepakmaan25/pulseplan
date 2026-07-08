@@ -126,3 +126,15 @@ body {
     transform: none;
   }
 }
+
+/* Prevent mobile browsers auto-zooming when focusing inputs.
+   iOS/Android zoom on any input/textarea/select with font-size < 16px.
+   This is a browser web-app (not a native shell), so we enforce 16px on
+   mobile widths to keep the draft/notes/capture fields readable while typing. */
+@media (max-width: 1023px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}

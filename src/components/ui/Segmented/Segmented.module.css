@@ -7,6 +7,16 @@
   border-radius: var(--r-full);
 }
 
+/* Full-width variant — fills its container, tabs share width equally. */
+.segmented[data-stretch="true"] {
+  display: flex;
+  width: 100%;
+}
+.segmented[data-stretch="true"] .tab {
+  flex: 1;
+  text-align: center;
+}
+
 .tab {
   appearance: none;
   background: transparent;

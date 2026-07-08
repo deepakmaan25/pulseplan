@@ -96,6 +96,12 @@ export function PostingActivity() {
           </div>
         ))}
       </div>
+      <div className={styles.heatAxis} aria-hidden="true">
+        <span>12w</span>
+        <span>8w</span>
+        <span>4w</span>
+        <span>now</span>
+      </div>
       <div className={styles.heatLegend} aria-hidden="true">
         <span>Less</span>
         <span className={styles.heatCell} data-level={0} />

@@ -135,6 +135,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
           onChange={(v) => set("mode", v)}
           ariaLabel="Post mode"
           size="sm"
+          stretch
           className={styles.modeSegmented}
         />
 

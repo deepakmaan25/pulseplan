@@ -1,0 +1,174 @@
+diff --git a/src/app/(app)/analytics/StatsWidgets.tsx b/src/app/(app)/analytics/StatsWidgets.tsx
+index 585a87e..98c1e68 100644
+--- a/src/app/(app)/analytics/StatsWidgets.tsx
++++ b/src/app/(app)/analytics/StatsWidgets.tsx
+@@ -96,6 +96,12 @@ export function PostingActivity() {
+           </div>
+         ))}
+       </div>
++      <div className={styles.heatAxis} aria-hidden="true">
++        <span>12w</span>
++        <span>8w</span>
++        <span>4w</span>
++        <span>now</span>
++      </div>
+       <div className={styles.heatLegend} aria-hidden="true">
+         <span>Less</span>
+         <span className={styles.heatCell} data-level={0} />
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index fb5d9ba..616bd8b 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -468,9 +468,37 @@
+ }
+ .heatCell {
+   aspect-ratio: 1;
++  max-height: 22px;
+   border-radius: 3px;
+   background: var(--well);
+ }
++.heatAxis {
++  display: grid;
++  grid-template-columns: 14px repeat(12, 1fr);
++  gap: var(--s-2);
++  margin-top: var(--s-3);
++}
++.heatAxis span {
++  font: var(--t-caption);
++  font-size: 10px;
++  color: var(--ink-4);
++  white-space: nowrap;
++}
++/* 4 ticks under weeks 1, 5, 9, 12 (every ~4 weeks) */
++.heatAxis span:nth-child(1) {
++  grid-column: 2 / span 4;
++}
++.heatAxis span:nth-child(2) {
++  grid-column: 6 / span 4;
++}
++.heatAxis span:nth-child(3) {
++  grid-column: 10 / span 3;
++  text-align: center;
++}
++.heatAxis span:nth-child(4) {
++  grid-column: 13;
++  text-align: right;
++}
+ .heatCell[data-level="1"] {
+   background: var(--heat-1);
+ }
+diff --git a/src/app/(app)/plan/plan.module.css b/src/app/(app)/plan/plan.module.css
+index c6d102e..475f552 100644
+--- a/src/app/(app)/plan/plan.module.css
++++ b/src/app/(app)/plan/plan.module.css
+@@ -191,7 +191,7 @@
+   padding: var(--s-4) var(--s-7) var(--s-7);
+   margin-bottom: var(--s-9);
+   background: var(--surface-1);
+-  border: 1px solid transparent;
++  border: 1px solid var(--divider);
+   border-radius: var(--r-lg);
+   box-shadow: var(--shadow-card);
+ }
+@@ -200,6 +200,10 @@
+   border-color: var(--divider-strong);
+ }
+ 
++:global(.pp2.dark) .day {
++  border-color: var(--divider-strong);
++}
++
+ .day:last-child {
+   margin-bottom: 0;
+ }
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index c3cb70a..dd48b7e 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -1,5 +1,5 @@
+ .content {
+-  padding: var(--s-10) var(--s-13) var(--s-13);
++  padding: var(--s-10) var(--s-8) var(--s-13);
+   display: flex;
+   flex-direction: column;
+   gap: var(--s-10);
+diff --git a/src/components/sheets/QuickCaptureSheet.tsx b/src/components/sheets/QuickCaptureSheet.tsx
+index e311961..0a479d7 100644
+--- a/src/components/sheets/QuickCaptureSheet.tsx
++++ b/src/components/sheets/QuickCaptureSheet.tsx
+@@ -135,6 +135,7 @@ export function QuickCaptureSheet({ open, onClose }: QuickCaptureSheetProps) {
+           onChange={(v) => set("mode", v)}
+           ariaLabel="Post mode"
+           size="sm"
++          stretch
+           className={styles.modeSegmented}
+         />
+ 
+diff --git a/src/components/ui/Segmented/Segmented.module.css b/src/components/ui/Segmented/Segmented.module.css
+index a7fb33a..f99e199 100644
+--- a/src/components/ui/Segmented/Segmented.module.css
++++ b/src/components/ui/Segmented/Segmented.module.css
+@@ -7,6 +7,16 @@
+   border-radius: var(--r-full);
+ }
+ 
++/* Full-width variant — fills its container, tabs share width equally. */
++.segmented[data-stretch="true"] {
++  display: flex;
++  width: 100%;
++}
++.segmented[data-stretch="true"] .tab {
++  flex: 1;
++  text-align: center;
++}
++
+ .tab {
+   appearance: none;
+   background: transparent;
+diff --git a/src/components/ui/Segmented/Segmented.tsx b/src/components/ui/Segmented/Segmented.tsx
+index f5cfc6f..c229b56 100644
+--- a/src/components/ui/Segmented/Segmented.tsx
++++ b/src/components/ui/Segmented/Segmented.tsx
+@@ -14,6 +14,7 @@ export interface SegmentedProps<T extends string> {
+   onChange: (next: T) => void;
+   ariaLabel: string;
+   size?: "sm" | "md";
++  stretch?: boolean;
+   className?: string;
+ }
+ 
+@@ -23,12 +24,14 @@ export function Segmented<T extends string>({
+   onChange,
+   ariaLabel,
+   size = "md",
++  stretch = false,
+   className,
+ }: SegmentedProps<T>) {
+   return (
+     <div
+       role="tablist"
+       aria-label={ariaLabel}
++      data-stretch={stretch ? "true" : undefined}
+       className={`${styles.segmented} ${className ?? ""}`}
+     >
+       {options.map((option) => {
+diff --git a/src/styles/globals.css b/src/styles/globals.css
+index 77f2602..e1e4853 100644
+--- a/src/styles/globals.css
++++ b/src/styles/globals.css
+@@ -126,3 +126,15 @@ body {
+     transform: none;
+   }
+ }
++
++/* Prevent mobile browsers auto-zooming when focusing inputs.
++   iOS/Android zoom on any input/textarea/select with font-size < 16px.
++   This is a browser web-app (not a native shell), so we enforce 16px on
++   mobile widths to keep the draft/notes/capture fields readable while typing. */
++@media (max-width: 1023px) {
++  input,
++  textarea,
++  select {
++    font-size: 16px;
++  }
++}

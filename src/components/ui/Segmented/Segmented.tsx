@@ -14,6 +14,7 @@ export interface SegmentedProps<T extends string> {
   onChange: (next: T) => void;
   ariaLabel: string;
   size?: "sm" | "md";
+  stretch?: boolean;
   className?: string;
 }
 
@@ -23,12 +24,14 @@ export function Segmented<T extends string>({
   onChange,
   ariaLabel,
   size = "md",
+  stretch = false,
   className,
 }: SegmentedProps<T>) {
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
+      data-stretch={stretch ? "true" : undefined}
       className={`${styles.segmented} ${className ?? ""}`}
     >
       {options.map((option) => {
