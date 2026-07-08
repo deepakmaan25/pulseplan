@@ -26,6 +26,15 @@
   max-width: 1560px;
 }
 
+/* Tinted panel — a subtly shaded surface so white content cards pop off it
+   (e.g. Plan's day cards, which are surface-1 and otherwise blend in). */
+.panelTinted {
+  background: var(--well);
+}
+:global(.pp2.dark) .panelTinted {
+  background: var(--bg-base);
+}
+
 /* ── Page header (inside the panel) ────────────────────────────── */
 .pageHead {
   display: flex;

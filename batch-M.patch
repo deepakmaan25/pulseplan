@@ -1,0 +1,164 @@
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index 616bd8b..a612777 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -324,50 +324,6 @@
+   margin: 0;
+ }
+ 
+-/* ─────────────────────────────────────────────────────────────
+-   Mobile (below desktop boundary --bp-lg 1024px)
+-   Reflow desktop grids so nothing overflows the phone width.
+-   Desktop rules above are untouched.
+-   ───────────────────────────────────────────────────────────── */
+-@media (max-width: 1023px) {
+-  .kpiGrid {
+-    grid-template-columns: 1fr 1fr;
+-    gap: var(--s-5);
+-  }
+-
+-  .breakdownCols {
+-    grid-template-columns: 1fr;
+-    gap: var(--s-11);
+-  }
+-
+-  .insightGrid {
+-    grid-template-columns: 1fr;
+-    gap: var(--s-9);
+-  }
+-
+-  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
+-     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
+-  .heatCell {
+-    aspect-ratio: auto;
+-    height: 16px;
+-    border-radius: var(--r-sm);
+-  }
+-  .heatLegend .heatCell {
+-    height: 12px;
+-    width: 12px;
+-  }
+-  /* Best-time bars a touch taller so they read on mobile */
+-  .bestTimeBars {
+-    height: 100px;
+-  }
+-
+-  /* Breakdown bars: give the bar more room on narrow screens */
+-  .breakdownRow {
+-    grid-template-columns: 76px 1fr 26px;
+-    gap: var(--s-5);
+-  }
+-}
+-
+ /* ═══ New stats widgets (best time + posting activity) ═══════════ */
+ .insightGrid {
+   display: grid;
+@@ -526,3 +482,47 @@
+   height: 11px;
+   aspect-ratio: auto;
+ }
++
++/* ─────────────────────────────────────────────────────────────
++   Mobile (below desktop boundary --bp-lg 1024px)
++   Reflow desktop grids so nothing overflows the phone width.
++   Placed at end of file so mobile overrides win the cascade.
++   ───────────────────────────────────────────────────────────── */
++@media (max-width: 1023px) {
++  .kpiGrid {
++    grid-template-columns: 1fr 1fr;
++    gap: var(--s-5);
++  }
++
++  .breakdownCols {
++    grid-template-columns: 1fr;
++    gap: var(--s-11);
++  }
++
++  .insightGrid {
++    grid-template-columns: 1fr;
++    gap: var(--s-9);
++  }
++
++  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
++     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
++  .heatCell {
++    aspect-ratio: auto;
++    height: 16px;
++    border-radius: var(--r-sm);
++  }
++  .heatLegend .heatCell {
++    height: 12px;
++    width: 12px;
++  }
++  /* Best-time bars a touch taller so they read on mobile */
++  .bestTimeBars {
++    height: 100px;
++  }
++
++  /* Breakdown bars: give the bar more room on narrow screens */
++  .breakdownRow {
++    grid-template-columns: 76px 1fr 26px;
++    gap: var(--s-5);
++  }
++}
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index 1b52ec6..2d71528 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -120,6 +120,7 @@ export function PlanClient() {
+   return (
+     <PageSurface
+       flushBody
++      tinted
+       eyebrow={weekRangeKicker(days)}
+       title="Plan"
+       subtitle={
+diff --git a/src/components/PageSurface/PageSurface.module.css b/src/components/PageSurface/PageSurface.module.css
+index 24f6dca..09d7ca5 100644
+--- a/src/components/PageSurface/PageSurface.module.css
++++ b/src/components/PageSurface/PageSurface.module.css
+@@ -26,6 +26,15 @@
+   max-width: 1560px;
+ }
+ 
++/* Tinted panel — a subtly shaded surface so white content cards pop off it
++   (e.g. Plan's day cards, which are surface-1 and otherwise blend in). */
++.panelTinted {
++  background: var(--well);
++}
++:global(.pp2.dark) .panelTinted {
++  background: var(--bg-base);
++}
++
+ /* ── Page header (inside the panel) ────────────────────────────── */
+ .pageHead {
+   display: flex;
+diff --git a/src/components/PageSurface/PageSurface.tsx b/src/components/PageSurface/PageSurface.tsx
+index 39db2ac..6e7ebc1 100644
+--- a/src/components/PageSurface/PageSurface.tsx
++++ b/src/components/PageSurface/PageSurface.tsx
+@@ -16,6 +16,8 @@ interface PageSurfaceProps {
+   flushBody?: boolean;
+   /** When true, uses a wider panel (e.g. Board's 5-column kanban). */
+   wide?: boolean;
++  /** When true, tints the panel surface so white content cards pop (e.g. Plan). */
++  tinted?: boolean;
+   children: ReactNode;
+ }
+ 
+@@ -32,11 +34,14 @@ export function PageSurface({
+   actions,
+   flushBody = false,
+   wide = false,
++  tinted = false,
+   children,
+ }: PageSurfaceProps) {
+   return (
+     <div className={styles.screen}>
+-      <div className={`${styles.panel} ${wide ? styles.panelWide : ""}`}>
++      <div
++        className={`${styles.panel} ${wide ? styles.panelWide : ""} ${tinted ? styles.panelTinted : ""}`}
++      >
+         <header className={styles.pageHead}>
+           <div className={styles.pageHeadText}>
+             {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}

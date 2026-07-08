@@ -120,6 +120,7 @@ export function PlanClient() {
   return (
     <PageSurface
       flushBody
+      tinted
       eyebrow={weekRangeKicker(days)}
       title="Plan"
       subtitle={

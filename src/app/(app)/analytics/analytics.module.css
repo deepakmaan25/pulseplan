@@ -324,50 +324,6 @@
   margin: 0;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Mobile (below desktop boundary --bp-lg 1024px)
-   Reflow desktop grids so nothing overflows the phone width.
-   Desktop rules above are untouched.
-   ───────────────────────────────────────────────────────────── */
-@media (max-width: 1023px) {
-  .kpiGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--s-5);
-  }
-
-  .breakdownCols {
-    grid-template-columns: 1fr;
-    gap: var(--s-11);
-  }
-
-  .insightGrid {
-    grid-template-columns: 1fr;
-    gap: var(--s-9);
-  }
-
-  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
-     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
-  .heatCell {
-    aspect-ratio: auto;
-    height: 16px;
-    border-radius: var(--r-sm);
-  }
-  .heatLegend .heatCell {
-    height: 12px;
-    width: 12px;
-  }
-  /* Best-time bars a touch taller so they read on mobile */
-  .bestTimeBars {
-    height: 100px;
-  }
-
-  /* Breakdown bars: give the bar more room on narrow screens */
-  .breakdownRow {
-    grid-template-columns: 76px 1fr 26px;
-    gap: var(--s-5);
-  }
-}
-
 /* ═══ New stats widgets (best time + posting activity) ═══════════ */
 .insightGrid {
   display: grid;
@@ -525,4 +481,48 @@
   width: 11px;
   height: 11px;
   aspect-ratio: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Mobile (below desktop boundary --bp-lg 1024px)
+   Reflow desktop grids so nothing overflows the phone width.
+   Placed at end of file so mobile overrides win the cascade.
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .kpiGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-5);
+  }
+
+  .breakdownCols {
+    grid-template-columns: 1fr;
+    gap: var(--s-11);
+  }
+
+  .insightGrid {
+    grid-template-columns: 1fr;
+    gap: var(--s-9);
+  }
+
+  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
+     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
+  .heatCell {
+    aspect-ratio: auto;
+    height: 16px;
+    border-radius: var(--r-sm);
+  }
+  .heatLegend .heatCell {
+    height: 12px;
+    width: 12px;
+  }
+  /* Best-time bars a touch taller so they read on mobile */
+  .bestTimeBars {
+    height: 100px;
+  }
+
+  /* Breakdown bars: give the bar more room on narrow screens */
+  .breakdownRow {
+    grid-template-columns: 76px 1fr 26px;
+    gap: var(--s-5);
+  }
 }

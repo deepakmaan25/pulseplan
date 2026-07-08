@@ -16,6 +16,8 @@ interface PageSurfaceProps {
   flushBody?: boolean;
   /** When true, uses a wider panel (e.g. Board's 5-column kanban). */
   wide?: boolean;
+  /** When true, tints the panel surface so white content cards pop (e.g. Plan). */
+  tinted?: boolean;
   children: ReactNode;
 }
 
@@ -32,11 +34,14 @@ export function PageSurface({
   actions,
   flushBody = false,
   wide = false,
+  tinted = false,
   children,
 }: PageSurfaceProps) {
   return (
     <div className={styles.screen}>
-      <div className={`${styles.panel} ${wide ? styles.panelWide : ""}`}>
+      <div
+        className={`${styles.panel} ${wide ? styles.panelWide : ""} ${tinted ? styles.panelTinted : ""}`}
+      >
         <header className={styles.pageHead}>
           <div className={styles.pageHeadText}>
             {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
