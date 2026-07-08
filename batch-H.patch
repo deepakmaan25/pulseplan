@@ -1,0 +1,314 @@
+diff --git a/src/app/(app)/analytics/AnalyticsClient.tsx b/src/app/(app)/analytics/AnalyticsClient.tsx
+index 0241dbe..ce84136 100644
+--- a/src/app/(app)/analytics/AnalyticsClient.tsx
++++ b/src/app/(app)/analytics/AnalyticsClient.tsx
+@@ -14,6 +14,7 @@ import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
+ import { PlatformIcon } from "@/components/ui/PlatformIcon";
+ import type { Platform } from "@/components/ui/chips/PlatformChip";
+ import { usePosts } from "@/store/PostsContext";
++import { BestTimeToPost, PostingActivity } from "./StatsWidgets";
+ import styles from "./analytics.module.css";
+ 
+ type Period = "7d" | "28d" | "90d";
+@@ -310,6 +311,14 @@ export function AnalyticsClient() {
+         </div>
+       </Section>
+ 
++      {/* Insights — best time to post + posting activity */}
++      <Section ariaLabel="Posting insights">
++        <div className={styles.insightGrid}>
++          <BestTimeToPost />
++          <PostingActivity />
++        </div>
++      </Section>
++
+       {/* Top Posts */}
+       {topPosts.length > 0 && (
+         <Section label="Top posts" ariaLabel="Top posts">
+diff --git a/src/app/(app)/analytics/StatsWidgets.tsx b/src/app/(app)/analytics/StatsWidgets.tsx
+new file mode 100644
+index 0000000..585a87e
+--- /dev/null
++++ b/src/app/(app)/analytics/StatsWidgets.tsx
+@@ -0,0 +1,110 @@
++import { useMemo } from "react";
++import styles from "./analytics.module.css";
++
++/* ── Best time to post ─────────────────────────────────────────────
++   7-day engagement mini-chart. Peak days rendered in the brand accent,
++   the rest muted. Data is stubbed (mock analytics). */
++
++const BEST_TIME_DAYS = [
++  { day: "M", weight: 0.42, peak: false },
++  { day: "T", weight: 0.88, peak: true },
++  { day: "W", weight: 0.5, peak: false },
++  { day: "T", weight: 0.92, peak: true },
++  { day: "F", weight: 0.6, peak: false },
++  { day: "S", weight: 0.26, peak: false },
++  { day: "S", weight: 0.2, peak: false },
++];
++
++export function BestTimeToPost() {
++  return (
++    <div className={styles.insightCard}>
++      <p className={styles.sectionLabel}>Best time to post</p>
++      <p className={styles.bestTimeValue}>
++        9:00<span className={styles.bestTimeMeridiem}>AM</span>
++      </p>
++      <p className={styles.bestTimeSub}>
++        Tuesdays &amp; Thursdays see your highest engagement
++      </p>
++      <div className={styles.bestTimeBars} aria-hidden="true">
++        {BEST_TIME_DAYS.map(({ day, weight, peak }, i) => (
++          <div key={i} className={styles.bestTimeBarCol}>
++            <div
++              className={`${styles.bestTimeBar} ${peak ? styles.bestTimeBarPeak : ""}`}
++              style={{ height: `${Math.round(weight * 100)}%` }}
++            />
++            <span className={styles.bestTimeDay}>{day}</span>
++          </div>
++        ))}
++      </div>
++    </div>
++  );
++}
++
++/* ── Posting activity heatmap ──────────────────────────────────────
++   GitHub-style contribution grid: 7 rows (days) × 12 columns (weeks).
++   Deterministic pseudo-random intensity so it's stable across renders
++   (no hydration mismatch). Data is stubbed. */
++
++const HEAT_ROWS = ["M", "T", "W", "T", "F", "S", "S"];
++const HEAT_WEEKS = 12;
++
++function intensityFor(row: number, week: number): number {
++  // deterministic hash → 0..4
++  const h = (row * 31 + week * 17 + ((row * week) % 7) * 13) % 11;
++  if (h < 3) return 0;
++  if (h < 5) return 1;
++  if (h < 7) return 2;
++  if (h < 9) return 3;
++  return 4;
++}
++
++export function PostingActivity() {
++  const cells = useMemo(
++    () =>
++      HEAT_ROWS.map((_, r) =>
++        Array.from({ length: HEAT_WEEKS }, (__, w) => intensityFor(r, w)),
++      ),
++    [],
++  );
++
++  return (
++    <div className={styles.insightCard}>
++      <div className={styles.insightHead}>
++        <p className={styles.sectionLabel} style={{ margin: 0 }}>
++          Posting activity
++        </p>
++        <span className={styles.insightMeta}>Last 12 weeks</span>
++      </div>
++      <div
++        className={styles.heatGrid}
++        role="img"
++        aria-label="Posting activity over the last 12 weeks"
++      >
++        {cells.map((rowCells, r) => (
++          <div key={r} className={styles.heatRow}>
++            <span className={styles.heatRowLabel} aria-hidden="true">
++              {HEAT_ROWS[r]}
++            </span>
++            {rowCells.map((level, w) => (
++              <span
++                key={w}
++                className={styles.heatCell}
++                data-level={level}
++                aria-hidden="true"
++              />
++            ))}
++          </div>
++        ))}
++      </div>
++      <div className={styles.heatLegend} aria-hidden="true">
++        <span>Less</span>
++        <span className={styles.heatCell} data-level={0} />
++        <span className={styles.heatCell} data-level={1} />
++        <span className={styles.heatCell} data-level={2} />
++        <span className={styles.heatCell} data-level={3} />
++        <span className={styles.heatCell} data-level={4} />
++        <span>More</span>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index aafa602..f0ea6d7 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -339,4 +339,140 @@
+     grid-template-columns: 1fr;
+     gap: var(--s-11);
+   }
++
++  .insightGrid {
++    grid-template-columns: 1fr;
++    gap: var(--s-9);
++  }
++}
++
++/* ═══ New stats widgets (best time + posting activity) ═══════════ */
++.insightGrid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: var(--s-9);
++}
++.insightCard {
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
++  border-radius: var(--r-lg);
++  box-shadow: var(--shadow-card);
++  padding: var(--s-8) var(--s-9);
++}
++:global(.pp2.dark) .insightCard {
++  border-color: var(--divider-strong);
++}
++
++.insightHead {
++  display: flex;
++  align-items: baseline;
++  justify-content: space-between;
++  margin-bottom: var(--s-7);
++}
++.insightMeta {
++  font: var(--t-mono);
++  font-size: 11px;
++  color: var(--ink-3);
++}
++
++/* Best time to post */
++.bestTimeValue {
++  font: var(--t-display);
++  font-size: 30px;
++  font-weight: 700;
++  letter-spacing: -0.02em;
++  color: var(--ink-1);
++  margin: 0;
++}
++.bestTimeMeridiem {
++  font-size: 15px;
++  font-weight: 600;
++  color: var(--ink-3);
++  margin-left: 2px;
++}
++.bestTimeSub {
++  font: var(--t-body-sm);
++  color: var(--ink-3);
++  margin: var(--s-3) 0 var(--s-8);
++  line-height: 1.4;
++}
++.bestTimeBars {
++  display: grid;
++  grid-template-columns: repeat(7, 1fr);
++  gap: var(--s-4);
++  align-items: end;
++  height: 92px;
++}
++.bestTimeBarCol {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: var(--s-3);
++  height: 100%;
++  justify-content: flex-end;
++}
++.bestTimeBar {
++  width: 68%;
++  min-height: 6px;
++  border-radius: var(--r-sm) var(--r-sm) 0 0;
++  background: var(--well);
++}
++.bestTimeBarPeak {
++  background: var(--primary);
++}
++.bestTimeDay {
++  font: var(--t-caption);
++  font-size: 10px;
++  color: var(--ink-3);
++}
++
++/* Posting activity heatmap */
++.heatGrid {
++  display: flex;
++  flex-direction: column;
++  gap: var(--s-2);
++}
++.heatRow {
++  display: grid;
++  grid-template-columns: 14px repeat(12, 1fr);
++  gap: var(--s-2);
++  align-items: center;
++}
++.heatRowLabel {
++  font: var(--t-caption);
++  font-size: 10px;
++  color: var(--ink-3);
++  text-align: center;
++}
++.heatCell {
++  aspect-ratio: 1;
++  border-radius: 3px;
++  background: var(--well);
++}
++.heatCell[data-level="1"] {
++  background: var(--heat-1);
++}
++.heatCell[data-level="2"] {
++  background: var(--heat-2);
++}
++.heatCell[data-level="3"] {
++  background: var(--heat-3);
++}
++.heatCell[data-level="4"] {
++  background: var(--heat-4);
++}
++.heatLegend {
++  display: flex;
++  align-items: center;
++  justify-content: flex-end;
++  gap: var(--s-2);
++  margin-top: var(--s-6);
++  font: var(--t-caption);
++  font-size: 10px;
++  color: var(--ink-3);
++}
++.heatLegend .heatCell {
++  width: 11px;
++  height: 11px;
++  aspect-ratio: auto;
+ }
+diff --git a/src/styles/tokens.css b/src/styles/tokens.css
+index 9a8b960..66f7d50 100644
+--- a/src/styles/tokens.css
++++ b/src/styles/tokens.css
+@@ -25,6 +25,10 @@
+   --surface-3: #f9fafb;
+   --surface-4: #f9fafb;
+   --well: #eef1f4;
++  --heat-1: #a7e8ca;
++  --heat-2: #5ed6a0;
++  --heat-3: #1fb877;
++  --heat-4: #0d9f6e;
+   --hair: rgba(10, 13, 18, 0.07);
+   --scrim: rgba(10, 13, 18, 0.48);
+ 
+@@ -211,6 +215,10 @@
+   --surface-3: #242931;
+   --surface-4: #2d333c;
+   --well: #1a1e23;
++  --heat-1: #14432f;
++  --heat-2: #1a7a52;
++  --heat-3: #20b878;
++  --heat-4: #24c98d;
+   --hair: rgba(255, 255, 255, 0.06);
+   --scrim: rgba(0, 0, 0, 0.68);
+ 

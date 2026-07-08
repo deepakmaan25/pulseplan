@@ -25,6 +25,10 @@
   --surface-3: #f9fafb;
   --surface-4: #f9fafb;
   --well: #eef1f4;
+  --heat-1: #a7e8ca;
+  --heat-2: #5ed6a0;
+  --heat-3: #1fb877;
+  --heat-4: #0d9f6e;
   --hair: rgba(10, 13, 18, 0.07);
   --scrim: rgba(10, 13, 18, 0.48);
 
@@ -211,6 +215,10 @@
   --surface-3: #242931;
   --surface-4: #2d333c;
   --well: #1a1e23;
+  --heat-1: #14432f;
+  --heat-2: #1a7a52;
+  --heat-3: #20b878;
+  --heat-4: #24c98d;
   --hair: rgba(255, 255, 255, 0.06);
   --scrim: rgba(0, 0, 0, 0.68);
 

@@ -14,6 +14,7 @@ import { PageSurface, Section } from "@/components/PageSurface/PageSurface";
 import { PlatformIcon } from "@/components/ui/PlatformIcon";
 import type { Platform } from "@/components/ui/chips/PlatformChip";
 import { usePosts } from "@/store/PostsContext";
+import { BestTimeToPost, PostingActivity } from "./StatsWidgets";
 import styles from "./analytics.module.css";
 
 type Period = "7d" | "28d" | "90d";
@@ -307,6 +308,14 @@ export function AnalyticsClient() {
               <span className={styles.kpiLabel}>{label}</span>
             </div>
           ))}
+        </div>
+      </Section>
+
+      {/* Insights — best time to post + posting activity */}
+      <Section ariaLabel="Posting insights">
+        <div className={styles.insightGrid}>
+          <BestTimeToPost />
+          <PostingActivity />
         </div>
       </Section>
 
