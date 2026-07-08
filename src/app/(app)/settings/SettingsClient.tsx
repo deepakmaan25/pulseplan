@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { PlatformChip } from "@/components/ui/chips/PlatformChip";
 import type { Platform } from "@/components/ui/chips/PlatformChip";
 import { createClient } from "@/lib/supabase/client";
+import { PILLARS } from "@/mocks/fixtures";
 import { ThemeSection } from "./ThemeSection";
 import styles from "./settings.module.css";
 
@@ -37,6 +38,23 @@ const ALL_PLATFORMS: { value: Platform; label: string }[] = [
   { value: "yt", label: "YouTube" },
   { value: "th", label: "Threads" },
 ];
+
+const PLATFORM_LABELS: Record<Platform, string> = {
+  ig: "Instagram",
+  li: "LinkedIn",
+  x: "X",
+  yt: "YouTube",
+  th: "Threads",
+};
+
+// Mock handles — illustrative, not wired to real account data.
+const MOCK_HANDLES: Record<Platform, string> = {
+  li: "in/deepakmaan",
+  ig: "@deepak.builds",
+  x: "@deepakmaan",
+  yt: "@deepakmaan",
+  th: "@deepakmaan",
+};
 
 function readOnboarding(): {
   name: string;
@@ -243,6 +261,7 @@ export function SettingsClient({ email }: { email?: string }) {
             {name ? capitalizeFirst(name) : email || "Your Profile"}
           </p>
           {name && email && <p className={styles.profileHandle}>{email}</p>}
+          <span className={styles.soloBadge}>Solo creator</span>
         </div>
         <button
           type="button"
@@ -252,6 +271,28 @@ export function SettingsClient({ email }: { email?: string }) {
         >
           Edit
         </button>
+      </div>
+    </section>
+  );
+
+  // Mock creator stats — illustrative, not wired to real tracking
+  const statsSection = (
+    <section aria-label="Creator stats">
+      <div className={styles.statsRow}>
+        <div className={styles.statCell}>
+          <p className={styles.statNum}>24</p>
+          <p className={styles.statLabel}>Day streak</p>
+        </div>
+        <div className={styles.statCell}>
+          <p className={styles.statNum}>142</p>
+          <p className={styles.statLabel}>Posts</p>
+        </div>
+        <div className={styles.statCell}>
+          <p className={styles.statNum}>
+            5<span className={styles.statNumSuffix}>/wk</span>
+          </p>
+          <p className={styles.statLabel}>Per week</p>
+        </div>
       </div>
     </section>
   );
@@ -284,19 +325,34 @@ export function SettingsClient({ email }: { email?: string }) {
       <div className={styles.card}>
         {connectedPlatforms.map(({ value }) => (
           <div key={value} className={styles.platformRow}>
-            <PlatformChip platform={value} showLabel size="md" />
+            <PlatformChip platform={value} size="md" />
+            <div className={styles.platformInfo}>
+              <span className={styles.platformName}>
+                {PLATFORM_LABELS[value] ?? value}
+              </span>
+              <span className={styles.platformHandle}>
+                {MOCK_HANDLES[value] ?? "@handle"}
+              </span>
+            </div>
             <button
               type="button"
-              className={`${styles.connBadge} ${styles.connBadgeOn}`}
+              className={styles.connLive}
               onClick={() => openDisconnect(value)}
             >
+              <span className={styles.connDot} aria-hidden="true" />
               Connected
             </button>
           </div>
         ))}
         {otherPlatforms.map(({ value }) => (
           <div key={value} className={styles.platformRow}>
-            <PlatformChip platform={value} showLabel size="md" />
+            <PlatformChip platform={value} size="md" />
+            <div className={styles.platformInfo}>
+              <span className={styles.platformName}>
+                {PLATFORM_LABELS[value] ?? value}
+              </span>
+              <span className={styles.platformNotConnected}>Not connected</span>
+            </div>
             <button
               type="button"
               className={styles.connBadge}
@@ -306,6 +362,38 @@ export function SettingsClient({ email }: { email?: string }) {
             </button>
           </div>
         ))}
+      </div>
+    </section>
+  );
+
+  const pillarsSection = (
+    <section aria-labelledby="pillars-heading">
+      <p id="pillars-heading" className={styles.groupLabel}>
+        Content pillars
+      </p>
+      <div className={styles.card}>
+        <div className={styles.pillarWrap}>
+          {PILLARS.map((p) => (
+            <span key={p.id} className={styles.pillarChip}>
+              <span
+                className={styles.pillarDot}
+                style={{ background: p.color }}
+                aria-hidden="true"
+              />
+              {p.name}
+            </span>
+          ))}
+        </div>
+        <div className={styles.pillarFoot}>
+          <span>{PILLARS.length} active pillars</span>
+          <button
+            type="button"
+            className={styles.pillarManage}
+            onClick={openEditProfile}
+          >
+            Manage
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -403,11 +491,13 @@ export function SettingsClient({ email }: { email?: string }) {
           <div className={styles.desktopCols}>
             <div className={styles.desktopCol}>
               {profileSection}
+              {statsSection}
               {goalSection}
               {notifSection}
             </div>
             <div className={styles.desktopCol}>
               {platformsSection}
+              {pillarsSection}
               {appearanceSection}
               {aboutSection}
               {accountSection}
@@ -416,8 +506,10 @@ export function SettingsClient({ email }: { email?: string }) {
         ) : (
           <div className={styles.content}>
             {profileSection}
+            {statsSection}
             {goalSection}
             {platformsSection}
+            {pillarsSection}
             {appearanceSection}
             {notifSection}
             {aboutSection}

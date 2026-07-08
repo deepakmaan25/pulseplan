@@ -382,3 +382,135 @@
     transition: none;
   }
 }
+
+/* ═══ Profile enrichments (badge, stats, @usernames, pillars) ════ */
+
+/* Solo-creator badge under the handle */
+.soloBadge {
+  display: inline-block;
+  font: var(--t-label);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  color: var(--primary-ink);
+  background: var(--primary-soft);
+  padding: 2px var(--s-4);
+  border-radius: var(--r-full);
+  margin-top: var(--s-3);
+}
+
+/* Stats row — 3 cells */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-5);
+}
+.statCell {
+  background: var(--surface-1);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--s-6) var(--s-7);
+}
+:global(.pp2.dark) .statCell {
+  border-color: var(--divider-strong);
+}
+.statNum {
+  font: var(--t-title);
+  font-weight: 700;
+  color: var(--ink-1);
+  line-height: 1;
+}
+.statNumSuffix {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.statLabel {
+  font: var(--t-label);
+  font-size: 10px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: var(--s-4);
+}
+
+/* @username under platform name */
+.platformInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.platformName {
+  font: var(--t-body-sm);
+  font-weight: 600;
+  color: var(--ink-1);
+}
+.platformHandle {
+  font: var(--t-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+}
+.platformNotConnected {
+  font: var(--t-caption);
+  font-size: 11px;
+  color: var(--ink-4);
+}
+.connLive {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font: var(--t-label);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--primary-ink);
+}
+.connDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--primary);
+}
+
+/* Content pillars */
+.pillarWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  padding: var(--s-6) var(--s-9);
+}
+.pillarChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  font: var(--t-body-sm);
+  font-weight: 500;
+  color: var(--ink-1);
+  background: var(--well);
+  padding: var(--s-3) var(--s-6);
+  border-radius: var(--r-full);
+}
+.pillarDot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+.pillarFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: var(--t-caption);
+  color: var(--ink-3);
+  border-top: 1px solid var(--divider);
+  padding: var(--s-6) var(--s-9);
+}
+.pillarManage {
+  color: var(--primary);
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+}

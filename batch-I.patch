@@ -1,0 +1,315 @@
+diff --git a/src/app/(app)/settings/SettingsClient.tsx b/src/app/(app)/settings/SettingsClient.tsx
+index 03c379f..ce083da 100644
+--- a/src/app/(app)/settings/SettingsClient.tsx
++++ b/src/app/(app)/settings/SettingsClient.tsx
+@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button/Button";
+ import { PlatformChip } from "@/components/ui/chips/PlatformChip";
+ import type { Platform } from "@/components/ui/chips/PlatformChip";
+ import { createClient } from "@/lib/supabase/client";
++import { PILLARS } from "@/mocks/fixtures";
+ import { ThemeSection } from "./ThemeSection";
+ import styles from "./settings.module.css";
+ 
+@@ -38,6 +39,23 @@ const ALL_PLATFORMS: { value: Platform; label: string }[] = [
+   { value: "th", label: "Threads" },
+ ];
+ 
++const PLATFORM_LABELS: Record<Platform, string> = {
++  ig: "Instagram",
++  li: "LinkedIn",
++  x: "X",
++  yt: "YouTube",
++  th: "Threads",
++};
++
++// Mock handles — illustrative, not wired to real account data.
++const MOCK_HANDLES: Record<Platform, string> = {
++  li: "in/deepakmaan",
++  ig: "@deepak.builds",
++  x: "@deepakmaan",
++  yt: "@deepakmaan",
++  th: "@deepakmaan",
++};
++
+ function readOnboarding(): {
+   name: string;
+   platforms: Platform[];
+@@ -243,6 +261,7 @@ export function SettingsClient({ email }: { email?: string }) {
+             {name ? capitalizeFirst(name) : email || "Your Profile"}
+           </p>
+           {name && email && <p className={styles.profileHandle}>{email}</p>}
++          <span className={styles.soloBadge}>Solo creator</span>
+         </div>
+         <button
+           type="button"
+@@ -256,6 +275,28 @@ export function SettingsClient({ email }: { email?: string }) {
+     </section>
+   );
+ 
++  // Mock creator stats — illustrative, not wired to real tracking
++  const statsSection = (
++    <section aria-label="Creator stats">
++      <div className={styles.statsRow}>
++        <div className={styles.statCell}>
++          <p className={styles.statNum}>24</p>
++          <p className={styles.statLabel}>Day streak</p>
++        </div>
++        <div className={styles.statCell}>
++          <p className={styles.statNum}>142</p>
++          <p className={styles.statLabel}>Posts</p>
++        </div>
++        <div className={styles.statCell}>
++          <p className={styles.statNum}>
++            5<span className={styles.statNumSuffix}>/wk</span>
++          </p>
++          <p className={styles.statLabel}>Per week</p>
++        </div>
++      </div>
++    </section>
++  );
++
+   const goalSection = (
+     <section aria-labelledby="goal-heading">
+       <p id="goal-heading" className={styles.groupLabel}>
+@@ -284,19 +325,34 @@ export function SettingsClient({ email }: { email?: string }) {
+       <div className={styles.card}>
+         {connectedPlatforms.map(({ value }) => (
+           <div key={value} className={styles.platformRow}>
+-            <PlatformChip platform={value} showLabel size="md" />
++            <PlatformChip platform={value} size="md" />
++            <div className={styles.platformInfo}>
++              <span className={styles.platformName}>
++                {PLATFORM_LABELS[value] ?? value}
++              </span>
++              <span className={styles.platformHandle}>
++                {MOCK_HANDLES[value] ?? "@handle"}
++              </span>
++            </div>
+             <button
+               type="button"
+-              className={`${styles.connBadge} ${styles.connBadgeOn}`}
++              className={styles.connLive}
+               onClick={() => openDisconnect(value)}
+             >
++              <span className={styles.connDot} aria-hidden="true" />
+               Connected
+             </button>
+           </div>
+         ))}
+         {otherPlatforms.map(({ value }) => (
+           <div key={value} className={styles.platformRow}>
+-            <PlatformChip platform={value} showLabel size="md" />
++            <PlatformChip platform={value} size="md" />
++            <div className={styles.platformInfo}>
++              <span className={styles.platformName}>
++                {PLATFORM_LABELS[value] ?? value}
++              </span>
++              <span className={styles.platformNotConnected}>Not connected</span>
++            </div>
+             <button
+               type="button"
+               className={styles.connBadge}
+@@ -310,6 +366,38 @@ export function SettingsClient({ email }: { email?: string }) {
+     </section>
+   );
+ 
++  const pillarsSection = (
++    <section aria-labelledby="pillars-heading">
++      <p id="pillars-heading" className={styles.groupLabel}>
++        Content pillars
++      </p>
++      <div className={styles.card}>
++        <div className={styles.pillarWrap}>
++          {PILLARS.map((p) => (
++            <span key={p.id} className={styles.pillarChip}>
++              <span
++                className={styles.pillarDot}
++                style={{ background: p.color }}
++                aria-hidden="true"
++              />
++              {p.name}
++            </span>
++          ))}
++        </div>
++        <div className={styles.pillarFoot}>
++          <span>{PILLARS.length} active pillars</span>
++          <button
++            type="button"
++            className={styles.pillarManage}
++            onClick={openEditProfile}
++          >
++            Manage
++          </button>
++        </div>
++      </div>
++    </section>
++  );
++
+   const appearanceSection = (
+     <section aria-labelledby="appearance-heading">
+       <p id="appearance-heading" className={styles.groupLabel}>
+@@ -403,11 +491,13 @@ export function SettingsClient({ email }: { email?: string }) {
+           <div className={styles.desktopCols}>
+             <div className={styles.desktopCol}>
+               {profileSection}
++              {statsSection}
+               {goalSection}
+               {notifSection}
+             </div>
+             <div className={styles.desktopCol}>
+               {platformsSection}
++              {pillarsSection}
+               {appearanceSection}
+               {aboutSection}
+               {accountSection}
+@@ -416,8 +506,10 @@ export function SettingsClient({ email }: { email?: string }) {
+         ) : (
+           <div className={styles.content}>
+             {profileSection}
++            {statsSection}
+             {goalSection}
+             {platformsSection}
++            {pillarsSection}
+             {appearanceSection}
+             {notifSection}
+             {aboutSection}
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index 468498d..09e276b 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -382,3 +382,135 @@
+     transition: none;
+   }
+ }
++
++/* ═══ Profile enrichments (badge, stats, @usernames, pillars) ════ */
++
++/* Solo-creator badge under the handle */
++.soloBadge {
++  display: inline-block;
++  font: var(--t-label);
++  font-size: 10px;
++  letter-spacing: var(--ls-label);
++  color: var(--primary-ink);
++  background: var(--primary-soft);
++  padding: 2px var(--s-4);
++  border-radius: var(--r-full);
++  margin-top: var(--s-3);
++}
++
++/* Stats row — 3 cells */
++.statsRow {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: var(--s-5);
++}
++.statCell {
++  background: var(--surface-1);
++  border: 1px solid var(--divider);
++  border-radius: var(--r-lg);
++  box-shadow: var(--shadow-card);
++  padding: var(--s-6) var(--s-7);
++}
++:global(.pp2.dark) .statCell {
++  border-color: var(--divider-strong);
++}
++.statNum {
++  font: var(--t-title);
++  font-weight: 700;
++  color: var(--ink-1);
++  line-height: 1;
++}
++.statNumSuffix {
++  font-size: 12px;
++  font-weight: 600;
++  color: var(--ink-3);
++}
++.statLabel {
++  font: var(--t-label);
++  font-size: 10px;
++  letter-spacing: var(--ls-label);
++  text-transform: uppercase;
++  color: var(--ink-3);
++  margin-top: var(--s-4);
++}
++
++/* @username under platform name */
++.platformInfo {
++  display: flex;
++  flex-direction: column;
++  min-width: 0;
++  flex: 1;
++}
++.platformName {
++  font: var(--t-body-sm);
++  font-weight: 600;
++  color: var(--ink-1);
++}
++.platformHandle {
++  font: var(--t-mono);
++  font-size: 11px;
++  color: var(--ink-4);
++}
++.platformNotConnected {
++  font: var(--t-caption);
++  font-size: 11px;
++  color: var(--ink-4);
++}
++.connLive {
++  display: inline-flex;
++  align-items: center;
++  gap: var(--s-3);
++  font: var(--t-label);
++  font-size: 11px;
++  letter-spacing: var(--ls-label);
++  text-transform: uppercase;
++  color: var(--primary-ink);
++}
++.connDot {
++  width: 6px;
++  height: 6px;
++  border-radius: var(--r-full);
++  background: var(--primary);
++}
++
++/* Content pillars */
++.pillarWrap {
++  display: flex;
++  flex-wrap: wrap;
++  gap: var(--s-4);
++  padding: var(--s-6) var(--s-9);
++}
++.pillarChip {
++  display: inline-flex;
++  align-items: center;
++  gap: var(--s-3);
++  font: var(--t-body-sm);
++  font-weight: 500;
++  color: var(--ink-1);
++  background: var(--well);
++  padding: var(--s-3) var(--s-6);
++  border-radius: var(--r-full);
++}
++.pillarDot {
++  width: 7px;
++  height: 7px;
++  border-radius: var(--r-full);
++  flex-shrink: 0;
++}
++.pillarFoot {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  font: var(--t-caption);
++  color: var(--ink-3);
++  border-top: 1px solid var(--divider);
++  padding: var(--s-6) var(--s-9);
++}
++.pillarManage {
++  color: var(--primary);
++  font-weight: 600;
++  background: none;
++  border: none;
++  cursor: pointer;
++  font-size: inherit;
++}
