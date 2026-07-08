@@ -2,9 +2,11 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, CalendarPlus } from "lucide-react";
 import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
+import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
+import { Button } from "@/components/ui/Button/Button";
 import { BoardCard } from "@/components/post/BoardCard";
 import { PlatformChip } from "@/components/ui/chips/PlatformChip";
 import { PillarChip } from "@/components/ui/chips/PillarChip";
@@ -205,85 +207,101 @@ export function PlanClient() {
         <div className={styles.hairline} />
 
         {/* Day rows — clean hairline list */}
-        <div className={styles.weekGroup}>
-          {days.map((day) => {
-            const dayPosts = postsForDay(day.date);
-            return (
-              <section
-                key={day.date}
-                id={`plan-day-${day.date}`}
-                className={styles.day}
-                aria-label={day.label}
-              >
-                <div className={styles.dayHeader}>
-                  <div className={styles.dayHeadL}>
-                    <span className={styles.dayName}>
-                      {day.isToday ? "Today" : weekdayFull(day.date)}
-                    </span>
-                    <span className={styles.dayDate}>
-                      MAY {day.dayNum}
-                      {day.isToday ? " · now" : ""}
+        {weekPlanned === 0 ? (
+          <EmptyState
+            tone="brand"
+            icon={<CalendarPlus />}
+            title="Nothing scheduled yet"
+            description="Your week is a blank canvas. Plan your first post and it'll show up right here."
+            primaryAction={
+              <Button variant="filled" onClick={() => openPost("new")}>
+                Schedule a post
+              </Button>
+            }
+          />
+        ) : (
+          <div className={styles.weekGroup}>
+            {days.map((day) => {
+              const dayPosts = postsForDay(day.date);
+              return (
+                <section
+                  key={day.date}
+                  id={`plan-day-${day.date}`}
+                  className={styles.day}
+                  aria-label={day.label}
+                >
+                  <div className={styles.dayHeader}>
+                    <div className={styles.dayHeadL}>
+                      <span className={styles.dayName}>
+                        {day.isToday ? "Today" : weekdayFull(day.date)}
+                      </span>
+                      <span className={styles.dayDate}>
+                        MAY {day.dayNum}
+                        {day.isToday ? " · now" : ""}
+                      </span>
+                    </div>
+                    <span className={styles.dayCount}>
+                      {dayPosts.length === 0
+                        ? "empty"
+                        : `${dayPosts.length} planned`}
                     </span>
                   </div>
-                  <span className={styles.dayCount}>
-                    {dayPosts.length === 0
-                      ? "empty"
-                      : `${dayPosts.length} planned`}
-                  </span>
-                </div>
-                {dayPosts.length > 0 ? (
-                  <div className={styles.rows}>
-                    {dayPosts.map((post) => (
-                      <button
-                        key={post.id}
-                        type="button"
-                        className={styles.planRow}
-                        onClick={() => openPost(post.id)}
-                      >
-                        <span className={styles.rowTime}>
-                          {post.time ?? "—"}
-                        </span>
-                        <PlatformChip
-                          platform={post.platform}
-                          showLabel={false}
-                          size="sm"
-                          className={styles.rowPlat}
-                        />
-                        {post.postType ? (
-                          <span className={styles.rowType}>
-                            {post.postType}
+                  {dayPosts.length > 0 ? (
+                    <div className={styles.rows}>
+                      {dayPosts.map((post) => (
+                        <button
+                          key={post.id}
+                          type="button"
+                          className={styles.planRow}
+                          onClick={() => openPost(post.id)}
+                        >
+                          <span className={styles.rowTime}>
+                            {post.time ?? "—"}
                           </span>
-                        ) : null}
-                        <span className={styles.rowTitle}>{post.title}</span>
-                        <span className={styles.rowChips}>
-                          <PillarChip
-                            name={post.pillar.name}
-                            color={post.pillar.color}
+                          <PlatformChip
+                            platform={post.platform}
+                            showLabel={false}
                             size="sm"
+                            className={styles.rowPlat}
                           />
-                          <StatusChip status={post.status} size="sm" />
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className={styles.emptyDayCta}
-                    onClick={() => openPost("new")}
-                    aria-label={`Schedule for ${day.label}`}
-                  >
-                    + Schedule for {day.weekdayShort}
-                  </button>
-                )}
-              </section>
-            );
-          })}
-        </div>
+                          {post.postType ? (
+                            <span className={styles.rowType}>
+                              {post.postType}
+                            </span>
+                          ) : null}
+                          <span className={styles.rowTitle}>{post.title}</span>
+                          <span className={styles.rowChips}>
+                            <PillarChip
+                              name={post.pillar.name}
+                              color={post.pillar.color}
+                              size="sm"
+                            />
+                            <StatusChip status={post.status} size="sm" />
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.emptyDayCta}
+                      onClick={() => openPost("new")}
+                      aria-label={`Schedule for ${day.label}`}
+                    >
+                      + Schedule for {day.weekdayShort}
+                    </button>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+        )}
 
-        <p className={styles.footerNote}>
-          End of week · {weekPlanned} items planned
-        </p>
+        {weekPlanned > 0 && (
+          <p className={styles.footerNote}>
+            End of week · {weekPlanned} items planned
+          </p>
+        )}
       </div>
     </PageSurface>
   );

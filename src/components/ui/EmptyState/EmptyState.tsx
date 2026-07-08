@@ -5,6 +5,7 @@ export interface EmptyStateProps {
   title: string;
   description?: string;
   icon?: ReactNode;
+  tone?: "neutral" | "brand";
   primaryAction?: ReactNode;
   secondaryAction?: ReactNode;
   className?: string;
@@ -14,6 +15,7 @@ export function EmptyState({
   title,
   description,
   icon,
+  tone = "neutral",
   primaryAction,
   secondaryAction,
   className,
@@ -21,7 +23,7 @@ export function EmptyState({
   return (
     <div className={`${styles.empty} ${className ?? ""}`}>
       {icon ? (
-        <div className={styles.icon} aria-hidden="true">
+        <div className={styles.icon} data-tone={tone} aria-hidden="true">
           {icon}
         </div>
       ) : null}

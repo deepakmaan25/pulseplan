@@ -8,20 +8,41 @@
 }
 
 .icon {
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border-radius: var(--r-xl);
-  background: var(--bg-sunken);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  line-height: 1;
+  position: relative;
+}
+.icon[data-tone="neutral"] {
+  width: 56px;
+  height: 56px;
+  background: var(--bg-sunken);
+}
+.icon[data-tone="neutral"] svg {
+  color: var(--ink-3);
+}
+.icon[data-tone="brand"] {
+  background: var(--primary-soft);
+}
+/* soft glow ring behind the emblem */
+.icon[data-tone="brand"]::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--r-2xl, 24px);
+  background: var(--primary-soft);
+  opacity: 0.4;
+  z-index: -1;
+}
+.icon[data-tone="brand"] svg {
+  color: var(--primary-ink);
 }
 .icon svg {
-  width: 24px;
-  height: 24px;
-  color: var(--ink-3);
+  width: 30px;
+  height: 30px;
 }
 
 .title {

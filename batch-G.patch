@@ -1,0 +1,323 @@
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index 0349f4c..1b52ec6 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -2,9 +2,11 @@
+ 
+ import { useCallback, useState } from "react";
+ import { useRouter } from "next/navigation";
+-import { SlidersHorizontal } from "lucide-react";
++import { SlidersHorizontal, CalendarPlus } from "lucide-react";
+ import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
++import { EmptyState } from "@/components/ui/EmptyState/EmptyState";
++import { Button } from "@/components/ui/Button/Button";
+ import { BoardCard } from "@/components/post/BoardCard";
+ import { PlatformChip } from "@/components/ui/chips/PlatformChip";
+ import { PillarChip } from "@/components/ui/chips/PillarChip";
+@@ -205,85 +207,101 @@ export function PlanClient() {
+         <div className={styles.hairline} />
+ 
+         {/* Day rows — clean hairline list */}
+-        <div className={styles.weekGroup}>
+-          {days.map((day) => {
+-            const dayPosts = postsForDay(day.date);
+-            return (
+-              <section
+-                key={day.date}
+-                id={`plan-day-${day.date}`}
+-                className={styles.day}
+-                aria-label={day.label}
+-              >
+-                <div className={styles.dayHeader}>
+-                  <div className={styles.dayHeadL}>
+-                    <span className={styles.dayName}>
+-                      {day.isToday ? "Today" : weekdayFull(day.date)}
+-                    </span>
+-                    <span className={styles.dayDate}>
+-                      MAY {day.dayNum}
+-                      {day.isToday ? " · now" : ""}
++        {weekPlanned === 0 ? (
++          <EmptyState
++            tone="brand"
++            icon={<CalendarPlus />}
++            title="Nothing scheduled yet"
++            description="Your week is a blank canvas. Plan your first post and it'll show up right here."
++            primaryAction={
++              <Button variant="filled" onClick={() => openPost("new")}>
++                Schedule a post
++              </Button>
++            }
++          />
++        ) : (
++          <div className={styles.weekGroup}>
++            {days.map((day) => {
++              const dayPosts = postsForDay(day.date);
++              return (
++                <section
++                  key={day.date}
++                  id={`plan-day-${day.date}`}
++                  className={styles.day}
++                  aria-label={day.label}
++                >
++                  <div className={styles.dayHeader}>
++                    <div className={styles.dayHeadL}>
++                      <span className={styles.dayName}>
++                        {day.isToday ? "Today" : weekdayFull(day.date)}
++                      </span>
++                      <span className={styles.dayDate}>
++                        MAY {day.dayNum}
++                        {day.isToday ? " · now" : ""}
++                      </span>
++                    </div>
++                    <span className={styles.dayCount}>
++                      {dayPosts.length === 0
++                        ? "empty"
++                        : `${dayPosts.length} planned`}
+                     </span>
+                   </div>
+-                  <span className={styles.dayCount}>
+-                    {dayPosts.length === 0
+-                      ? "empty"
+-                      : `${dayPosts.length} planned`}
+-                  </span>
+-                </div>
+-                {dayPosts.length > 0 ? (
+-                  <div className={styles.rows}>
+-                    {dayPosts.map((post) => (
+-                      <button
+-                        key={post.id}
+-                        type="button"
+-                        className={styles.planRow}
+-                        onClick={() => openPost(post.id)}
+-                      >
+-                        <span className={styles.rowTime}>
+-                          {post.time ?? "—"}
+-                        </span>
+-                        <PlatformChip
+-                          platform={post.platform}
+-                          showLabel={false}
+-                          size="sm"
+-                          className={styles.rowPlat}
+-                        />
+-                        {post.postType ? (
+-                          <span className={styles.rowType}>
+-                            {post.postType}
++                  {dayPosts.length > 0 ? (
++                    <div className={styles.rows}>
++                      {dayPosts.map((post) => (
++                        <button
++                          key={post.id}
++                          type="button"
++                          className={styles.planRow}
++                          onClick={() => openPost(post.id)}
++                        >
++                          <span className={styles.rowTime}>
++                            {post.time ?? "—"}
+                           </span>
+-                        ) : null}
+-                        <span className={styles.rowTitle}>{post.title}</span>
+-                        <span className={styles.rowChips}>
+-                          <PillarChip
+-                            name={post.pillar.name}
+-                            color={post.pillar.color}
++                          <PlatformChip
++                            platform={post.platform}
++                            showLabel={false}
+                             size="sm"
++                            className={styles.rowPlat}
+                           />
+-                          <StatusChip status={post.status} size="sm" />
+-                        </span>
+-                      </button>
+-                    ))}
+-                  </div>
+-                ) : (
+-                  <button
+-                    type="button"
+-                    className={styles.emptyDayCta}
+-                    onClick={() => openPost("new")}
+-                    aria-label={`Schedule for ${day.label}`}
+-                  >
+-                    + Schedule for {day.weekdayShort}
+-                  </button>
+-                )}
+-              </section>
+-            );
+-          })}
+-        </div>
++                          {post.postType ? (
++                            <span className={styles.rowType}>
++                              {post.postType}
++                            </span>
++                          ) : null}
++                          <span className={styles.rowTitle}>{post.title}</span>
++                          <span className={styles.rowChips}>
++                            <PillarChip
++                              name={post.pillar.name}
++                              color={post.pillar.color}
++                              size="sm"
++                            />
++                            <StatusChip status={post.status} size="sm" />
++                          </span>
++                        </button>
++                      ))}
++                    </div>
++                  ) : (
++                    <button
++                      type="button"
++                      className={styles.emptyDayCta}
++                      onClick={() => openPost("new")}
++                      aria-label={`Schedule for ${day.label}`}
++                    >
++                      + Schedule for {day.weekdayShort}
++                    </button>
++                  )}
++                </section>
++              );
++            })}
++          </div>
++        )}
+ 
+-        <p className={styles.footerNote}>
+-          End of week · {weekPlanned} items planned
+-        </p>
++        {weekPlanned > 0 && (
++          <p className={styles.footerNote}>
++            End of week · {weekPlanned} items planned
++          </p>
++        )}
+       </div>
+     </PageSurface>
+   );
+diff --git a/src/app/(app)/plan/PlanSkeleton.tsx b/src/app/(app)/plan/PlanSkeleton.tsx
+new file mode 100644
+index 0000000..6705872
+--- /dev/null
++++ b/src/app/(app)/plan/PlanSkeleton.tsx
+@@ -0,0 +1,41 @@
++import { Skeleton } from "@/components/ui/Skeleton/Skeleton";
++import styles from "./plan.module.css";
++
++/**
++ * Loading skeleton for the Plan week view. Mirrors the real layout (day
++ * header + gap-separated post-row blocks) so the load→content swap doesn't
++ * reflow.
++ *
++ * NOTE: currently DORMANT. Posts come from a synchronous mock context
++ * (`usePosts`) with no async loading phase, so nothing renders this yet. When
++ * the data layer becomes async (real backend), render <PlanSkeleton /> while
++ * `isLoading` is true — it's keyed to the same `.day` / `.rows` / `.planRow`
++ * classes as the live view.
++ */
++export function PlanSkeleton({ days = 3 }: { days?: number }) {
++  return (
++    <div className={styles.weekGroup} aria-hidden="true">
++      {Array.from({ length: days }).map((_, i) => (
++        <section key={i} className={styles.day}>
++          <div className={styles.dayHeader}>
++            <Skeleton width={110} height={15} />
++            <Skeleton width={56} height={12} />
++          </div>
++          <div className={styles.rows}>
++            {Array.from({ length: i === 0 ? 1 : 2 }).map((__, j) => (
++              <div key={j} className={styles.planRow}>
++                <Skeleton width={56} height={12} />
++                <Skeleton
++                  height={14}
++                  style={{ flex: 1, maxWidth: "60%" }}
++                  shape="line"
++                />
++                <Skeleton width={64} height={20} shape="rect" />
++              </div>
++            ))}
++          </div>
++        </section>
++      ))}
++    </div>
++  );
++}
+diff --git a/src/components/ui/EmptyState/EmptyState.module.css b/src/components/ui/EmptyState/EmptyState.module.css
+index e8ffc40..69cf20e 100644
+--- a/src/components/ui/EmptyState/EmptyState.module.css
++++ b/src/components/ui/EmptyState/EmptyState.module.css
+@@ -8,21 +8,42 @@
+ }
+ 
+ .icon {
+-  width: 56px;
+-  height: 56px;
++  width: 72px;
++  height: 72px;
+   border-radius: var(--r-xl);
+-  background: var(--bg-sunken);
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+-  font-size: 24px;
+-  line-height: 1;
++  position: relative;
+ }
+-.icon svg {
+-  width: 24px;
+-  height: 24px;
++.icon[data-tone="neutral"] {
++  width: 56px;
++  height: 56px;
++  background: var(--bg-sunken);
++}
++.icon[data-tone="neutral"] svg {
+   color: var(--ink-3);
+ }
++.icon[data-tone="brand"] {
++  background: var(--primary-soft);
++}
++/* soft glow ring behind the emblem */
++.icon[data-tone="brand"]::before {
++  content: "";
++  position: absolute;
++  inset: -6px;
++  border-radius: var(--r-2xl, 24px);
++  background: var(--primary-soft);
++  opacity: 0.4;
++  z-index: -1;
++}
++.icon[data-tone="brand"] svg {
++  color: var(--primary-ink);
++}
++.icon svg {
++  width: 30px;
++  height: 30px;
++}
+ 
+ .title {
+   font: var(--t-title);
+diff --git a/src/components/ui/EmptyState/EmptyState.tsx b/src/components/ui/EmptyState/EmptyState.tsx
+index 3c0b23c..89818d1 100644
+--- a/src/components/ui/EmptyState/EmptyState.tsx
++++ b/src/components/ui/EmptyState/EmptyState.tsx
+@@ -5,6 +5,7 @@ export interface EmptyStateProps {
+   title: string;
+   description?: string;
+   icon?: ReactNode;
++  tone?: "neutral" | "brand";
+   primaryAction?: ReactNode;
+   secondaryAction?: ReactNode;
+   className?: string;
+@@ -14,6 +15,7 @@ export function EmptyState({
+   title,
+   description,
+   icon,
++  tone = "neutral",
+   primaryAction,
+   secondaryAction,
+   className,
+@@ -21,7 +23,7 @@ export function EmptyState({
+   return (
+     <div className={`${styles.empty} ${className ?? ""}`}>
+       {icon ? (
+-        <div className={styles.icon} aria-hidden="true">
++        <div className={styles.icon} data-tone={tone} aria-hidden="true">
+           {icon}
+         </div>
+       ) : null}
