@@ -1,0 +1,166 @@
+diff --git a/src/app/(app)/board/BoardDesktop.tsx b/src/app/(app)/board/BoardDesktop.tsx
+index d470ac8..2d4fd65 100644
+--- a/src/app/(app)/board/BoardDesktop.tsx
++++ b/src/app/(app)/board/BoardDesktop.tsx
+@@ -1,6 +1,7 @@
+ "use client";
+ 
+ import { useRouter } from "next/navigation";
++import { Pencil, Plus } from "lucide-react";
+ import { usePosts } from "@/store/PostsContext";
+ import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { BoardCard } from "@/components/post/BoardCard";
+@@ -14,14 +15,54 @@ function formatDayStamp(dateStr?: string): string | undefined {
+ }
+ 
+ // Overdue is a derived callout, not a kanban stage — excluded from columns.
+-const STAGES: { value: PostStatus; label: string; color: string }[] = [
+-  { value: "idea", label: "Idea", color: "var(--st-idea-fg)" },
+-  { value: "draft", label: "Drafting", color: "var(--st-draft-fg)" },
+-  { value: "review", label: "Review", color: "var(--st-review-fg)" },
+-  { value: "sched", label: "Scheduled", color: "var(--st-sched-fg)" },
+-  { value: "pub", label: "Published", color: "var(--st-pub-fg)" },
++const STAGES: {
++  value: PostStatus;
++  label: string;
++  color: string;
++  emptyAction: string;
++}[] = [
++  {
++    value: "idea",
++    label: "Idea",
++    color: "var(--st-idea-fg)",
++    emptyAction: "New idea",
++  },
++  {
++    value: "draft",
++    label: "Drafting",
++    color: "var(--st-draft-fg)",
++    emptyAction: "New draft",
++  },
++  {
++    value: "review",
++    label: "Review",
++    color: "var(--st-review-fg)",
++    emptyAction: "New post",
++  },
++  {
++    value: "sched",
++    label: "Scheduled",
++    color: "var(--st-sched-fg)",
++    emptyAction: "Schedule post",
++  },
++  {
++    value: "pub",
++    label: "Published",
++    color: "var(--st-pub-fg)",
++    emptyAction: "New post",
++  },
+ ];
+ 
++// Helper copy per lane
++const EMPTY_COPY: Record<string, string> = {
++  idea: "Capture a spark here. Every post starts as an idea.",
++  draft:
++    "Posts you start writing will show up here. Move an idea forward to begin a draft.",
++  review: "Drafts ready for a final pass land here before scheduling.",
++  sched: "Posts with a date and time queue up here, ready to publish.",
++  pub: "Published posts live here. Nothing shipped yet.",
++};
++
+ export function BoardDesktop() {
+   const router = useRouter();
+   const { posts } = usePosts();
+@@ -35,7 +76,7 @@ export function BoardDesktop() {
+       subtitle={`${total} posts across ${STAGES.length} stages`}
+     >
+       <div className={styles.board}>
+-        {STAGES.map(({ value, label, color }) => {
++        {STAGES.map(({ value, label, color, emptyAction }) => {
+           const cards = posts.filter((p) => p.status === value);
+           return (
+             <section
+@@ -68,7 +109,21 @@ export function BoardDesktop() {
+                     />
+                   ))
+                 ) : (
+-                  <p className={styles.emptyColumn}>Nothing here yet</p>
++                  <div className={styles.emptyLane}>
++                    <span className={styles.emptyLaneIcon} aria-hidden="true">
++                      <Pencil size={20} />
++                    </span>
++                    <p className={styles.emptyLaneTitle}>Nothing in {label}</p>
++                    <p className={styles.emptyLaneDesc}>{EMPTY_COPY[value]}</p>
++                    <button
++                      type="button"
++                      className={styles.emptyLaneBtn}
++                      onClick={() => router.push("/post/new")}
++                    >
++                      <Plus size={14} />
++                      {emptyAction}
++                    </button>
++                  </div>
+                 )}
+               </div>
+             </section>
+diff --git a/src/app/(app)/board/boardDesktop.module.css b/src/app/(app)/board/boardDesktop.module.css
+index 9097b1b..18ec2ae 100644
+--- a/src/app/(app)/board/boardDesktop.module.css
++++ b/src/app/(app)/board/boardDesktop.module.css
+@@ -67,3 +67,56 @@
+   color: var(--ink-3);
+   margin: 0;
+ }
++
++/* Dashed empty-lane dropzone */
++.emptyLane {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: var(--s-4);
++  text-align: center;
++  padding: var(--s-10) var(--s-6);
++  border: 1.5px dashed var(--outline-strong);
++  border-radius: var(--r-lg);
++}
++.emptyLaneIcon {
++  width: 44px;
++  height: 44px;
++  border-radius: var(--r-md);
++  background: var(--well);
++  color: var(--ink-3);
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++}
++.emptyLaneTitle {
++  font: var(--t-body-sm);
++  font-weight: 600;
++  color: var(--ink-1);
++  margin: 0;
++}
++.emptyLaneDesc {
++  font: var(--t-caption);
++  color: var(--ink-3);
++  line-height: 1.45;
++  margin: 0;
++  max-width: 28ch;
++}
++.emptyLaneBtn {
++  margin-top: var(--s-2);
++  display: inline-flex;
++  align-items: center;
++  gap: var(--s-3);
++  font: var(--t-label);
++  font-weight: 600;
++  color: var(--ink-inverse);
++  background: var(--primary);
++  border: none;
++  padding: var(--s-4) var(--s-7);
++  border-radius: var(--r-md);
++  cursor: pointer;
++  transition: background var(--dur-fast) var(--easing-standard);
++}
++.emptyLaneBtn:hover {
++  background: var(--primary-hover);
++}
