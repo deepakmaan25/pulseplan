@@ -5,6 +5,12 @@
   justify-content: space-between;
   padding: var(--s-10) var(--s-6) var(--s-7) var(--s-9);
   gap: var(--s-4);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--divider);
+}
+
+:global(.pp2.dark) .greetingHeader {
+  border-bottom-color: var(--divider-strong);
 }
 
 .greetingBlock {

@@ -325,7 +325,7 @@ export function SettingsClient({ email }: { email?: string }) {
       <div className={styles.card}>
         {connectedPlatforms.map(({ value }) => (
           <div key={value} className={styles.platformRow}>
-            <PlatformChip platform={value} size="md" />
+            <PlatformChip platform={value} size="md" showLabel={false} />
             <div className={styles.platformInfo}>
               <span className={styles.platformName}>
                 {PLATFORM_LABELS[value] ?? value}
@@ -346,7 +346,7 @@ export function SettingsClient({ email }: { email?: string }) {
         ))}
         {otherPlatforms.map(({ value }) => (
           <div key={value} className={styles.platformRow}>
-            <PlatformChip platform={value} size="md" />
+            <PlatformChip platform={value} size="md" showLabel={false} />
             <div className={styles.platformInfo}>
               <span className={styles.platformName}>
                 {PLATFORM_LABELS[value] ?? value}

@@ -344,6 +344,28 @@
     grid-template-columns: 1fr;
     gap: var(--s-9);
   }
+
+  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
+     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
+  .heatCell {
+    aspect-ratio: auto;
+    height: 16px;
+    border-radius: var(--r-sm);
+  }
+  .heatLegend .heatCell {
+    height: 12px;
+    width: 12px;
+  }
+  /* Best-time bars a touch taller so they read on mobile */
+  .bestTimeBars {
+    height: 100px;
+  }
+
+  /* Breakdown bars: give the bar more room on narrow screens */
+  .breakdownRow {
+    grid-template-columns: 76px 1fr 26px;
+    gap: var(--s-5);
+  }
 }
 
 /* ═══ New stats widgets (best time + posting activity) ═══════════ */

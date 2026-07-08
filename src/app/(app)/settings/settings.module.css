@@ -117,6 +117,7 @@
 .platformRow {
   display: flex;
   align-items: center;
+  gap: var(--s-6);
   justify-content: space-between;
   padding: var(--s-6) 0;
   border-top: 1px solid var(--divider);

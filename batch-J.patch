@@ -1,0 +1,120 @@
+diff --git a/src/app/(app)/analytics/analytics.module.css b/src/app/(app)/analytics/analytics.module.css
+index f0ea6d7..fb5d9ba 100644
+--- a/src/app/(app)/analytics/analytics.module.css
++++ b/src/app/(app)/analytics/analytics.module.css
+@@ -344,6 +344,28 @@
+     grid-template-columns: 1fr;
+     gap: var(--s-9);
+   }
++
++  /* Heatmap: keep cells legible on narrow widths instead of collapsing to
++     dots. Fixed height + full-width cells rather than aspect-ratio squares. */
++  .heatCell {
++    aspect-ratio: auto;
++    height: 16px;
++    border-radius: var(--r-sm);
++  }
++  .heatLegend .heatCell {
++    height: 12px;
++    width: 12px;
++  }
++  /* Best-time bars a touch taller so they read on mobile */
++  .bestTimeBars {
++    height: 100px;
++  }
++
++  /* Breakdown bars: give the bar more room on narrow screens */
++  .breakdownRow {
++    grid-template-columns: 76px 1fr 26px;
++    gap: var(--s-5);
++  }
+ }
+ 
+ /* ═══ New stats widgets (best time + posting activity) ═══════════ */
+diff --git a/src/app/(app)/post/[id]/detail.module.css b/src/app/(app)/post/[id]/detail.module.css
+index f698abe..b167752 100644
+--- a/src/app/(app)/post/[id]/detail.module.css
++++ b/src/app/(app)/post/[id]/detail.module.css
+@@ -167,14 +167,28 @@
+   display: block;
+   width: 100%;
+   min-height: 80px;
+-  background: transparent;
+-  border: none;
++  background: var(--well);
++  border: 1px solid var(--divider);
++  border-radius: var(--r-md);
+   outline: none;
+   resize: none;
+   font: var(--t-body);
+   color: var(--ink-1);
+   line-height: 1.6;
+-  padding: 0;
++  padding: var(--s-6) var(--s-7);
++  transition:
++    border-color var(--dur-fast) var(--easing-standard),
++    box-shadow var(--dur-fast) var(--easing-standard);
++}
++
++.textArea:focus {
++  border-color: var(--primary);
++  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
++}
++
++:global(.pp2.dark) .textArea {
++  background: var(--surface-2);
++  border-color: var(--divider-strong);
+ }
+ .textArea::placeholder {
+   color: var(--ink-4);
+diff --git a/src/app/(app)/settings/SettingsClient.tsx b/src/app/(app)/settings/SettingsClient.tsx
+index ce083da..563a8f2 100644
+--- a/src/app/(app)/settings/SettingsClient.tsx
++++ b/src/app/(app)/settings/SettingsClient.tsx
+@@ -325,7 +325,7 @@ export function SettingsClient({ email }: { email?: string }) {
+       <div className={styles.card}>
+         {connectedPlatforms.map(({ value }) => (
+           <div key={value} className={styles.platformRow}>
+-            <PlatformChip platform={value} size="md" />
++            <PlatformChip platform={value} size="md" showLabel={false} />
+             <div className={styles.platformInfo}>
+               <span className={styles.platformName}>
+                 {PLATFORM_LABELS[value] ?? value}
+@@ -346,7 +346,7 @@ export function SettingsClient({ email }: { email?: string }) {
+         ))}
+         {otherPlatforms.map(({ value }) => (
+           <div key={value} className={styles.platformRow}>
+-            <PlatformChip platform={value} size="md" />
++            <PlatformChip platform={value} size="md" showLabel={false} />
+             <div className={styles.platformInfo}>
+               <span className={styles.platformName}>
+                 {PLATFORM_LABELS[value] ?? value}
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index 09e276b..c3cb70a 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -117,6 +117,7 @@
+ .platformRow {
+   display: flex;
+   align-items: center;
++  gap: var(--s-6);
+   justify-content: space-between;
+   padding: var(--s-6) 0;
+   border-top: 1px solid var(--divider);
+diff --git a/src/components/AppHeader/AppHeader.module.css b/src/components/AppHeader/AppHeader.module.css
+index f3e5488..6c53a5f 100644
+--- a/src/components/AppHeader/AppHeader.module.css
++++ b/src/components/AppHeader/AppHeader.module.css
+@@ -5,6 +5,12 @@
+   justify-content: space-between;
+   padding: var(--s-10) var(--s-6) var(--s-7) var(--s-9);
+   gap: var(--s-4);
++  background: var(--surface-1);
++  border-bottom: 1px solid var(--divider);
++}
++
++:global(.pp2.dark) .greetingHeader {
++  border-bottom-color: var(--divider-strong);
+ }
+ 
+ .greetingBlock {
