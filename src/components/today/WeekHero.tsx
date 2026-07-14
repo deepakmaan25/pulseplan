@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import type { MockPost } from "@/mocks/fixtures";
 import styles from "./WeekHero.module.css";
 
@@ -21,6 +22,7 @@ interface WeekHeroProps {
 }
 
 export function WeekHero({ posts }: WeekHeroProps) {
+  const router = useRouter();
   const weekTotal = WEEK_DAYS.reduce(
     (sum, d) => sum + posts.filter((p) => p.scheduledDate === d.iso).length,
     0,
@@ -67,21 +69,24 @@ export function WeekHero({ posts }: WeekHeroProps) {
               : count === 1
                 ? "1 post"
                 : `${count} posts`;
-          const label = `${dayName}${isToday ? ", today" : ""}, ${postText}`;
+          const label = `${dayName}${isToday ? ", today" : ""}, ${postText}. View in Plan.`;
           return (
-            <li
-              key={d.iso}
-              className={[
-                styles.dayCell,
-                loaded ? styles.dayCellLoad : styles.dayCellEmpty,
-                isToday ? styles.dayCellToday : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              aria-label={label}
-            >
-              <span className={styles.dayLetter}>{d.letter}</span>
-              <span className={styles.dayNum}>{d.n}</span>
+            <li key={d.iso} className={styles.dayItem}>
+              <button
+                type="button"
+                onClick={() => router.push(`/plan?day=${d.iso}`)}
+                className={[
+                  styles.dayCell,
+                  loaded ? styles.dayCellLoad : styles.dayCellEmpty,
+                  isToday ? styles.dayCellToday : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-label={label}
+              >
+                <span className={styles.dayLetter}>{d.letter}</span>
+                <span className={styles.dayNum}>{d.n}</span>
+              </button>
             </li>
           );
         })}

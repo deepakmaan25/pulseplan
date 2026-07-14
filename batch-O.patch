@@ -1,0 +1,154 @@
+diff --git a/src/app/(app)/plan/PlanClient.tsx b/src/app/(app)/plan/PlanClient.tsx
+index 2d71528..07527db 100644
+--- a/src/app/(app)/plan/PlanClient.tsx
++++ b/src/app/(app)/plan/PlanClient.tsx
+@@ -1,7 +1,7 @@
+ "use client";
+ 
+-import { useCallback, useState } from "react";
+-import { useRouter } from "next/navigation";
++import { useCallback, useEffect, useState } from "react";
++import { useRouter, useSearchParams } from "next/navigation";
+ import { SlidersHorizontal, CalendarPlus } from "lucide-react";
+ import { PageSurface } from "@/components/PageSurface/PageSurface";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
+@@ -92,6 +92,17 @@ export function PlanClient() {
+       ?.scrollIntoView({ behavior: "smooth", block: "start" });
+   }, []);
+ 
++  // Deep-link: /plan?day=YYYY-MM-DD (e.g. from the Today week strip) scrolls
++  // straight to that day's posts instead of making the user hunt for them.
++  const searchParams = useSearchParams();
++  const dayParam = searchParams.get("day");
++  useEffect(() => {
++    if (!dayParam) return;
++    // Wait a frame so the day rows are in the DOM before scrolling.
++    const id = requestAnimationFrame(() => scrollToDay(dayParam));
++    return () => cancelAnimationFrame(id);
++  }, [dayParam, scrollToDay]);
++
+   // Overdue posts
+ 
+   // Posts per day (all statuses except overdue)
+diff --git a/src/app/(app)/plan/page.tsx b/src/app/(app)/plan/page.tsx
+index fc372b2..959de59 100644
+--- a/src/app/(app)/plan/page.tsx
++++ b/src/app/(app)/plan/page.tsx
+@@ -1,5 +1,12 @@
++import { Suspense } from "react";
+ import { PlanClient } from "./PlanClient";
+ 
+ export default function PlanPage() {
+-  return <PlanClient />;
++  // PlanClient reads ?day= via useSearchParams (deep-link from the Today week
++  // strip), which Next requires to sit inside a Suspense boundary.
++  return (
++    <Suspense fallback={null}>
++      <PlanClient />
++    </Suspense>
++  );
+ }
+diff --git a/src/components/sheets/ScheduleSheet.module.css b/src/components/sheets/ScheduleSheet.module.css
+index f34e909..e17bda9 100644
+--- a/src/components/sheets/ScheduleSheet.module.css
++++ b/src/components/sheets/ScheduleSheet.module.css
+@@ -79,12 +79,17 @@
+     border-color var(--dur-fast) var(--easing-standard);
+   min-width: 0;
+ }
+-.dayCell:hover {
++/* Hover only applies to NON-selected cells. Previously `.dayCell:hover`
++   (specificity 0,1,1) beat `.dayCellSelected` (0,1,0), repainting the selected
++   cell with a light surface — white text on white = invisible while hovering. */
++.dayCell:not(.dayCellSelected):hover {
+   background: var(--surface-2);
+   border-color: var(--outline-strong);
+ }
+ 
+-.dayCellSelected {
++/* Selected wins over hover: same specificity bump so it can't be repainted. */
++.dayCell.dayCellSelected,
++.dayCell.dayCellSelected:hover {
+   background: var(--primary);
+   border-color: var(--primary);
+ }
+diff --git a/src/components/today/WeekHero.module.css b/src/components/today/WeekHero.module.css
+index ad79878..231fb94 100644
+--- a/src/components/today/WeekHero.module.css
++++ b/src/components/today/WeekHero.module.css
+@@ -45,8 +45,17 @@
+   list-style: none;
+ }
+ 
++/* <li> wrapper — the interactive control is the button inside. */
++.dayItem {
++  display: flex;
++  min-width: 0;
++}
++
+ /* Strip B: loaded days lift as cards, empty days recede, today is emerald. */
+ .dayCell {
++  appearance: none;
++  width: 100%;
++  cursor: pointer;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+diff --git a/src/components/today/WeekHero.tsx b/src/components/today/WeekHero.tsx
+index 45c7e62..ca46f71 100644
+--- a/src/components/today/WeekHero.tsx
++++ b/src/components/today/WeekHero.tsx
+@@ -1,5 +1,6 @@
+ "use client";
+ 
++import { useRouter } from "next/navigation";
+ import type { MockPost } from "@/mocks/fixtures";
+ import styles from "./WeekHero.module.css";
+ 
+@@ -21,6 +22,7 @@ interface WeekHeroProps {
+ }
+ 
+ export function WeekHero({ posts }: WeekHeroProps) {
++  const router = useRouter();
+   const weekTotal = WEEK_DAYS.reduce(
+     (sum, d) => sum + posts.filter((p) => p.scheduledDate === d.iso).length,
+     0,
+@@ -67,21 +69,24 @@ export function WeekHero({ posts }: WeekHeroProps) {
+               : count === 1
+                 ? "1 post"
+                 : `${count} posts`;
+-          const label = `${dayName}${isToday ? ", today" : ""}, ${postText}`;
++          const label = `${dayName}${isToday ? ", today" : ""}, ${postText}. View in Plan.`;
+           return (
+-            <li
+-              key={d.iso}
+-              className={[
+-                styles.dayCell,
+-                loaded ? styles.dayCellLoad : styles.dayCellEmpty,
+-                isToday ? styles.dayCellToday : "",
+-              ]
+-                .filter(Boolean)
+-                .join(" ")}
+-              aria-label={label}
+-            >
+-              <span className={styles.dayLetter}>{d.letter}</span>
+-              <span className={styles.dayNum}>{d.n}</span>
++            <li key={d.iso} className={styles.dayItem}>
++              <button
++                type="button"
++                onClick={() => router.push(`/plan?day=${d.iso}`)}
++                className={[
++                  styles.dayCell,
++                  loaded ? styles.dayCellLoad : styles.dayCellEmpty,
++                  isToday ? styles.dayCellToday : "",
++                ]
++                  .filter(Boolean)
++                  .join(" ")}
++                aria-label={label}
++              >
++                <span className={styles.dayLetter}>{d.letter}</span>
++                <span className={styles.dayNum}>{d.n}</span>
++              </button>
+             </li>
+           );
+         })}

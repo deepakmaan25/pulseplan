@@ -45,8 +45,17 @@
   list-style: none;
 }
 
+/* <li> wrapper — the interactive control is the button inside. */
+.dayItem {
+  display: flex;
+  min-width: 0;
+}
+
 /* Strip B: loaded days lift as cards, empty days recede, today is emerald. */
 .dayCell {
+  appearance: none;
+  width: 100%;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;

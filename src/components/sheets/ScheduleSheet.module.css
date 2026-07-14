@@ -79,12 +79,17 @@
     border-color var(--dur-fast) var(--easing-standard);
   min-width: 0;
 }
-.dayCell:hover {
+/* Hover only applies to NON-selected cells. Previously `.dayCell:hover`
+   (specificity 0,1,1) beat `.dayCellSelected` (0,1,0), repainting the selected
+   cell with a light surface — white text on white = invisible while hovering. */
+.dayCell:not(.dayCellSelected):hover {
   background: var(--surface-2);
   border-color: var(--outline-strong);
 }
 
-.dayCellSelected {
+/* Selected wins over hover: same specificity bump so it can't be repainted. */
+.dayCell.dayCellSelected,
+.dayCell.dayCellSelected:hover {
   background: var(--primary);
   border-color: var(--primary);
 }

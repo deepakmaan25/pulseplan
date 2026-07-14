@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal, CalendarPlus } from "lucide-react";
 import { PageSurface } from "@/components/PageSurface/PageSurface";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
@@ -91,6 +91,17 @@ export function PlanClient() {
       .getElementById(`plan-day-${date}`)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  // Deep-link: /plan?day=YYYY-MM-DD (e.g. from the Today week strip) scrolls
+  // straight to that day's posts instead of making the user hunt for them.
+  const searchParams = useSearchParams();
+  const dayParam = searchParams.get("day");
+  useEffect(() => {
+    if (!dayParam) return;
+    // Wait a frame so the day rows are in the DOM before scrolling.
+    const id = requestAnimationFrame(() => scrollToDay(dayParam));
+    return () => cancelAnimationFrame(id);
+  }, [dayParam, scrollToDay]);
 
   // Overdue posts
 
