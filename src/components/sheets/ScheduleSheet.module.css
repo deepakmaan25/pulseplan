@@ -85,19 +85,21 @@
 }
 
 .dayCellSelected {
-  background: var(--ink-1);
-  border-color: var(--ink-1);
+  background: var(--primary);
+  border-color: var(--primary);
 }
 .dayCellSelected .dayLetter,
 .dayCellSelected .dayNum {
-  color: var(--ink-inverse);
+  color: #fff;
 }
 
 .dayCellToday .dayNum {
   color: var(--primary);
 }
+/* Selected + today: keep white on the emerald fill (never inherit). */
+.dayCellSelected.dayCellToday .dayLetter,
 .dayCellSelected.dayCellToday .dayNum {
-  color: var(--ink-inverse);
+  color: #fff;
 }
 
 .dayLetter {

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { Bell } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import { AppBar } from "@/components/ui/AppBar/AppBar";
 import { IconButton } from "@/components/ui/IconButton/IconButton";
 import { useNotifications } from "@/store/NotificationsContext";
@@ -71,7 +71,7 @@ export function AppHeader({
     }
   }, []);
 
-  const avatarLetter = (firstName || "?")[0]?.toUpperCase() ?? "?";
+  const avatarLetter = firstName ? (firstName[0]?.toUpperCase() ?? "") : "";
 
   const actions = (
     <div className={styles.trailingActions}>
@@ -89,7 +89,7 @@ export function AppHeader({
         onClick={() => router.push("/settings")}
         aria-label="Profile and settings"
       >
-        {avatarLetter}
+        {avatarLetter ? avatarLetter : <User size={18} />}
       </button>
     </div>
   );

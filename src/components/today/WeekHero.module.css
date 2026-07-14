@@ -61,15 +61,17 @@
 }
 
 /* loaded = has posts → sits up as a white card */
+/* All cells share the same box so the strip aligns; only the FILL varies. */
 .dayCellLoad {
   background: var(--surface-1);
   border-color: var(--divider);
-  box-shadow: var(--e-1);
+  box-shadow: none;
 }
 
-/* empty = no posts → recedes into the card */
+/* empty = no posts → same box, quieter fill (not transparent, so it aligns) */
 .dayCellEmpty {
-  background: transparent;
+  background: var(--well);
+  border-color: transparent;
 }
 
 .dayCellToday,

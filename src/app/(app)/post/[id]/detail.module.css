@@ -131,14 +131,17 @@
   margin: 0 0 var(--s-5);
 }
 
+/* Transparent wrapper — the .textArea inside is the single field surface.
+   (Previously this had its own bg + padding + shadow, which nested a card
+   inside a card once the textarea got its own background.) */
 .textBlock {
-  background: var(--surface-1);
-  border-radius: var(--r-lg);
-  padding: var(--s-9) var(--s-9);
-  min-height: 80px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  min-height: 0;
   font: var(--t-body);
   color: var(--ink-3);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 
 /* Draft is visually dominant — larger canvas, slightly lighter background */

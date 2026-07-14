@@ -1,0 +1,113 @@
+diff --git a/src/app/(app)/post/[id]/detail.module.css b/src/app/(app)/post/[id]/detail.module.css
+index b167752..adb8ca9 100644
+--- a/src/app/(app)/post/[id]/detail.module.css
++++ b/src/app/(app)/post/[id]/detail.module.css
+@@ -131,14 +131,17 @@
+   margin: 0 0 var(--s-5);
+ }
+ 
++/* Transparent wrapper — the .textArea inside is the single field surface.
++   (Previously this had its own bg + padding + shadow, which nested a card
++   inside a card once the textarea got its own background.) */
+ .textBlock {
+-  background: var(--surface-1);
+-  border-radius: var(--r-lg);
+-  padding: var(--s-9) var(--s-9);
+-  min-height: 80px;
++  background: transparent;
++  border-radius: 0;
++  padding: 0;
++  min-height: 0;
+   font: var(--t-body);
+   color: var(--ink-3);
+-  box-shadow: var(--shadow-card);
++  box-shadow: none;
+ }
+ 
+ /* Draft is visually dominant — larger canvas, slightly lighter background */
+diff --git a/src/components/AppHeader/AppHeader.tsx b/src/components/AppHeader/AppHeader.tsx
+index a3806ea..333ce99 100644
+--- a/src/components/AppHeader/AppHeader.tsx
++++ b/src/components/AppHeader/AppHeader.tsx
+@@ -8,7 +8,7 @@ import {
+   type ReactNode,
+ } from "react";
+ import { useRouter } from "next/navigation";
+-import { Bell } from "lucide-react";
++import { Bell, User } from "lucide-react";
+ import { AppBar } from "@/components/ui/AppBar/AppBar";
+ import { IconButton } from "@/components/ui/IconButton/IconButton";
+ import { useNotifications } from "@/store/NotificationsContext";
+@@ -71,7 +71,7 @@ export function AppHeader({
+     }
+   }, []);
+ 
+-  const avatarLetter = (firstName || "?")[0]?.toUpperCase() ?? "?";
++  const avatarLetter = firstName ? (firstName[0]?.toUpperCase() ?? "") : "";
+ 
+   const actions = (
+     <div className={styles.trailingActions}>
+@@ -89,7 +89,7 @@ export function AppHeader({
+         onClick={() => router.push("/settings")}
+         aria-label="Profile and settings"
+       >
+-        {avatarLetter}
++        {avatarLetter ? avatarLetter : <User size={18} />}
+       </button>
+     </div>
+   );
+diff --git a/src/components/sheets/ScheduleSheet.module.css b/src/components/sheets/ScheduleSheet.module.css
+index ca7e66f..f34e909 100644
+--- a/src/components/sheets/ScheduleSheet.module.css
++++ b/src/components/sheets/ScheduleSheet.module.css
+@@ -85,19 +85,21 @@
+ }
+ 
+ .dayCellSelected {
+-  background: var(--ink-1);
+-  border-color: var(--ink-1);
++  background: var(--primary);
++  border-color: var(--primary);
+ }
+ .dayCellSelected .dayLetter,
+ .dayCellSelected .dayNum {
+-  color: var(--ink-inverse);
++  color: #fff;
+ }
+ 
+ .dayCellToday .dayNum {
+   color: var(--primary);
+ }
++/* Selected + today: keep white on the emerald fill (never inherit). */
++.dayCellSelected.dayCellToday .dayLetter,
+ .dayCellSelected.dayCellToday .dayNum {
+-  color: var(--ink-inverse);
++  color: #fff;
+ }
+ 
+ .dayLetter {
+diff --git a/src/components/today/WeekHero.module.css b/src/components/today/WeekHero.module.css
+index 39e2304..ad79878 100644
+--- a/src/components/today/WeekHero.module.css
++++ b/src/components/today/WeekHero.module.css
+@@ -61,15 +61,17 @@
+ }
+ 
+ /* loaded = has posts → sits up as a white card */
++/* All cells share the same box so the strip aligns; only the FILL varies. */
+ .dayCellLoad {
+   background: var(--surface-1);
+   border-color: var(--divider);
+-  box-shadow: var(--e-1);
++  box-shadow: none;
+ }
+ 
+-/* empty = no posts → recedes into the card */
++/* empty = no posts → same box, quieter fill (not transparent, so it aligns) */
+ .dayCellEmpty {
+-  background: transparent;
++  background: var(--well);
++  border-color: transparent;
+ }
+ 
+ .dayCellToday,
