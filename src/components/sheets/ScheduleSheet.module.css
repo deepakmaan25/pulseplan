@@ -213,3 +213,48 @@
   gap: var(--s-4);
   width: 100%;
 }
+
+/* ── Week navigation (prev/next week in the date strip) ─────────── */
+.dateHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+.dateHead .sectionLabel {
+  margin: 0;
+}
+.weekNav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.weekNavBtn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--divider);
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--easing-standard),
+    color var(--dur-fast) var(--easing-standard);
+}
+.weekNavBtn:hover {
+  background: var(--well);
+  color: var(--ink-1);
+}
+.weekLabel {
+  font: var(--t-caption);
+  font-size: 11px;
+  color: var(--ink-2);
+  min-width: 84px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

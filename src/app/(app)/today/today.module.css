@@ -262,3 +262,11 @@
     transition: none;
   }
 }
+
+/* Loading skeleton: the three stat pills sit in a row.
+   (Was referenced by loading.tsx but never defined — the div rendered
+   unstyled, so the pills stacked instead of sitting side by side.) */
+.statsRow {
+  display: flex;
+  gap: var(--s-5);
+}

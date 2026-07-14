@@ -60,14 +60,6 @@
   gap: var(--s-5);
 }
 
-.emptyColumn {
-  padding: var(--s-9) var(--s-5);
-  text-align: center;
-  font: var(--t-body-sm);
-  color: var(--ink-3);
-  margin: 0;
-}
-
 /* Dashed empty-lane dropzone */
 .emptyLane {
   display: flex;

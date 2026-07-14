@@ -1,0 +1,204 @@
+diff --git a/src/app/(app)/board/boardDesktop.module.css b/src/app/(app)/board/boardDesktop.module.css
+index 18ec2ae..253cedd 100644
+--- a/src/app/(app)/board/boardDesktop.module.css
++++ b/src/app/(app)/board/boardDesktop.module.css
+@@ -60,14 +60,6 @@
+   gap: var(--s-5);
+ }
+ 
+-.emptyColumn {
+-  padding: var(--s-9) var(--s-5);
+-  text-align: center;
+-  font: var(--t-body-sm);
+-  color: var(--ink-3);
+-  margin: 0;
+-}
+-
+ /* Dashed empty-lane dropzone */
+ .emptyLane {
+   display: flex;
+diff --git a/src/app/(app)/settings/settings.module.css b/src/app/(app)/settings/settings.module.css
+index dd48b7e..8646bde 100644
+--- a/src/app/(app)/settings/settings.module.css
++++ b/src/app/(app)/settings/settings.module.css
+@@ -51,8 +51,8 @@
+   width: 48px;
+   height: 48px;
+   border-radius: var(--r-full);
+-  background: var(--primary-soft);
+-  color: var(--primary-ink);
++  background: var(--ink-1);
++  color: var(--ink-inverse);
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+@@ -355,11 +355,6 @@
+ }
+ 
+ /* Avatar uses ink-1/ink-inverse — no brand color */
+-.avatar {
+-  background: var(--ink-1) !important;
+-  color: var(--ink-inverse) !important;
+-}
+-
+ .signOutBtn {
+   appearance: none;
+   background: none;
+diff --git a/src/app/(app)/today/today.module.css b/src/app/(app)/today/today.module.css
+index 78b1189..21ddf16 100644
+--- a/src/app/(app)/today/today.module.css
++++ b/src/app/(app)/today/today.module.css
+@@ -262,3 +262,11 @@
+     transition: none;
+   }
+ }
++
++/* Loading skeleton: the three stat pills sit in a row.
++   (Was referenced by loading.tsx but never defined — the div rendered
++   unstyled, so the pills stacked instead of sitting side by side.) */
++.statsRow {
++  display: flex;
++  gap: var(--s-5);
++}
+diff --git a/src/components/sheets/ScheduleSheet.module.css b/src/components/sheets/ScheduleSheet.module.css
+index e17bda9..05368ae 100644
+--- a/src/components/sheets/ScheduleSheet.module.css
++++ b/src/components/sheets/ScheduleSheet.module.css
+@@ -213,3 +213,48 @@
+   gap: var(--s-4);
+   width: 100%;
+ }
++
++/* ── Week navigation (prev/next week in the date strip) ─────────── */
++.dateHead {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: var(--s-4);
++  margin-bottom: var(--s-5);
++}
++.dateHead .sectionLabel {
++  margin: 0;
++}
++.weekNav {
++  display: inline-flex;
++  align-items: center;
++  gap: var(--s-2);
++}
++.weekNavBtn {
++  appearance: none;
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  width: 26px;
++  height: 26px;
++  border-radius: var(--r-sm);
++  border: 1px solid var(--divider);
++  background: transparent;
++  color: var(--ink-3);
++  cursor: pointer;
++  transition:
++    background var(--dur-fast) var(--easing-standard),
++    color var(--dur-fast) var(--easing-standard);
++}
++.weekNavBtn:hover {
++  background: var(--well);
++  color: var(--ink-1);
++}
++.weekLabel {
++  font: var(--t-caption);
++  font-size: 11px;
++  color: var(--ink-2);
++  min-width: 84px;
++  text-align: center;
++  font-variant-numeric: tabular-nums;
++}
+diff --git a/src/components/sheets/ScheduleSheet.tsx b/src/components/sheets/ScheduleSheet.tsx
+index f2cfced..21ac5d7 100644
+--- a/src/components/sheets/ScheduleSheet.tsx
++++ b/src/components/sheets/ScheduleSheet.tsx
+@@ -1,6 +1,7 @@
+ "use client";
+ 
+-import { useState } from "react";
++import { useMemo, useState } from "react";
++import { ChevronLeft, ChevronRight } from "lucide-react";
+ import { Sheet } from "@/components/ui/Sheet/Sheet";
+ import { Button } from "@/components/ui/Button/Button";
+ import styles from "./ScheduleSheet.module.css";
+@@ -26,8 +27,9 @@ interface WeekCell {
+   isToday: boolean;
+ }
+ 
+-function getWeekCells(): WeekCell[] {
++function getWeekCells(weekOffset: number): WeekCell[] {
+   const start = new Date(WEEK_START + "T00:00:00");
++  start.setDate(start.getDate() + weekOffset * 7);
+   return Array.from({ length: 7 }, (_, i) => {
+     const d = new Date(start);
+     d.setDate(start.getDate() + i);
+@@ -41,7 +43,20 @@ function getWeekCells(): WeekCell[] {
+   });
+ }
+ 
+-const WEEK_CELLS = getWeekCells();
++/** Label for the visible week, e.g. "May 10 – 16" (or across months). */
++function weekLabel(cells: WeekCell[]): string {
++  const firstCell = cells[0];
++  const lastCell = cells[cells.length - 1];
++  if (!firstCell || !lastCell) return "";
++  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
++  const first = new Date(firstCell.date + "T00:00:00");
++  const last = new Date(lastCell.date + "T00:00:00");
++  const sameMonth = first.getMonth() === last.getMonth();
++  return `${first.toLocaleDateString("en-US", opts)} – ${last.toLocaleDateString(
++    "en-US",
++    sameMonth ? { day: "numeric" } : opts,
++  )}`;
++}
+ 
+ function formatDate(dateStr: string): string {
+   return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
+@@ -80,6 +95,9 @@ export function ScheduleSheet({
+   const [time, setTime] = useState(initialTime ?? "9:00 AM");
+   const [isCustomMode, setIsCustomMode] = useState(false);
+   const [customHour, setCustomHour] = useState("09:00");
++  const [weekOffset, setWeekOffset] = useState(0);
++
++  const weekCells = useMemo(() => getWeekCells(weekOffset), [weekOffset]);
+ 
+   function handleConfirm() {
+     onSchedule(date, time);
+@@ -142,9 +160,30 @@ export function ScheduleSheet({
+ 
+         {/* Day picker strip */}
+         <div className={styles.section}>
+-          <p className={styles.sectionLabel}>Date</p>
++          <div className={styles.dateHead}>
++            <p className={styles.sectionLabel}>Date</p>
++            <div className={styles.weekNav}>
++              <button
++                type="button"
++                className={styles.weekNavBtn}
++                onClick={() => setWeekOffset((w) => w - 1)}
++                aria-label="Previous week"
++              >
++                <ChevronLeft size={16} />
++              </button>
++              <span className={styles.weekLabel}>{weekLabel(weekCells)}</span>
++              <button
++                type="button"
++                className={styles.weekNavBtn}
++                onClick={() => setWeekOffset((w) => w + 1)}
++                aria-label="Next week"
++              >
++                <ChevronRight size={16} />
++              </button>
++            </div>
++          </div>
+           <div className={styles.dayStrip}>
+-            {WEEK_CELLS.map((cell) => (
++            {weekCells.map((cell) => (
+               <button
+                 key={cell.date}
+                 type="button"

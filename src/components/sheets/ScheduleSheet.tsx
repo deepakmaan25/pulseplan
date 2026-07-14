@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Sheet } from "@/components/ui/Sheet/Sheet";
 import { Button } from "@/components/ui/Button/Button";
 import styles from "./ScheduleSheet.module.css";
@@ -26,8 +27,9 @@ interface WeekCell {
   isToday: boolean;
 }
 
-function getWeekCells(): WeekCell[] {
+function getWeekCells(weekOffset: number): WeekCell[] {
   const start = new Date(WEEK_START + "T00:00:00");
+  start.setDate(start.getDate() + weekOffset * 7);
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
@@ -41,7 +43,20 @@ function getWeekCells(): WeekCell[] {
   });
 }
 
-const WEEK_CELLS = getWeekCells();
+/** Label for the visible week, e.g. "May 10 – 16" (or across months). */
+function weekLabel(cells: WeekCell[]): string {
+  const firstCell = cells[0];
+  const lastCell = cells[cells.length - 1];
+  if (!firstCell || !lastCell) return "";
+  const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  const first = new Date(firstCell.date + "T00:00:00");
+  const last = new Date(lastCell.date + "T00:00:00");
+  const sameMonth = first.getMonth() === last.getMonth();
+  return `${first.toLocaleDateString("en-US", opts)} – ${last.toLocaleDateString(
+    "en-US",
+    sameMonth ? { day: "numeric" } : opts,
+  )}`;
+}
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
@@ -80,6 +95,9 @@ export function ScheduleSheet({
   const [time, setTime] = useState(initialTime ?? "9:00 AM");
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customHour, setCustomHour] = useState("09:00");
+  const [weekOffset, setWeekOffset] = useState(0);
+
+  const weekCells = useMemo(() => getWeekCells(weekOffset), [weekOffset]);
 
   function handleConfirm() {
     onSchedule(date, time);
@@ -142,9 +160,30 @@ export function ScheduleSheet({
 
         {/* Day picker strip */}
         <div className={styles.section}>
-          <p className={styles.sectionLabel}>Date</p>
+          <div className={styles.dateHead}>
+            <p className={styles.sectionLabel}>Date</p>
+            <div className={styles.weekNav}>
+              <button
+                type="button"
+                className={styles.weekNavBtn}
+                onClick={() => setWeekOffset((w) => w - 1)}
+                aria-label="Previous week"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span className={styles.weekLabel}>{weekLabel(weekCells)}</span>
+              <button
+                type="button"
+                className={styles.weekNavBtn}
+                onClick={() => setWeekOffset((w) => w + 1)}
+                aria-label="Next week"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
           <div className={styles.dayStrip}>
-            {WEEK_CELLS.map((cell) => (
+            {weekCells.map((cell) => (
               <button
                 key={cell.date}
                 type="button"
